@@ -102,8 +102,8 @@ public class ImageDisplayWindow extends Window{
 				ICFile imageFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(new Integer(id));
 				ICFile imageFolder = (ICFile) imageFile.getParentEntity();
 				
-				previousImage = getPreviousImage(iwc, imageFolder, imageNumber - 1);
-				nextImage = getNextImage(iwc, imageFolder, imageNumber + 1);
+				previousImage = getImage(iwc, imageFolder, imageNumber - 1);
+				nextImage = getImage(iwc, imageFolder, imageNumber + 1);
 			}
 			catch (IDOLookupException ile) {
 				log(ile);
@@ -232,10 +232,10 @@ public class ImageDisplayWindow extends Window{
 		}
 	}
 	
-	private AdvancedImage getPreviousImage(IWContext iwc, ICFile imageFolder, int imageNumber) {
+	private AdvancedImage getImage(IWContext iwc, ICFile imageFolder, int imageNumber) {
 		if (imageNumber > 0) {
 			try {
-				ArrayList list = getImageProvider(iwc).getImagesFromTo(imageFolder, imageNumber, imageNumber-1);
+				ArrayList list = getImageProvider(iwc).getImagesFromTo(imageFolder, imageNumber, imageNumber);
 				if (list != null) {
 					Iterator iter = list.iterator();
 					while (iter.hasNext()) {
@@ -249,26 +249,6 @@ public class ImageDisplayWindow extends Window{
 			catch (RemoteException re) {
 				log(re);
 			}
-		}
-		
-		return null;
-	}
-	
-	private AdvancedImage getNextImage(IWContext iwc, ICFile imageFolder, int imageNumber) {
-		try {
-			ArrayList list = getImageProvider(iwc).getImagesFromTo(imageFolder, imageNumber, imageNumber+1);
-			if (list != null) {
-				Iterator iter = list.iterator();
-				while (iter.hasNext()) {
-					return (AdvancedImage) iter.next();
-				}
-			}
-		}
-		catch (SQLException sql) {
-			log(sql);
-		}
-		catch (RemoteException re) {
-			log(re);
 		}
 		
 		return null;
