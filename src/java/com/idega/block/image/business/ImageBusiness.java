@@ -270,9 +270,9 @@ public static void makeDefaultSizes(IWContext iwc){
 
       image.setFileValue(input);
       image.setFileSize((int)ip.getSize());
-      image.insert();
+      image.store();
 
-      id = image.getID();
+      id = ((Integer)image.getPrimaryKey()).intValue();
 
 
 /*      String dataBaseType = "";
@@ -442,7 +442,7 @@ public static void setImageDimensions(MediaProperties ip) {
       else update = false;
 
       if(update){
-        image.update();
+        image.store();
         iwc.setSessionAttribute("im_refresh",new String("true"));
       }
     }

@@ -528,7 +528,7 @@ public class AdvancedImage extends Image {
     catch (FinderException e) {
       return -1;
     }
-    return icFile.getID();
+    return ((Integer)icFile.getPrimaryKey()).intValue();
   }
   
   private ImageEncoder getImageEncoder(IWContext iwc)  throws RemoteException{

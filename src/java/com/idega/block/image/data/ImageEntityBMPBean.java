@@ -4,13 +4,15 @@ package com.idega.block.image.data;
 
 import java.sql.SQLException;
 
+import com.idega.data.IDOLegacyEntity;
+
 //import com.idega.data.BlobWrapper;
 
 
 
 
 
-public class ImageEntityBMPBean extends com.idega.core.data.ICFileBMPBean implements com.idega.block.image.data.ImageEntity {
+public class ImageEntityBMPBean extends com.idega.core.data.ICFileBMPBean implements com.idega.block.image.data.ImageEntity,IDOLegacyEntity {
 
   public ImageEntityBMPBean(){
 
@@ -34,7 +36,7 @@ public class ImageEntityBMPBean extends com.idega.core.data.ICFileBMPBean implem
 
     image.setName("Default no image");
 
-    image.insert();
+    image.store();
 
   }
 

@@ -138,7 +138,7 @@ public ImageHandler( PlanarImage originalImage, int ParentId ) throws Exception{
 
 public ImageHandler( ImageEntity imageEntity ) throws Exception{
 
-  setImageId( imageEntity.getID() );
+  setImageId( ((Integer)imageEntity.getPrimaryKey()).intValue() );
 
   getImageFromDatabase();
 

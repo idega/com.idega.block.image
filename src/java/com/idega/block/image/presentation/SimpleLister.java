@@ -75,8 +75,8 @@ public class SimpleLister extends PresentationObjectContainer {
   public Link getImageLink(ImageEntity image,String target,String prm){
     Link L = new Link(formatText(image.getName()),SimpleViewer.class);
     L.setFontSize(1);
-    L.setOnClick("top.iImageId = "+image.getID() );
-    L.addParameter(sessImageParameter,image.getID());
+    L.setOnClick("top.iImageId = "+image.getPrimaryKey().toString() );
+    L.addParameter(sessImageParameter,image.getPrimaryKey().toString());
     L.setTarget(target);
     return L;
   }
@@ -92,6 +92,7 @@ public class SimpleLister extends PresentationObjectContainer {
       sql.append(" and t.unique_name = 'ic_image' ");
       sql.append(" order by ").append(com.idega.block.image.data.ImageEntityBMPBean.getColumnNameCreationDate()).append(" desc ");
       //EntityFinder.debug = true;
+      //TODO - ARON - move into ICFileBMPBean
       L = EntityFinder.findAll(image,sql.toString());
       //EntityFinder.debug = false;
     }

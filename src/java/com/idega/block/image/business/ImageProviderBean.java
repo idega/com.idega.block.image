@@ -54,7 +54,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
       }
       else  {
         ICFile imageFile = ((ICFile) iterator.next());
-        child = new AdvancedImage(imageFile.getID(),imageFile.getName());
+        child = new AdvancedImage(((Integer)imageFile.getPrimaryKey()).intValue(),imageFile.getName());
         result.add(child);
       }
     }
@@ -86,7 +86,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
       // set new entity as a child 
       // addChild throws SQLException
       parent.addChild(imageEntity);
-      id = imageEntity.getID();
+      id = ((Integer)imageEntity.getPrimaryKey()).intValue();
       trans.commit();
     }
     catch (Exception e) {

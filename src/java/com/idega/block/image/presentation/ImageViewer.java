@@ -787,7 +787,7 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
 {
 
-  int imageId = image.getID();
+  int imageId = ((Integer)image.getPrimaryKey()).intValue();
 
   Table imageTable = new Table(1,2);
 

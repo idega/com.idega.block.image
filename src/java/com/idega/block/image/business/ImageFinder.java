@@ -31,7 +31,7 @@ public class ImageFinder {
     try {
       ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(id);
       image.addMetaData(key,att);
-      image.update();
+      image.store();
       return true;
     }
     catch (SQLException ex) {

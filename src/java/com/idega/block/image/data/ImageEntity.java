@@ -1,7 +1,9 @@
 package com.idega.block.image.data;
 
+import com.idega.data.IDOLegacyEntity;
 
-public interface ImageEntity extends com.idega.core.data.ICFile
+
+public interface ImageEntity extends com.idega.core.data.ICFile,IDOLegacyEntity
 {
  public java.lang.String getHeight();
  public java.lang.String getImageLink();

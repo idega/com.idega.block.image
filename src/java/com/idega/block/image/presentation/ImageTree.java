@@ -91,7 +91,7 @@ public Table getTreeTable(IWContext iwc) throws SQLException {
 
                     if (images[j].getParentId()== -1 ) {
 
-                      findNodes(items,images[j].getID(),pos,com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"),2);
+                      findNodes(items,((Integer)images[j].getPrimaryKey()).intValue(),pos,com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"),2);
 
                     }
 
