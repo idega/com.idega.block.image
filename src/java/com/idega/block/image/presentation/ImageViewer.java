@@ -793,8 +793,6 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
 
 
-  imageTable.setAlignment("center");
-
   imageTable.setAlignment(1,1,"center");
 
   imageTable.setAlignment(1,2,"center");
