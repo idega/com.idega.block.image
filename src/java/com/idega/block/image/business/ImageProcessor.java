@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.5 2004/10/01 14:20:34 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.6 2004/10/01 16:57:42 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2004/10/01 14:20:34 $ by $Author: eiki $
+ * Last modified: $Date: 2004/10/01 16:57:42 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -92,7 +92,7 @@ public class ImageProcessor implements Runnable {
 	/**
 	 * Does the actual image processing and saves the images to the database
 	 */
-	private synchronized void processImages() {
+	private void processImages() {
 		Object[] jobs = (Object[]) unprocessedImages.values().toArray();
 		for (int i = 0; i < jobs.length; i++) {
 			ImageProcessJob job = (ImageProcessJob) jobs[i];
@@ -240,7 +240,7 @@ public class ImageProcessor implements Runnable {
 	 * 
 	 * @param job
 	 */
-	public synchronized void addImageProcessJobToQueu(ImageProcessJob job) {
+	public void addImageProcessJobToQueu(ImageProcessJob job) {
 		String key = job.getJobKey();
 		if (!isInProcessOrDone(key)) {
 			unprocessedImages.put(job.getJobKey(), job);
