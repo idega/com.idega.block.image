@@ -1,6 +1,3 @@
-#Mon Oct 27 01:32:55 CET 2003
-=
-CommuneReportBusiness.parent2_ssn=
 absbottom=Absbottom
 absmiddle=Absmiddle
 alignment=Alignment
@@ -14,7 +11,7 @@ horizontal_spacing=Horizontal spacing
 im_image_attributes=Image Attributes
 left=Left
 middle=Middle
-new_image=N\u00FD mynd
+new_image=New image
 right=Right
 save=
 texttop=Text top
