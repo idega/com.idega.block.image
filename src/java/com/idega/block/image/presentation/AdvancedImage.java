@@ -191,9 +191,9 @@ public class AdvancedImage extends Image {
   private void scaleImage(IWContext iwc) {
     try {
       modifiedImageId  = createAndStoreImage(iwc);
-   		// remove these attributes to prevent scaling by the browser client 
-   	  removeAttribute(HEIGHT);
-   	  removeAttribute(WIDTH);
+      // remove these attributes to prevent scaling by the browser client 
+      removeAttribute(HEIGHT);
+      removeAttribute(WIDTH);
     }
     catch (Exception ex)  {
       // set modified image id back
@@ -401,17 +401,17 @@ public class AdvancedImage extends Image {
 
 
 
-	/**
-	 * Method setHeightAndWidthOfOriginalImageAtEntity.
-	 * @param width
-	 * @param height
-	 */
-	private void setHeightAndWidthOfOriginalImageAtEntity(int width, int height, IWContext iwc) 
+  /**
+   * Method setHeightAndWidthOfOriginalImageAtEntity.
+   * @param width
+   * @param height
+   */
+  private void setHeightAndWidthOfOriginalImageAtEntity(int width, int height, IWContext iwc) 
     throws Exception {
      ImageProvider imageProvider = getImageProvider(iwc);
      ImageEntity entity = getImageEntity(iwc);
      imageProvider.setHeightAndWidthOfOriginalImageToEntity(width, height, entity);     
-	}
+  }
 
 
 
@@ -451,12 +451,12 @@ public class AdvancedImage extends Image {
 
 
 
-	private Cache getCachedImage(IWContext iwc, int imageId) {
-		// this method is similar to the private getImage() method of the super class Image
-		IWMainApplication iwma = iwc.getApplication(); 
-	
-	  return (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
-	}
+  private Cache getCachedImage(IWContext iwc, int imageId) {
+    // this method is similar to the private getImage() method of the super class Image
+    IWMainApplication iwma = iwc.getApplication(); 
+  
+    return (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
+  }
 
  
   private int createAndStoreImage(IWContext iwc) throws Exception {
@@ -492,17 +492,14 @@ public class AdvancedImage extends Image {
        // Does the image already exist? Then there is nothing to do.
       int imageID = getImageIDByName(nameOfModifiedImage);
       if ( imageID > -1)
-      	return imageID;
+        return imageID;
       
-      // get real path and virtual path to modified image
-      // (this does not mean that the modified image already exists)
+      // get real path to modified image
+      // (this does not mean that the modified image already exists!)
       IWMainApplication mainApp = iwc.getApplication();
             
-      String virtualPathOfModifiedImage = 
-        getVirtualPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp);
-      
       String pathOfModifiedImage = 
-        mainApp.getApplicationRealPath() + virtualPathOfModifiedImage;
+        getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp);
       
       // now create the new image...  
       
@@ -537,17 +534,17 @@ public class AdvancedImage extends Image {
   }
  
  
-	private int getImageIDByName(String name) {
-  	ICFileHome icFileHome = (ICFileHome) com.idega.data.IDOLookup.getHomeLegacy(ICFile.class);
+  private int getImageIDByName(String name) {
+    ICFileHome icFileHome = (ICFileHome) com.idega.data.IDOLookup.getHomeLegacy(ICFile.class);
     ICFile icFile;
-  	try {
-			icFile = (ICFile) icFileHome.findByFileName(name);
-		}
-		catch (FinderException e) {
-			return -1;
-		}
+    try {
+      icFile = (ICFile) icFileHome.findByFileName(name);
+    }
+    catch (FinderException e) {
+      return -1;
+    }
     return icFile.getID();
-	}
+  }
   
   private ImageEncoder getImageEncoder(IWContext iwc)  throws RemoteException{
       return (ImageEncoder) IBOLookup.getServiceInstance(iwc,ImageEncoder.class);
@@ -558,29 +555,27 @@ public class AdvancedImage extends Image {
     return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
   }
   
- 
-
   
-  
-  private String getVirtualPathOfModifiedImage(int width, int height, String extension, IWMainApplication mainApp) throws IOException {
+  private String getRealPathOfModifiedImage(int width, int height, String extension,IWMainApplication mainApp) {
     
     String separator = FileUtil.getFileSeparator();
     
-    StringBuffer nameOfImage = new StringBuffer();
+    StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
            
-    nameOfImage.append(mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY);
-    nameOfImage.append(separator);
-    nameOfImage.append(MODIFIED_IMAGES_FOLDER);
+    path.append(mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY)
+      .append(separator)
+      .append(MODIFIED_IMAGES_FOLDER);
     
-    // check if this folder exist create it if necessary
-    FileUtil.createFolder(mainApp.getApplicationRealPath() + nameOfImage.toString());
-    
-    nameOfImage.append(separator);  
-        
-    nameOfImage.append(getNameOfModifiedImageWithExtension(width, height, extension));
-    
-    return nameOfImage.toString();
+    // check if the folder exists create it if necessary
+    // usually the folder should be already be there.
+    // the folder is never deleted by this class
+    FileUtil.createFolder(path.toString());
+    path.append(separator) 
+        .append(getNameOfModifiedImageWithExtension(width, height, extension));
+    return path.toString();
   }
+  
+
 
   private String getNameOfModifiedImageWithExtension(int width, int height, String extension)  {
     String name = getName();
