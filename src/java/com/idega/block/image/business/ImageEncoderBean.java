@@ -52,18 +52,20 @@ import com.sun.media.jai.codec.TIFFEncodeParam;
   }
 
 
-*/
-                   
-
 
 /**
- * @author Thomas
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ *  * 
+ * 
+ * Title:         idegaWeb
+ * Description:   This class provides methodes to encode images.
+ *                  
+ * Copyright:     Copyright (c) 2003
+ * Company:       idega software
+ * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>
+ * @version 1.0
  */
+ 
+ 
 public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.image.business.ImageEncoder {
 
   
@@ -302,25 +304,6 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
     // scale image
     PlanarImage modifiedImage = createImageWithSize(image,width, heigth);
     
-    
-   /* 
-    
-    ImageCodec codec = ImageCodec.getCodec(outputMimeType);
-    String formatName = codec.getFormatName().toUpperCase();
-    // get the corresponding parameterclass
-    String className = "com.sun.media.jai.codec."+formatName+"EncodeParam";
-    ImageEncodeParam encodeParam;
-    try {        
-      encodeParam = (ImageEncodeParam) Class.forName(className).newInstance();
-    }
-    catch (Exception ex) {
-      encodeParam = null;
-    }              
-    // set Quality of encoderParam
-    if (! inputMimeType.equals(outputMimeType))
-      encodeParam.
-    // get corresponding encoder   */
-    
     ImageEncodeParam encodeParam = getEncoderParam(inputMimeType, outputMimeType, image);
     
     com.sun.media.jai.codec.ImageEncoder imageEncoder;
@@ -366,25 +349,7 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
       return;
     }
     
-    /*
-     * 
-       
-    Enumeration enum = reader.getImageEnumeration();
-    double frames_per_second = 2;
-    boolean looped = true;   
-    Gif89Encoder gifenc = new Gif89Encoder();
-   
-    Image singleImage;
-    Image scaledSingleImage;
- 
-    
-    while (enum.hasMoreElements())  {
-      
-      singleImage = (Image) enum.nextElement();
-      scaledSingleImage = singleImage.getScaledInstance(width,height,Image.SCALE_DEFAULT);
-      gifenc.addFrame(scaledSingleImage);
-    }
-    */
+
     Gif89Encoder gifenc = new Gif89Encoder();
     Canvas cv = new Canvas();
     Enumeration enum = reader.getRasterImageEnumeration();
