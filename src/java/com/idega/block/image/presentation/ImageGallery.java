@@ -5,10 +5,6 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.*;
 
-import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
-
-
 import com.idega.block.image.business.ImageProvider;
 import com.idega.block.image.business.ImageProviderBean;
 import com.idega.builder.data.IBPage;
@@ -59,8 +55,18 @@ public class ImageGallery extends Block {
   private boolean showNameOfImage = false;
   // number of new images that is shown per step
   private int numberOfImagesPerStep = 0;
- 
-      
+  // flag to show if the image should keep it´s proportion
+  private boolean scaleProportional = true;
+  // border of all images
+  private int borderOfImage = 0;
+  
+  // table properties...
+  private int cellBorderTable = 0;
+  private String colorCellBorderTable = null;
+  
+  private int cellSpacingTable = 0;
+  private int cellPaddingTable = 0;
+       
   private int rows = 1;
   private int columns = 1;   
     
@@ -99,6 +105,10 @@ public class ImageGallery extends Block {
   public void setViewerPage(IBPage viewerPage) {
     this.viewerPage = viewerPage;
   }
+  
+  public void setScaleProportional(boolean scaleProportional) {
+    this.scaleProportional = scaleProportional;
+  }
         
   public void setRows(int rows) {
     if (rows > 0)
@@ -122,6 +132,25 @@ public class ImageGallery extends Block {
     this.numberOfImagesPerStep = numberOfImagesPerStep;
   }
   
+  public void setBorderOfImage(int borderOfImage)  {
+    this.borderOfImage = borderOfImage;
+  }
+  
+  public void setCellBorderTable(int cellBorderTable) {
+    this.cellBorderTable = cellBorderTable;
+  }
+  
+  public void setColorCellBorderTable(String colorCellBorderTable)  {
+    this.colorCellBorderTable = colorCellBorderTable;
+  }
+  
+  public void setCellPadding(int cellPaddingTable)  {
+    this.cellPaddingTable = cellPaddingTable;
+  }
+  
+  public void setCellSpacing(int cellSpacingTable)  {
+    this.cellSpacingTable = cellSpacingTable;
+  }
 
   public void main(IWContext iwc) throws Exception{
     Table mainTable = new Table(1,2); 
@@ -135,6 +164,14 @@ public class ImageGallery extends Block {
     // insert rows if names should be shown
     int rowsOfTable = (showNameOfImage)? (rows * 2) : (rows);
     Table galleryTable = new Table(columns,rowsOfTable); 
+    if (cellPaddingTable > 0)
+      galleryTable.setCellpadding(cellPaddingTable);
+    if (cellSpacingTable > 0)
+      galleryTable.setCellspacing(cellSpacingTable);
+    if (cellBorderTable > 0)
+      galleryTable.setBorder(cellBorderTable);
+    if (colorCellBorderTable != null)
+      galleryTable.setBorderColor(colorCellBorderTable);
     AdvancedImage image;              
     int count = -1;
     Iterator iterator = images.iterator();
@@ -148,8 +185,11 @@ public class ImageGallery extends Block {
         image.setHeight(heightOfImages);
       if (heightOfImages > 0)
         image.setWidth(widthOfImages);
+      // set properties of advanced image
       image.setEnlargeProperty(enlargeImage);
-
+      image.setScaleProportional(scaleProportional);
+      if (borderOfImage > 0)
+        image.setBorder(borderOfImage);
       int xPositionImage = ((count%columns)+1);
       int yPositionImage;          
       if (showNameOfImage)  {
@@ -170,13 +210,18 @@ public class ImageGallery extends Block {
       }
       // check if a link to a popup window should be added
       else if (popUpOriginalImageOnClick)  {
-        image.addLinkToDisplayWindow(iwc);
+        image.setLinkToDisplayWindow(iwc);
         pres = (PresentationObject) image;
       }
       // show only the image without a link
       else  {
         pres = (PresentationObject) image;
       }
+      // set size of the cell that shows the image
+      if (heightOfImages > 0)
+        galleryTable.setHeight(xPositionImage, yPositionImage, Integer.toString(heightOfImages));
+      if (widthOfImages > 0)
+        galleryTable.setWidth(xPositionImage, yPositionImage, Integer.toString(widthOfImages));
       galleryTable.add(pres, xPositionImage, yPositionImage);
     }
     return galleryTable;
@@ -247,7 +292,6 @@ public class ImageGallery extends Block {
     if (newStartPosition > 0 && newStartPosition <= getImageProvider(iwc).getImageCount(imageFileFolder))
       startPosition = newStartPosition;
     storeNumberOfFirstImage(iwc,startPosition);
-    //return getImagesFromTo(iwc, startPosition, startPosition + step - 1);
     return getImagesFromTo(iwc, startPosition, startPosition + getNumberOfImagePlaces() - 1);
   }
     
