@@ -57,6 +57,8 @@ public class ImageGallery extends Block {
   // table properties...
   private int cellBorderTable = 0;
   private String colorCellBorderTable = null;
+  // image properties
+  private String colorBorderImage = null;
   
   private int cellSpacingTable = 0;
   private int cellPaddingTable = 0;
@@ -138,6 +140,10 @@ public class ImageGallery extends Block {
     this.colorCellBorderTable = colorCellBorderTable;
   }
   
+  public void setColorBorderImage(String colorBorderImage)  {
+    this.colorBorderImage = colorBorderImage;
+  }
+  
   public void setCellPadding(int cellPaddingTable)  {
     this.cellPaddingTable = cellPaddingTable;
   }
@@ -184,6 +190,9 @@ public class ImageGallery extends Block {
       image.setScaleProportional(scaleProportional);
       if (borderOfImage > 0)
         image.setBorder(borderOfImage);
+      if (colorBorderImage != null) {
+        image.setBorderColor(colorBorderImage);
+      }
       int xPositionImage = ((count%columns)+1);
       int yPositionImage;          
       if (showNameOfImage)  {
