@@ -233,7 +233,14 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
   private String getFormatedMimeType(String mimeType) {
     return getValueForMimeType(mimeType, 0, ImageEncoder.UNKNOWN_MIME_TYPE );
  }
+ 
 
+  public boolean isInputTypeEqualToResultType(String mimeType)  {
+    String formatedMimeType = getFormatedMimeType(mimeType);
+    if (UNKNOWN_MIME_TYPE.equals(formatedMimeType))
+      return false;
+    return formatedMimeType.equals(getResultMimeTypeForInputMimeType(mimeType));
+  }
 
   public String getResultMimeTypeForInputMimeType(String inputMimeType) {
     return getValueForMimeType(inputMimeType, 1, ImageEncoder.UNKNOWN_MIME_TYPE );
@@ -287,6 +294,7 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
    * The input stream should be a image with the same mimetype. 
    * The implementation uses the JAI library.
 	 * @param mimeType
+   * @param outputMimeType
 	 * @param input
 	 * @param output
 	 * @param width

@@ -11,7 +11,7 @@ public interface ImageEncoder extends com.idega.business.IBOService
   
   public static final String INVALID_FILE_EXTENSION = "invalid file extension";
   
-  
+  public boolean isInputTypeEqualToResultType(String mimeType);
   
   public String getResultFileExtensionForInputMimeType(String inputMimeType);
   
