@@ -10,7 +10,7 @@ package com.idega.block.image.presentation;
  */
 
 import java.util.Map;
-
+import javax.faces.component.UIComponent;
 import com.idega.block.image.business.ImageFinder;
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.builder.presentation.IBPageChooser;
@@ -87,7 +87,7 @@ public class ImageAttributeSetter extends Block{
       add("no attributekey or image id ");
   }
 
-  public PresentationObject getForm(Map map,String sAttributeKey,String sImageEntityId){
+  public UIComponent getForm(Map map,String sAttributeKey,String sImageEntityId){
     Form form = new Form();
       form.add(new HiddenInput(sHiddenInputName,getAttributesString(map)));
       form.add(new HiddenInput(prmAttributeKey,sAttributeKey));
