@@ -352,7 +352,7 @@ public class AdvancedImage extends Image {
 
   /** Adds a link to this image to a popup window that the original version of this image shows
    */
-  public void setLinkToDisplayWindow(IWContext iwc)  {
+  public void setLinkToDisplayWindow(IWContext iwc, int imageNumber)  {
     Link link = new Link();
     String imageID = Integer.toString(originalImageId);
     String widthString;
@@ -365,6 +365,7 @@ public class AdvancedImage extends Image {
       link.setParameter(ImageDisplayWindow.PARAMETER_BORDER, BORDER);
       link.setParameter(ImageDisplayWindow.PARAMETER_WIDTH, widthString);
       link.setParameter(ImageDisplayWindow.PARAMETER_HEIGHT, heightString);
+      link.setParameter(ImageDisplayWindow.PARAMETER_IMAGE_NUMBER, String.valueOf(imageNumber));
     }
     catch (Exception ex)  { 
       // do nothing

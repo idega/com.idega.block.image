@@ -257,6 +257,7 @@ public class ImageGallery extends Block {
 		int rowsOfTable = (showNameOfImage) ? (rows * 2) : (rows);
 		Table galleryTable = new Table(columns, rowsOfTable);
 		//galleryTable.setBorder(1);
+		galleryTable.setWidth(Table.HUNDRED_PERCENT);
 		for (int i = 1; i <= rowsOfTable; i++) {
 			galleryTable.setRowAlignment(i, Table.HORIZONTAL_ALIGN_CENTER);
 		}
@@ -271,6 +272,7 @@ public class ImageGallery extends Block {
 		AdvancedImage image;
 		int count = -1;
 		Iterator iterator = images.iterator();
+		int imageNumber = restoreNumberOfFirstImage(iwc);
 		while (iterator.hasNext()) {
 			count++;
 			image = (AdvancedImage) iterator.next();
@@ -303,7 +305,7 @@ public class ImageGallery extends Block {
 			}
 			// check if a link to a popup window should be added
 			else if (popUpOriginalImageOnClick) {
-				image.setLinkToDisplayWindow(iwc);
+				image.setLinkToDisplayWindow(iwc, imageNumber);
 				pres = (PresentationObject) image;
 			}
 			// show only the image without a link
@@ -375,6 +377,7 @@ public class ImageGallery extends Block {
 			if (widthOfImages > 0)
 				galleryTable.setWidth(xPositionImage, yPositionImage, Integer.toString(widthOfImages));
 			galleryTable.add(pres, xPositionImage, yPositionImage);
+			imageNumber++;
 		}
 		return galleryTable;
 	}
