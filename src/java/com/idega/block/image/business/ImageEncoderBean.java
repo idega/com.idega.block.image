@@ -219,7 +219,9 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
       handleSpecialMimeTypGIF(input, output, width, heigth);
     else
       handleMimeType(formatedInputMime, resultMime, input, output, width, heigth); 
-    }
+    output.flush();
+  }
+ 
 
   /**
   * Method getFormatedMimeType.
