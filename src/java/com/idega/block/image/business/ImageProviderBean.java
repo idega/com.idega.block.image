@@ -52,20 +52,13 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 
 		try {
 			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-			Collection images = fileHome.findChildren(imageFolder, null, null, "name", startPosition, length);
+			Collection images = fileHome.findChildren(imageFolder, null, null, "name", startPosition-1, length);
 			Iterator iterator = images.iterator();
-			int position = 0;
 			AdvancedImage child;
-			while (iterator.hasNext() && position < endPosition) {
-				position++;
-				if (position < startPosition) {
-					iterator.next();
-				}
-				else {
-					ICFile imageFile = ((ICFile) iterator.next());
-					child = new AdvancedImage(((Integer) imageFile.getPrimaryKey()).intValue(), imageFile.getName());
-					result.add(child);
-				}
+			while (iterator.hasNext()) {
+				ICFile imageFile = ((ICFile) iterator.next());
+				child = new AdvancedImage(((Integer) imageFile.getPrimaryKey()).intValue(), imageFile.getName());
+				result.add(child);
 			}
 		}
 		catch (IDOLookupException ile) {
