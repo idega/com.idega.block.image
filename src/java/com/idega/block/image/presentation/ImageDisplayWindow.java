@@ -280,6 +280,9 @@ public class ImageDisplayWindow extends Window{
     link.setParameter(ImageDisplayWindow.PARAMETER_WIDTH, Integer.toString(image.getWidthOfOriginalImage(iwc)));
     link.setParameter(ImageDisplayWindow.PARAMETER_HEIGHT, Integer.toString(image.getHeightOfOriginalImage(iwc)));
     link.setParameter(ImageDisplayWindow.PARAMETER_IMAGE_NUMBER, String.valueOf(imageNumber));
+    link.setParameter(ImageDisplayWindow.PARAMETER_TITLE, getResourceBundle(iwc).getLocalizedString("image","Image"));
+    link.setParameter(ImageDisplayWindow.PARAMETER_IMAGE_ID, Integer.toString(image.getImageID(iwc)));
+    link.setParameter(ImageDisplayWindow.PARAMETER_INFO, image.getName());
 		return link;
 	}
 }
