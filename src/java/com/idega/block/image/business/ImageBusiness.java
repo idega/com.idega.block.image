@@ -272,9 +272,9 @@ public static void makeDefaultSizes(IWContext iwc){
       /**@todo make this non image specific*/
 
 
-      image.setMimeType(ip.getContentType());
+      image.setMimeType(ip.getMimeType());
 
-      System.out.println("ImageBusiness mimetype:"+ip.getContentType());
+      System.out.println("ImageBusiness mimetype:"+ip.getMimeType());
 
       image.setFileValue(input);
       image.setFileSize((int)ip.getSize());
