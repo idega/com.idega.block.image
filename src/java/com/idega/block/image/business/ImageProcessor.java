@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.6 2004/10/01 16:57:42 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.7 2004/10/04 11:07:57 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2004/10/01 16:57:42 $ by $Author: eiki $
+ * Last modified: $Date: 2004/10/04 11:07:57 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -243,11 +243,15 @@ public class ImageProcessor implements Runnable {
 	public void addImageProcessJobToQueu(ImageProcessJob job) {
 		String key = job.getJobKey();
 		if (!isInProcessOrDone(key)) {
-			unprocessedImages.put(job.getJobKey(), job);
+			addToQueu(job);
 			//if the processes are not being processed already (run() not
 			// running) we start it now.
 			this.start();
 		}
+	}
+
+	private synchronized void addToQueu(ImageProcessJob job) {
+		unprocessedImages.put(job.getJobKey(), job);
 	}
 
 	/**
