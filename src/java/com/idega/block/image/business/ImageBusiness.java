@@ -237,7 +237,7 @@ public static void makeDefaultSizes(IWContext iwc){
           if(deleteValue != null){
             for(int i = 0; i < deleteValue.length; i++){
               ICFileCategory cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy( Integer.parseInt(deleteValue[i]) );
-              cat.removeFrom(com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"));
+              cat.removeFrom((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"));
               cat.delete();
             }
           }

@@ -69,13 +69,13 @@ public Table getTreeTable(IWContext iwc) throws SQLException {
 
           for (int i = 0 ; i < catagory.length ; i++ ) {
 
-            findNodes(items,catagory[i].getID(),1,com.idega.data.GenericEntity.getStaticInstance("com.idega.core.data.ICFileCategory"),1);
+            findNodes(items,catagory[i].getID(),1,(IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance("com.idega.core.data.ICFileCategory"),1);
 
 
 
             if ( showAll ) {
 
-              images = (ImageEntity[])catagory[i].findRelated( com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity") );
+              images = (ImageEntity[])catagory[i].findRelated( (IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity") );
 
 
 
@@ -91,7 +91,7 @@ public Table getTreeTable(IWContext iwc) throws SQLException {
 
                     if (images[j].getParentId()== -1 ) {
 
-                      findNodes(items,((Integer)images[j].getPrimaryKey()).intValue(),pos,com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"),2);
+                      findNodes(items,((Integer)images[j].getPrimaryKey()).intValue(),pos,(IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"),2);
 
                     }
 
