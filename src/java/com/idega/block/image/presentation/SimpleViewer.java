@@ -1,5 +1,6 @@
 package com.idega.block.image.presentation;
 
+import com.idega.block.media.business.MediaBusiness;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.*;
 import com.idega.presentation.text.*;
@@ -39,7 +40,7 @@ public class SimpleViewer extends PresentationObjectContainer{
             saveImageId(iwc,sImageId);
           }
           else if(sAction.equals(actDelete)){
-           ConfirmDeleteImage(sImageId);
+           ConfirmDeleteImage(sImageId,iwc);
           }
           else if(sAction.equals(actConfirmDelete)){
             deleteImage( sImageId);
@@ -105,7 +106,7 @@ public class SimpleViewer extends PresentationObjectContainer{
       }
     }
 
-    public void ConfirmDeleteImage(String sImageId){
+    public void ConfirmDeleteImage(String sImageId,IWContext iwc){
        Table T = new Table();
        T.setWidth("100%");
        T.setHeight("100%");
@@ -118,7 +119,7 @@ public class SimpleViewer extends PresentationObjectContainer{
             warning.setFontColor("FF0000");
             warning.setBold();
             Image image = new Image(id);
-            image.setURL(com.idega.block.media.servlet.MediaServlet.getMediaURL(id));
+            image.setURL(MediaBusiness.getMediaURL(id,iwc.getApplication()));
             T.setBackgroundImage(1,2,image);
             T.add(ieImage.getName(),1,1);
             T.add(warning,1,2);
