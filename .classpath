@@ -5,6 +5,8 @@
   </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
   </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jimi/jars/jimi-1.0.jar">
+  </classpathentry>
   <classpathentry kind="src" path="/com.idega.core">
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.builder">
@@ -18,8 +20,6 @@
   <classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jimi/jars/jimi-1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
   </classpathentry>

@@ -45,8 +45,18 @@
       <roles/>
     </developer>
   </developers>
-  <dependencies>
+  <dependencies>	
     <dependency>
+        <groupId>jimi</groupId>
+        <artifactId>jimi</artifactId>
+        <version>1.0</version>
+        <type>jar</type>
+        <url>http://java.sun.com/products/jimi/</url>
+        <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
+	<dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
       <!--<version>1.9</version>-->
