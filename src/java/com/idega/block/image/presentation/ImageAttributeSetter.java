@@ -16,12 +16,12 @@ import com.idega.util.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.*;
 import com.idega.presentation.ui.*;
-import com.idega.block.media.business.ImageBusiness;
+import com.idega.block.image.business.ImageBusiness;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.block.media.data.ImageEntity;
-import com.idega.block.media.business.ImageFinder;
+import com.idega.block.image.data.ImageEntity;
+import com.idega.block.image.business.ImageFinder;
 
 public class ImageAttributeSetter extends Block{
 

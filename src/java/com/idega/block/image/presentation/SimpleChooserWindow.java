@@ -18,15 +18,16 @@ import com.idega.idegaweb.IWBundle;
  * @version 1.1
  */
 
- public class ImageAttributeWindow extends IWAdminWindow {
+ public class SimpleChooserWindow extends IWAdminWindow {
     private IWBundle iwb;
     private String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
+    public static String prmReloadParent = "simple_upl_wind_rp";
 
-    public ImageAttributeWindow(){
+    public SimpleChooserWindow(){
       super();
       setResizable(true);
-      setWidth(300);
-      setHeight(300);
+      setWidth(726);
+      setHeight(460);
     }
 
     public String getBundleIdentifier(){
@@ -35,11 +36,13 @@ import com.idega.idegaweb.IWBundle;
 
     public void  main(IWContext iwc) throws Exception{
       iwb = getBundle(iwc);
-      ImageAttributeSetter SC = new ImageAttributeSetter();
+      SimpleChooser SC = new SimpleChooser();
+      SC.setToIncludeLinks(false);
       add(SC);
-      setTitle("Image Attributes");
-      addTitle("Image Attributes" );
-
-      //setParentToReload();
+      addHeaderObject(SC.getLinkTable(iwb));
+      setTitle("Image Chooser Block Media");
+      addTitle("Image Chooser" );
+      if(iwc.getParameter(prmReloadParent )!= null)
+        setParentToReload();
     }
 }

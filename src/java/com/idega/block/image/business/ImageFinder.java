@@ -1,6 +1,6 @@
 package com.idega.block.image.business;
 
-import com.idega.block.media.data.*;
+import com.idega.block.image.data.*;
 import java.sql.SQLException;
 /**
  * Title:
