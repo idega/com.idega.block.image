@@ -99,7 +99,7 @@ public class ImageDisplayWindow extends Window{
     AdvancedImage nextImage = null;
     if (id != -1) {
 			try {
-				ICFile imageFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(new Integer(-1));
+				ICFile imageFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(new Integer(id));
 				ICFile imageFolder = (ICFile) imageFile.getParentEntity();
 				
 				previousImage = getPreviousImage(iwc, imageFolder, imageNumber);
