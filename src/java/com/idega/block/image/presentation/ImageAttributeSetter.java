@@ -67,7 +67,6 @@ public class ImageAttributeSetter extends Block{
 
     String sAttributeKey = iwc.getParameter(prmAttributeKey );
     String sImageEntityId = iwc.getParameter(prmImageEntityId );
-    debug(sAttributeKey + " " + sImageEntityId );
     if(sImageEntityId != null && sAttributeKey !=null){
       int iImageEntityId = Integer.parseInt(sImageEntityId );
       String oldAttributes = getImageAttributes(sAttributeKey,iImageEntityId);
