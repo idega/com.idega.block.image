@@ -6,7 +6,7 @@ import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.block.image.data.ImageEntity;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import com.idega.idegaweb.IWBundle;
 import com.idega.block.media.servlet.MediaServlet;
 

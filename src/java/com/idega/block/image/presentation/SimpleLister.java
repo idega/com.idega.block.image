@@ -4,7 +4,7 @@ import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.block.image.data.ImageEntity;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import com.idega.data.EntityFinder;
 import java.sql.SQLException;
 import java.util.List;
@@ -50,7 +50,7 @@ public class SimpleLister extends PresentationObjectContainer {
           /**@todo: localize
            *
            */
-          T.add(formatText(new IWTimeStamp(image.getCreationDate() ).getISLDate(".",true)),2,row);
+          T.add(formatText(new IWTimestamp(image.getCreationDate() ).getISLDate(".",true)),2,row);
           row++;
         }
         T.setCellpadding(2);
