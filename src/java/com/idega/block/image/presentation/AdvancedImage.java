@@ -438,7 +438,7 @@ public class AdvancedImage extends Image {
 
   private Cache getCachedImage(IWContext iwc, int imageId) {
     // this method is similar to the private getImage() method of the super class Image
-    IWMainApplication iwma = iwc.getApplication(); 
+    IWMainApplication iwma = iwc.getIWMainApplication(); 
   
     return (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
   }
@@ -481,7 +481,7 @@ public class AdvancedImage extends Image {
       
       // get real path to modified image
       // (this does not mean that the modified image already exists!)
-      IWMainApplication mainApp = iwc.getApplication();
+      IWMainApplication mainApp = iwc.getIWMainApplication();
             
       String pathOfModifiedImage = 
         getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp);

@@ -1226,7 +1226,7 @@ private void refresh(IWContext iwc) throws SQLException{
 
       for (int i = 0 ; i < catagories.length ; i++ ) {
 
-        iwc.getApplication().removeAttribute("image_entities_"+catagories[i].getID());
+        iwc.getIWMainApplication().removeAttribute("image_entities_"+catagories[i].getID());
 
       }
 

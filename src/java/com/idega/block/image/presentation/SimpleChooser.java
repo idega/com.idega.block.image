@@ -53,7 +53,7 @@ import com.idega.presentation.ui.IFrame;
       IWBundle iwb = getBundle(iwc);
       checkParameterName(iwc);
 
-      if(iwc.getApplication().getSettings().getProperty(MediaServlet.USES_OLD_TABLES)!=null)
+      if(iwc.getIWMainApplication().getSettings().getProperty(MediaServlet.USES_OLD_TABLES)!=null)
         usesOld = true;
 
         getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(sessImageParameter) );

@@ -121,7 +121,7 @@ public class SimpleViewer extends PresentationObjectContainer{
             warning.setFontColor("FF0000");
             warning.setBold();
             Image image = new Image(id);
-            image.setURL(MediaBusiness.getMediaURL(id,iwc.getApplication()));
+            image.setURL(MediaBusiness.getMediaURL(id,iwc.getIWMainApplication()));
             T.setBackgroundImage(1,2,image);
             T.add(ieImage.getName(),1,1);
             T.add(warning,1,2);
