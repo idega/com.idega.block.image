@@ -102,8 +102,8 @@ public class ImageDisplayWindow extends Window{
 				ICFile imageFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(new Integer(id));
 				ICFile imageFolder = (ICFile) imageFile.getParentEntity();
 				
-				previousImage = getPreviousImage(iwc, imageFolder, imageNumber);
-				nextImage = getNextImage(iwc, imageFolder, imageNumber);
+				previousImage = getPreviousImage(iwc, imageFolder, imageNumber - 1);
+				nextImage = getNextImage(iwc, imageFolder, imageNumber + 1);
 			}
 			catch (IDOLookupException ile) {
 				log(ile);
