@@ -189,8 +189,6 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
     table.setCellspacing(0);
 
-    table.setAlignment("left");
-
 
 
   Text more = new Text("+");
