@@ -797,8 +797,6 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
   imageTable.setAlignment(1,2,"center");
 
-  imageTable.setVerticalAlignment("top");
-
   imageTable.setCellpadding(0);
 
 
