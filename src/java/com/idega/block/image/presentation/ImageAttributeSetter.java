@@ -9,6 +9,7 @@ package com.idega.block.image.presentation;
  * @version 1.1
  */
 
+import com.idega.block.text.business.TextFormatter;
 import java.sql.*;
 import java.util.*;
 import java.io.*;
@@ -59,61 +60,67 @@ public class ImageAttributeSetter extends Block{
   }
 
   public void main(IWContext iwc)throws Exception{
-    this.empty();
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
 
     String sAttributeKey = iwc.getParameter(prmAttributeKey );
     String sImageEntityId = iwc.getParameter(prmImageEntityId );
-    add(sAttributeKey + " " + sImageEntityId );
+    debug(sAttributeKey + " " + sImageEntityId );
     if(sImageEntityId != null && sAttributeKey !=null){
       int iImageEntityId = Integer.parseInt(sImageEntityId );
       String oldAttributes = getImageAttributes(sAttributeKey,iImageEntityId);
       oldMap = getAttributeMap(oldAttributes);
       if(iwc.getParameter("save")!=null){
         String attributeString = processForm(iwc);
-        add("<br>"+attributeString);
+        addBreak();
+        //add(attributeString);
         saveImageAttributes(sAttributeKey,attributeString,iImageEntityId);
         //saveString( iwc,attributeString);
       }
-      add(getForm(oldMap,sAttributeKey ,sImageEntityId ));
-      Table T  = new Table();
+
+      Table T = new Table(2,1);
+      T.setCellpadding(0);
+      T.setCellspacing(0);
+      T.setWidth(Table.HUNDRED_PERCENT);
+      T.setHeight(Table.HUNDRED_PERCENT);
+      T.setWidth(1,"260");
+      T.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+      T.setVerticalAlignment(2,1,Table.VERTICAL_ALIGN_TOP);
+      T.add(getForm(oldMap,sAttributeKey ,sImageEntityId ),1,1);
+
       try {
         Image image = new Image(iImageEntityId);
         image.setAttributes(oldMap);
-        T.add(getText("bla "));
-        T.add(image);
-        T.add(getText("blu "));
+        T.add(TextFormatter.getLoremIpsumString(iwc,200),2,1);
+        T.add(image,2,1);
+        T.add(TextFormatter.getLoremIpsumString(iwc,350),2,1);
 
-        add(T);
       }
       catch (SQLException ex) {
         add("image error");
         ex.printStackTrace();
       }
+
+      add(T);
+
     }
     else
       add("no attributekey or image id ");
   }
 
-  public String getText(String bla){
-    StringBuffer text = new StringBuffer();
-    for (int i = 0; i < 60; i++) {
-      text.append(bla);
-    }
-    return text.toString();
-  }
-
   public PresentationObject getForm(Map map,String sAttributeKey,String sImageEntityId){
     Form form = new Form();
-    Table T = new Table();
+    Table T = new Table(1,1);
+    T.setCellpaddingAndCellspacing(0);
+    T.setWidthAndHeightToHundredPercent();
+    T.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
     T.add(getLayoutTable(map) ,1,1);
     //T.add(getSizeTable(map),2,1);
     SubmitButton save = new SubmitButton("save","Save");
-    T.add(save,2,2);
-    T.add(new HiddenInput(sHiddenInputName,getAttributeString(map)));
-    T.add(new HiddenInput(prmAttributeKey,sAttributeKey));
-    T.add(new HiddenInput(prmImageEntityId, sImageEntityId));
+    T.add(save,1,1);
+    T.add(new HiddenInput(sHiddenInputName,getAttributeString(map)),1,1);
+    T.add(new HiddenInput(prmAttributeKey,sAttributeKey),1,1);
+    T.add(new HiddenInput(prmImageEntityId, sImageEntityId),1,1);
     form.add(T);
     return form;
   }
@@ -163,7 +170,7 @@ public class ImageAttributeSetter extends Block{
   }
 
   public PresentationObject getLayoutTable(Map map){
-    Table T = new Table();
+    Table T = new Table(2,6);
     String alignment = map.containsKey(ALIGNMENT)?(String)map.get(ALIGNMENT):"";
     String border = map.containsKey(BORDER)?(String)map.get(BORDER):"";
     String hspace = map.containsKey(HSPACE)?(String)map.get(HSPACE):"";
@@ -186,7 +193,7 @@ public class ImageAttributeSetter extends Block{
   }
 
   public PresentationObject getSizeTable(Map map){
-    Table T = new Table();
+    Table T = new Table(2,2);
     String width = map.containsKey(WIDTH)?(String)map.get(WIDTH):"";
     String height = map.containsKey(HEIGHT)?(String)map.get(HEIGHT):"";
     T.add(toText( iwrb.getLocalizedString("width","Width") ) ,1,1 );
@@ -245,7 +252,6 @@ public class ImageAttributeSetter extends Block{
     drp.addMenuElement("absmiddle",iwrb.getLocalizedString("absmiddle","Absmiddle"));
     drp.addMenuElement("baseline",iwrb.getLocalizedString("baseline","Baseline"));
     drp.addMenuElement("bottom",iwrb.getLocalizedString("bottom","Bottom"));
-    drp.addMenuElement("absbottom",iwrb.getLocalizedString("absbottom","Absbottom"));
     drp.addMenuElement("absbottom",iwrb.getLocalizedString("absbottom","Absbottom"));
     drp.setSelectedElement(selected );
     return drp;

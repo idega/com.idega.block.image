@@ -1,13 +1,9 @@
 package com.idega.block.image.presentation;
 
-import com.idega.idegaweb.presentation.IWAdminWindow;
-import com.idega.block.image.business.SimpleImage;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.idega.block.image.data.ImageEntity;
-import com.idega.util.idegaTimestamp;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:
@@ -20,13 +16,14 @@ import com.idega.idegaweb.IWBundle;
 
  public class ImageAttributeWindow extends IWAdminWindow {
     private IWBundle iwb;
+    private IWResourceBundle iwrb;
     private String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
 
     public ImageAttributeWindow(){
       super();
       setResizable(true);
-      setWidth(300);
-      setHeight(300);
+      setWidth(600);
+      setHeight(350);
     }
 
     public String getBundleIdentifier(){
@@ -35,10 +32,13 @@ import com.idega.idegaweb.IWBundle;
 
     public void  main(IWContext iwc) throws Exception{
       iwb = getBundle(iwc);
+      iwrb = iwb.getResourceBundle(iwc);
+
       ImageAttributeSetter SC = new ImageAttributeSetter();
       add(SC);
-      setTitle("Image Attributes");
-      addTitle("Image Attributes" );
+      String title = iwrb.getLocalizedString("im_image_attributes","Image Attributes");
+      setTitle(title);
+      addTitle(title);
 
       //setParentToReload();
     }
