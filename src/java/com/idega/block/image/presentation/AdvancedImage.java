@@ -176,9 +176,14 @@ public class AdvancedImage extends Image {
   private void scaleImage(IWContext iwc) {
     try {
       modifiedImageId  = createAndStoreImage(iwc);
+      
+      
+      //commented because we want the browser to know the width and height (faster browser rendering)
+      //even when the image has not been scaled (otherwise the layout is destroyed)...
       // remove these attributes to prevent scaling by the browser client 
-      removeMarkupAttribute(HEIGHT);
-      removeMarkupAttribute(WIDTH);
+//      removeMarkupAttribute(HEIGHT);
+//      removeMarkupAttribute(WIDTH);
+//    
     }
     catch (Exception ex)  {
       // set modified image id back
@@ -464,12 +469,16 @@ public class AdvancedImage extends Image {
         return -1;
       }else{
       	// convert the original image using the same size
+      	//e.g. bitmap to jpeg conversion because of load size
     		heightOfModifiedImage = getHeightOfOriginalImage(iwc);
     		widthOfModifiedImage = getWidthOfOriginalImage(iwc);  
       }
     }
     
-           
+    //set the xml width and height
+    setHeight(heightOfModifiedImage);
+    setWidth(widthOfModifiedImage);
+    
     // look up the file extension of the result file the image encoder returns 
     // for this mime type
     String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
