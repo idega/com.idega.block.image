@@ -22,8 +22,8 @@ import com.idega.presentation.IWContext;
     public ImageAttributeWindow(){
       super();
       setResizable(true);
-      setWidth(600);
-      setHeight(350);
+      setWidth(260);
+      setHeight(320);
     }
 
     public String getBundleIdentifier(){
