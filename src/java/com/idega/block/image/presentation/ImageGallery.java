@@ -53,12 +53,22 @@ public class ImageGallery extends Block {
   private boolean scaleProportional = true;
   // border of all images
   private int borderOfImage = 0;
+  // gallery color
+  private String colorGallery = null;
+  private int galleryBorder = 0;
+  private String colorGalleryBorder = "#000000";
+  private String heightOfGallery = null;
+  private String widthOfGallery = null;
   
   // table properties...
   private int cellBorderTable = 0;
   private String colorCellBorderTable = null;
+  private String colorCell = null;
   // image properties
   private String colorBorderImage = null;
+  
+  private int cellBorder = 0;
+  private String colorCellBorder = "#000000";
   
   private int cellSpacingTable = 0;
   private int cellPaddingTable = 0;
@@ -74,6 +84,17 @@ public class ImageGallery extends Block {
   private static final String STRING_FORWARD_BUTTON = ">";
   // string back button
   private static final String STRING_BACK_BUTTON = "<";
+  
+
+  public static final int BUTTON_POSITON_BOTTOM = 0;
+  public static final int BUTTON_POSITON_TOP = 1;
+  //public static int BUTTON_POSITON_LEFT = 2;
+  //public static int BUTTON_POSITON_RIGHT = 3;
+  
+  // button position
+  private int _posButton = BUTTON_POSITON_BOTTOM;
+
+  
     	
   public ImageGallery() {
         }
@@ -140,6 +161,14 @@ public class ImageGallery extends Block {
     this.colorCellBorderTable = colorCellBorderTable;
   }
   
+  public void setCellBorder(int cellBorder) {
+	this.cellBorder = cellBorder;
+  }
+
+  public void setColorCellBorder(String colorCellBorder)  {
+	this.colorCellBorder = colorCellBorder;
+  }
+  
   public void setColorBorderImage(String colorBorderImage)  {
     this.colorBorderImage = colorBorderImage;
   }
@@ -153,18 +182,63 @@ public class ImageGallery extends Block {
   }
 
   public void main(IWContext iwc) throws Exception{
-    Table mainTable = new Table(1,2); 
-    mainTable.add(getImageTable(iwc),1,1);
-    mainTable.add(getButtonTable(iwc),1,2);
-    add(mainTable);
+    Table mainTable = new Table(1,2);
+//mainTable.setBorder(1);
+	if(heightOfGallery!=null){
+		mainTable.setHeight(heightOfGallery);
+	}
+	if(widthOfGallery!=null){
+		mainTable.setWidth(widthOfGallery);
+	}
+    int bottonRow;
+    int contentRow;
+    switch (_posButton) {
+		case BUTTON_POSITON_TOP :
+			contentRow=2;
+			bottonRow=1;
+			break;
+		default :
+			contentRow=1;
+			bottonRow=2;
+			break;
+	}
+	mainTable.setRowAlignment(1,Table.HORIZONTAL_ALIGN_CENTER);
+	mainTable.setRowAlignment(2,Table.HORIZONTAL_ALIGN_CENTER);
+    mainTable.add(getImageTable(iwc),1,contentRow);
+    mainTable.add(getButtonTable(iwc),1,bottonRow);
+    
+    if(colorGallery != null){
+		if(galleryBorder>0) {
+			Table borderTable = new Table(1,1);
+			if(heightOfGallery!=null){
+				borderTable.setHeight(heightOfGallery);
+			}
+			if(widthOfGallery!=null){
+				borderTable.setWidth(widthOfGallery);
+			}
+			borderTable.setCellspacing(galleryBorder);
+			borderTable.setColor(colorGalleryBorder);
+			borderTable.setColor(1,1,colorGallery);
+			borderTable.add(mainTable);
+			add(borderTable);
+		} else {
+			mainTable.setColor(colorGallery);
+			add(mainTable);
+		}
+    } else {
+	  add(mainTable);
+    }
+    
   }
 
   private Table getImageTable(IWContext iwc) throws Exception {
     ArrayList images = getImages(iwc);
     // insert rows if names should be shown
     int rowsOfTable = (showNameOfImage)? (rows * 2) : (rows);
-    Table galleryTable = new Table(columns,rowsOfTable); 
-    if (cellPaddingTable > 0)
+    Table galleryTable = new Table(columns,rowsOfTable);
+//galleryTable.setBorder(1);
+	galleryTable.setRowAlignment(1,Table.HORIZONTAL_ALIGN_CENTER); 
+    if (cellPaddingTable > 0 && cellBorder<1)
       galleryTable.setCellpadding(cellPaddingTable);
     if (cellSpacingTable > 0)
       galleryTable.setCellspacing(cellSpacingTable);
@@ -193,33 +267,84 @@ public class ImageGallery extends Block {
       if (colorBorderImage != null) {
         image.setBorderColor(colorBorderImage);
       }
+      
+      
+	  PresentationObject pres = null;
+	  // check if a link to a viewer page should be added
+	  if (viewerPage != null) {
+		  Link link;
+		  link = new Link(image);
+		  link.setPage(viewerPage);
+		  link.addParameter(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME,image.getImageID(iwc));
+		  pres = (PresentationObject) link;
+	  }
+	  // check if a link to a popup window should be added
+	  else if (popUpOriginalImageOnClick)  {
+		  image.setLinkToDisplayWindow(iwc);
+		  pres = (PresentationObject) image;
+	  }
+	  // show only the image without a link
+	  else  {
+		  pres = (PresentationObject) image;
+	  }
+      
+      
       int xPositionImage = ((count%columns)+1);
       int yPositionImage;          
       if (showNameOfImage)  {
         yPositionImage = ((count/columns)*2)+1;
-        galleryTable.add(image.getName(), xPositionImage, yPositionImage+1); 
+		PresentationObject name = null;
+		if (colorCell != null){
+	        if(cellBorder>0){
+				Table borderTable = new Table(1,1);
+				if (cellPaddingTable > 0){
+					borderTable.setCellpadding(cellPaddingTable);
+				}
+				borderTable.setColor(1,1,colorCell);
+				borderTable.setColor(colorCellBorder);
+				borderTable.setCellspacing(cellBorder);
+				borderTable.setWidth("100%");
+				//borderTable.setHeight("100%");
+				//borderTable.setRowHeight(1,"100%");
+				borderTable.add(image.getName());
+				name=borderTable;
+	        } else {
+				galleryTable.setColor(xPositionImage,yPositionImage+1,colorCell);
+				//name = new Text(image.getName());
+				name = new Text(image.getName());
+			}
+        } else {
+			name = new Text(image.getName());
+        }
+		galleryTable.setVerticalAlignment(xPositionImage, yPositionImage+1,Table.VERTICAL_ALIGN_TOP);
+		galleryTable.add(name, xPositionImage, yPositionImage+1);
       }
       else  {
-        yPositionImage = ((count/columns)+1);     
-      }  
-      PresentationObject pres = null;
-      // check if a link to a viewer page should be added
-      if (viewerPage != null) {
-        Link link;
-        link = new Link(image);
-        link.setPage(viewerPage);
-        link.addParameter(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME,image.getImageID(iwc));
-        pres = (PresentationObject) link;
+        yPositionImage = ((count/columns)+1);
       }
-      // check if a link to a popup window should be added
-      else if (popUpOriginalImageOnClick)  {
-        image.setLinkToDisplayWindow(iwc);
-        pres = (PresentationObject) image;
-      }
-      // show only the image without a link
-      else  {
-        pres = (PresentationObject) image;
-      }
+		
+		if (colorCell != null){
+		 if (cellBorder>0){
+		 	Table borderTable = new Table(1,1);
+			if (cellPaddingTable > 0){
+		 	  borderTable.setCellpadding(cellPaddingTable);
+			}
+			borderTable.setColor(1,1,colorCell);
+			borderTable.setColor(colorCellBorder);
+			borderTable.setCellspacing(cellBorder);
+			borderTable.setWidth("100%");
+			//borderTable.setHeight("100%");
+			//borderTable.setRowHeight(1,"100%");
+			PresentationObject tmp = (PresentationObject)pres.clone();
+			borderTable.add(tmp);
+			pres = borderTable;
+		 } else {
+			galleryTable.setColor(xPositionImage,yPositionImage,colorCell);  
+		 } 
+		} 
+		galleryTable.setVerticalAlignment(xPositionImage, yPositionImage,Table.VERTICAL_ALIGN_BOTTOM);
+        
+      
       // set size of the cell that shows the image
       if (heightOfImages > 0)
         galleryTable.setHeight(xPositionImage, yPositionImage, Integer.toString(heightOfImages));
@@ -332,6 +457,104 @@ public class ImageGallery extends Block {
     // how many images can I show in the current table?
     return rows * columns;
   }
+	/**
+	 * @return
+	 */
+	public String getGalleryColor() {
+		return colorGallery;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getCellColor() {
+		return colorCell;
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setGalleryColor(String color) {
+		colorGallery = color;
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setCellColor(String color) {
+		colorCell = color;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getButtonPosition() {
+		return _posButton;
+	}
+
+	/**
+	 * @param posConst, one of the BOTTON_POSITION_... constants
+	 */
+	public void setButtonPosition(int posConst) {
+		_posButton = posConst;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getColorGalleryBorder() {
+		return colorGalleryBorder;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getGalleryBorder() {
+		return galleryBorder;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getHeightOfGallery() {
+		return heightOfGallery;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getWidthOfGallery() {
+		return widthOfGallery;
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setGalleryBorderColor(String color) {
+		colorGalleryBorder = color;
+	}
+
+	/**
+	 * @param width
+	 */
+	public void setGalleryBorderWith(int width) {
+		galleryBorder = width;
+	}
+
+	/**
+	 * @param height
+	 */
+	public void setHeightOfGallery(String height) {
+		heightOfGallery = height;
+	}
+
+	/**
+	 * @param width
+	 */
+	public void setWidthOfGallery(String width) {
+		widthOfGallery = width;
+	}
+
 }
      
  
