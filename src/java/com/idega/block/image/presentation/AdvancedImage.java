@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -47,24 +48,38 @@ import com.sun.media.jai.codec.MemoryCacheSeekableStream;
  *   
  * 
  * Title:         idegaWeb
- * Description:   AdvancedImage represents a image and extend the image class.
+ * Description:   AdvancedImage represents a image and extends 
+ *                {@link com.idega.presentation.Image Image}.
+ *                 
  *                In contrast to the Image class changes of the size by the methods
  *                setHeight and setWith are not performed by adding corresponding values
  *                and commands to the print method but by creating a new image 
- *                with the desired size. 
- *                The ImageEncoder service bean is used to create a new image. 
+ *                with the desired size. The new image with the desired size is sent to the client.
+ *                Therefore the image is not resized on the client side but
+ *                on the server side. 
+ * 
+ *                The height and the width of the image can be set by using 
+ *                the setHeight and setWidth methods of the Image class.
+ * 
+ *                The ImageEncoder service bean is used to create the new image. 
  *                The new created image is uploaded into the database 
  *                into a branch of the original image. The type of the new image is not
- *                necessary equal to the type of the original image, that depends how the
- *                ImageEncoder works (e.g. bitmap is transformed to jpeg).
- *                An instance of this class represents the original image and all derived
+ *                necessary equal to the type of the original image. The 
+ *                ImageEncoder is responsible for changing the type. 
+ *                (e.g. bitmap is transformed to jpeg).
+ * 
+ *                An instance of this class represents therefore the original image and all derived
  *                images: Depending on the values of the height and the width value the
  *                corresponding image is used by the print method. A new image is only 
  *                created if that size was never created before otherwise the desired
- *                image is fetched from the database or cache.
- *                To print the original image the AdvancedImageWrapper can be used:
- *                Even if the height and the width is set the original image is
- *                printed.
+ *                image is fetched from the database or cache. 
+ *                This means that an access to
+ *                all modified images and especially to the original image is always possible.
+ *                
+ *                To print the original image when this image is set to a different size the 
+ *                {@link com.idega.block.image.presentation.AdvancedImageWrapper AdvancedImageWrapper} 
+ *                can be used. Use the constructor AdvancedImageWrapper(this) and the wrapper represents
+ *                the original image, especially the original image is printed if the wrapper is printed.
  *                
  *                  
  * Copyright:     Copyright (c) 2003
@@ -80,7 +95,7 @@ public class AdvancedImage extends Image {
   public static final String MODIFIED_IMAGES_FOLDER = "modified_images";
   
   /** border around the image in the popup window */
-  private static final String BORDER = "70";
+  private static final String BORDER = "90";
   
   /** cached value not an attribute */
   private ImageEntity imageEntity;
@@ -91,43 +106,26 @@ public class AdvancedImage extends Image {
   /** cached value not an attribute */
   private String realPathToImage;
   
-  /** id of the original image. The image id of this instance 
-   * changed to -1 if the image is scaled. -1 means that this instance  
-   * points to an URL (a stored image in a folder). 
-   * See print() method of the super class.
+  /** id of the original image. 
+   * The id is stored because during the execution of the print method
+   * the id variable of the super class must be set to the id of the modified image
+   * when a modified image is printed. See print method of this class.
    */
   private int originalImageId;
   
   private int modifiedImageId = -1;
-   
 
-  /** desired width of the image.
-   *  This is neither the width of the original image 
-   *  nor necessary the result of the modification.
-   *  This value is used to calculate the width of the modified image.
-   *  If enlargeNecessary is set to true then 
-   *  the width (of the result) equals the desired width. 
-   *  If enlargeNecessary is set to false then
-   *  the width (of the result) is the minimum of the 
-   *  width of the original image and the desired width.
-   */
-  private int widthOfModifiedImage = -1;
+  private int widthOfModifiedImage = 0;
   
-  /** desired height of the image.
-   *  This is neither the height of the original image 
-   *  nor necessary the result of the modification.
-   *  This value is used to calculate the height of the modified image.
-   *  If enlargeNecessary is set to true then 
-   *  the height (of the result image) equals the desired height. 
-   *  If enlargeNecessary is set to false then
-   *  the width (of the result) is the minimum of the 
-   *  height of the original image and the desired height.
-   */
-  private int heightOfModifiedImage = -1;
+  private int heightOfModifiedImage = 0;
   
   /** flag to show if the image should be enlarged or not
    */
   private boolean enlargeIfNecessary = false;
+  
+  /** flag to show if the image should keep it´s proportion
+   */
+  private boolean scaleProportional = true;
 
 
     
@@ -148,9 +146,11 @@ public class AdvancedImage extends Image {
   }
   
   public void print(IWContext iwc) throws Exception  {
+    // set id temporary to id of the modified image
     if (modifiedImageId > -1) {
       setImageID(modifiedImageId);
       super.print(iwc);
+      // set old value
       setImageID(originalImageId);
     }
     else
@@ -166,6 +166,11 @@ public class AdvancedImage extends Image {
   public void setEnlargeProperty(boolean enlargeIfNecessary)  {
     this.enlargeIfNecessary = enlargeIfNecessary;
   }
+
+  public void setScaleProportional(boolean scaleProportional) {
+    this.scaleProportional = scaleProportional;
+  }
+
 
 
 /*  public void setImageToOpenInPopUp(IWContext iwc) {
@@ -185,16 +190,10 @@ public class AdvancedImage extends Image {
     
   private void scaleImage(IWContext iwc) {
     try {
-    	if (checkAndCalculateNewWidthAndHeight(iwc)) {
-        
-      	// Does the desired image already exist?
-      	// If so then there is nothing to do.
-        modifiedImageId  = createAndStoreImage(widthOfModifiedImage,heightOfModifiedImage,iwc);
-
-   		}
+      modifiedImageId  = createAndStoreImage(iwc);
    		// remove these attributes to prevent scaling by the browser client 
-    	removeAttribute(HEIGHT);
-    	removeAttribute(WIDTH);
+   	  removeAttribute(HEIGHT);
+   	  removeAttribute(WIDTH);
     }
     catch (Exception ex)  {
       // set modified image id back
@@ -206,42 +205,46 @@ public class AdvancedImage extends Image {
  
  
   private boolean checkAndCalculateNewWidthAndHeight(IWContext iwc) throws Exception {
-       
+      
     String heightString = getHeight();
     String widthString = getWidth();
-
-    // if the image was scaled before return true!  
-    // (that is: use the modified image!)  
-    boolean returnValue = (heightOfModifiedImage > -1 && heightOfModifiedImage > -1);
-
+    
     if (heightString == null || widthString == null) 
-      return returnValue;
+      // image must be not modified
+      return false;
     
     int setHeight = Integer.parseInt(heightString);
     int setWidth = Integer.parseInt(widthString);
     
     if ((setHeight <= 0) && (setWidth <= 0))
-      return returnValue;
+      // image must not be modified
+      return false;
 
+    // ...there are new settings for the height and the width
+    // calculate now the new values for the modified image....
+    // first assumption: image must not be modified:
     heightOfModifiedImage = 0;
     widthOfModifiedImage = 0;
-
-    boolean imageMustBeModified = false;
-    
-    heightOfModifiedImage = getHeightOfOriginalImage(iwc);
-    widthOfModifiedImage = getWidthOfOriginalImage(iwc);
-    
+    boolean imageMustBeModified = false;  
+  
+    // get values of the original image
+    int heightOfOriginalImage = getHeightOfOriginalImage(iwc);
+    int widthOfOriginalImage = getWidthOfOriginalImage(iwc);
+   
+        
     /* modify height, if
     + desired height is defined
     + image should be enlarged (if it is smaller than the desired height)
     + imgage is too large for the desired heigth
     */
         
-    if ((heightOfModifiedImage < setHeight && enlargeIfNecessary) ||
-        (heightOfModifiedImage > setHeight))  {
+    if ((heightOfOriginalImage < setHeight && enlargeIfNecessary) ||
+        (heightOfOriginalImage > setHeight))  {
       heightOfModifiedImage = setHeight;
       imageMustBeModified = true;
     }
+    else
+      heightOfModifiedImage = heightOfOriginalImage;
     
     /* modify width, if
     + desired width is defined
@@ -249,15 +252,50 @@ public class AdvancedImage extends Image {
     + imgage is too large for the desired width
     */
     
-    if ((widthOfModifiedImage < setWidth && enlargeIfNecessary) ||
-        (widthOfModifiedImage > setWidth))  {
+    if ((widthOfOriginalImage < setWidth && enlargeIfNecessary) ||
+        (widthOfOriginalImage > setWidth))  {
       widthOfModifiedImage = setWidth;
       imageMustBeModified = true;
     }
+    else
+      widthOfModifiedImage = widthOfOriginalImage;
+      
+    
+   // resize the image proportional if desired
+    if (imageMustBeModified && scaleProportional) {
+      BigInteger wTable = BigInteger.valueOf(setWidth);
+      BigInteger hTable = BigInteger.valueOf(setHeight);
+      BigInteger wImage = BigInteger.valueOf(widthOfOriginalImage);
+      BigInteger hImage = BigInteger.valueOf(heightOfOriginalImage);
+      // start calculation with big integers
+      BigInteger wImagehTable = wImage.multiply(hTable);
+      BigInteger hImagewTable = hImage.multiply(wTable);
+      if (hImagewTable.compareTo(wImagehTable) > 0)  {
+        // set height of modified image to height of the cell
+        heightOfModifiedImage = setHeight;
+        widthOfModifiedImage = wImagehTable.divide(hImage).intValue();
+      }
+      else { 
+        // set width of modified image to width of the cell
+        widthOfModifiedImage = setWidth;
+        heightOfModifiedImage = hImagewTable.divide(wImage).intValue();
+      }
+      // sometimes the new values equal to the original values:
+      // in this case do not modify the image 
+      if (widthOfModifiedImage == widthOfOriginalImage &&
+          heightOfModifiedImage == heightOfOriginalImage) {
+        // do not modify the image    
+        widthOfModifiedImage = 0;
+        heightOfModifiedImage = 0;
+        return false;
+      }
+    }
+    // end of calculation of the values width and height of the modified image   
     return imageMustBeModified;
   }
  
-
+ /**  Gets height of original image. 
+  */
   public int getHeightOfOriginalImage(IWContext iwc) throws Exception{
     String heightOfOriginalImage = getImageEntity(iwc).getHeight();
     if (heightOfOriginalImage == null)  {
@@ -270,7 +308,8 @@ public class AdvancedImage extends Image {
     return Integer.parseInt(heightOfOriginalImage);
   }
 
-
+  /** Gets width of the original image
+   */
   public int getWidthOfOriginalImage(IWContext iwc) throws Exception {
    String widthOfOriginalImage = getImageEntity(iwc).getWidth();
     if (widthOfOriginalImage == null)  {
@@ -282,9 +321,53 @@ public class AdvancedImage extends Image {
     }
     return Integer.parseInt(widthOfOriginalImage);
   }
+  
+  
+  public String getHeight()  {
+    String height = super.getHeight();
+    // height is set?
+    // In this case get the height that was set by the setHeight method of the super class!
+    if (height != null) 
+      return height;
+    // has the height been set before?
+    // remember: to prevent that the image is resized on the client side
+    // the height attribute was deleted after creating the modified image
+    // but the value is stored in the
+    // heightOfModifiedImage variable. 
+    // see: scale() method of this class
+    // Therefore:
+    if (heightOfModifiedImage > 0)
+      return Integer.toString(heightOfModifiedImage);
+    return null;
+  }
 
 
-  public void addLinkToDisplayWindow(IWContext iwc)  {
+  public String getWidth()  {
+    String width = super.getWidth();
+    // width is set?
+    // In this case get the width that was set by the setWidth method of the super class!
+    if (width != null) 
+      return width;
+    // has the width been set before?
+    // remember: to prevent that the image is resized on the client side
+    // the width attribute was deleted after creating the modified image
+    // but the value is stored in the
+    // widthOfModifiedImage variable. 
+    // see: scale() method of this class
+    // Therefore:
+    if (widthOfModifiedImage > 0)
+      return Integer.toString(widthOfModifiedImage);
+    return null;
+  }
+
+
+
+
+      
+
+  /** Adds a link to this image to a popup window that the original version of this image shows
+   */
+  public void setLinkToDisplayWindow(IWContext iwc)  {
     Link link = new Link();
     String imageID = Integer.toString(originalImageId);
     String widthString;
@@ -300,10 +383,11 @@ public class AdvancedImage extends Image {
     }
     catch (Exception ex)  { 
       // do nothing
-      // default values of height and width will be used
+      // default values of height and width (regarding a pop up window) will be used
     }
     String title = getResourceBundle(iwc).getLocalizedString("image","Image");
     link.setParameter(ImageDisplayWindow.PARAMETER_TITLE, title);
+    // set imageID of the original image
     link.setParameter(ImageDisplayWindow.PARAMETER_IMAGE_ID,imageID);
     link.setParameter(ImageDisplayWindow.PARAMETER_INFO, getName());
     link.setWindowToOpen(ImageDisplayWindow.class);
@@ -375,23 +459,35 @@ public class AdvancedImage extends Image {
 	}
 
  
-  private int createAndStoreImage(int width, int height, IWContext iwc) throws Exception {
+  private int createAndStoreImage(IWContext iwc) throws Exception {
     
+    // get image encoder
+    ImageEncoder imageEncoder = getImageEncoder(iwc);
     
-      // get image encoder
-      ImageEncoder imageEncoder = getImageEncoder(iwc);
-      
-       // get mimetype
-      ImageEntity imageEntity = getImageEntity(iwc);
-      String mimeType = imageEntity.getMimeType();
-            
-      // look up the file extension of the result file the image encoder returns 
-      // for this mime type
-      String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
-      if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension))
-        throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
+    // get mime type
+    ImageEntity imageEntity = getImageEntity(iwc);
+    String mimeType = imageEntity.getMimeType();
     
-      String nameOfModifiedImage = getNameOfModifiedImageWithExtension(width, height ,extension);
+    // is it necessary to convert the image?  
+    if (! checkAndCalculateNewWidthAndHeight(iwc))
+      // okay: the desired width and height is the same as the original image
+      // check if the image would be converted to another type
+      if (imageEncoder.isInputTypeEqualToResultType(mimeType))
+        // do nothing, use the original image
+        return -1;
+      else  {
+        // convert the original image using the same size
+        heightOfModifiedImage = getHeightOfOriginalImage(iwc);
+        widthOfModifiedImage = getWidthOfOriginalImage(iwc);  
+      }
+           
+    // look up the file extension of the result file the image encoder returns 
+    // for this mime type
+    String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
+    if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension))
+      throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
+    
+    String nameOfModifiedImage = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage ,extension);
       
        // Does the image already exist? Then there is nothing to do.
       int imageID = getImageIDByName(nameOfModifiedImage);
@@ -419,7 +515,7 @@ public class AdvancedImage extends Image {
       OutputStream output = new FileOutputStream(pathOfModifiedImage);
       // encode     
     try {  
-      imageEncoder.encode(mimeType, input ,output,width, height);
+      imageEncoder.encode(mimeType, input ,output,widthOfModifiedImage, heightOfModifiedImage);
     }
     catch (Exception ex)  {
       // delete the created file (you can not use the result)
@@ -435,7 +531,7 @@ public class AdvancedImage extends Image {
     
     ImageEntity motherImage = getImageEntity(iwc);
     ImageProvider imageProvider = getImageProvider(iwc);
-    int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, name, width, height,motherImage);
+    int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, name, widthOfModifiedImage, heightOfModifiedImage ,motherImage);
     inputStream.close();
     return modifiedImageId;
   }
