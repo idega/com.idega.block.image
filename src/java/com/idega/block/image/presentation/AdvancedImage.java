@@ -15,22 +15,27 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
+import javax.transaction.UserTransaction;
 
 import com.idega.block.image.business.ImageEncoder;
+import com.idega.block.image.business.ImageProvider;
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageEntityHome;
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.block.media.servlet.MediaServlet;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.ICFile;
+import com.idega.core.data.ICFileHome;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.text.Link;
 import com.idega.util.FileUtil;
 import com.idega.util.caching.Cache;
 import com.sun.media.jai.codec.ImageCodec;
@@ -39,18 +44,43 @@ import com.sun.media.jai.codec.JPEGEncodeParam;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
 /**
- * @author Thomas
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ *   
+ * 
+ * Title:         idegaWeb
+ * Description:   AdvancedImage represents a image and extend the image class.
+ *                In contrast to the Image class changes of the size by the methods
+ *                setHeight and setWith are not performed by adding corresponding values
+ *                and commands to the print method but by creating a new image 
+ *                with the desired size. 
+ *                The ImageEncoder service bean is used to create a new image. 
+ *                The new created image is uploaded into the database 
+ *                into a branch of the original image. The type of the new image is not
+ *                necessary equal to the type of the original image, that depends how the
+ *                ImageEncoder works (e.g. bitmap is transformed to jpeg).
+ *                An instance of this class represents the original image and all derived
+ *                images: Depending on the values of the height and the width value the
+ *                corresponding image is used by the print method. A new image is only 
+ *                created if that size was never created before otherwise the desired
+ *                image is fetched from the database or cache.
+ *                To print the original image the AdvancedImageWrapper can be used:
+ *                Even if the height and the width is set the original image is
+ *                printed.
+ *                
+ *                  
+ * Copyright:     Copyright (c) 2003
+ * Company:       idega software
+ * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>
+ * @version 1.0
  */
+
 public class AdvancedImage extends Image {
   
 
   /** Folder where the modified images are stored */  
   public static final String MODIFIED_IMAGES_FOLDER = "modified_images";
+  
+  /** border around the image in the popup window */
+  private static final String BORDER = "70";
   
   /** cached value not an attribute */
   private ImageEntity imageEntity;
@@ -67,6 +97,9 @@ public class AdvancedImage extends Image {
    * See print() method of the super class.
    */
   private int originalImageId;
+  
+  private int modifiedImageId = -1;
+   
 
   /** desired width of the image.
    *  This is neither the width of the original image 
@@ -78,7 +111,7 @@ public class AdvancedImage extends Image {
    *  the width (of the result) is the minimum of the 
    *  width of the original image and the desired width.
    */
-  private int widthOfModifiedImage;
+  private int widthOfModifiedImage = -1;
   
   /** desired height of the image.
    *  This is neither the height of the original image 
@@ -90,14 +123,14 @@ public class AdvancedImage extends Image {
    *  the width (of the result) is the minimum of the 
    *  height of the original image and the desired height.
    */
-  private int heightOfModifiedImage;
+  private int heightOfModifiedImage = -1;
   
   /** flag to show if the image should be enlarged or not
    */
-  private boolean enlargeIfNecessary = false; 
-    
+  private boolean enlargeIfNecessary = false;
 
-  
+
+    
   public AdvancedImage(int imageId) throws SQLException{
     super(imageId);
     originalImageId = imageId; 
@@ -111,14 +144,41 @@ public class AdvancedImage extends Image {
 
   public void main(IWContext iwc) {
     super.main(iwc);
-
     scaleImage(iwc);
   }
+  
+  public void print(IWContext iwc) throws Exception  {
+    if (modifiedImageId > -1) {
+      setImageID(modifiedImageId);
+      super.print(iwc);
+      setImageID(originalImageId);
+    }
+    else
+      printOriginalImage(iwc);
+  }
+   
+  public void printOriginalImage(IWContext iwc) throws Exception {
+    super.print(iwc);
+  }    
+
 
 
   public void setEnlargeProperty(boolean enlargeIfNecessary)  {
     this.enlargeIfNecessary = enlargeIfNecessary;
   }
+
+
+/*  public void setImageToOpenInPopUp(IWContext iwc) {
+    try {
+      String width = Integer.toString(getWidthOfOriginalImage(iwc));
+      String height = Integer.toString(getHeightOfOriginalImage(iwc));
+      this.setOnClick("img_wnd=window.open('"+getMediaURL()+"','','width="+width+",height="+height+",left='+((screen.width/2)-50)+',top='+((screen.height/2)-50)+',resizable=yes,scrollbars=no'); doopen('"+getMediaURL()+"'); return true;");
+    }
+    catch (Exception ex)  {
+      System.err.println(ex.getMessage());
+    }
+  }
+*/
 
  
 
@@ -129,37 +189,42 @@ public class AdvancedImage extends Image {
         
       	// Does the desired image already exist?
       	// If so then there is nothing to do.
-        String pathOfModifiedImage = createAndStoreImage(widthOfModifiedImage,heightOfModifiedImage,iwc);
-        setURL(pathOfModifiedImage);
-       	setImageID(-1);
+        modifiedImageId  = createAndStoreImage(widthOfModifiedImage,heightOfModifiedImage,iwc);
+
    		}
    		// remove these attributes to prevent scaling by the browser client 
     	removeAttribute(HEIGHT);
     	removeAttribute(WIDTH);
     }
     catch (Exception ex)  {
-      System.out.println("weser");
+      // set modified image id back
+      modifiedImageId = -1;
+      System.err.println("Image could not be modified. Message was: "+ ex.getMessage());
     }      
   }
  
  
  
   private boolean checkAndCalculateNewWidthAndHeight(IWContext iwc) throws Exception {
-    
-    heightOfModifiedImage = 0;
-    widthOfModifiedImage = 0;
-    
+       
     String heightString = getHeight();
     String widthString = getWidth();
 
+    // if the image was scaled before return true!  
+    // (that is: use the modified image!)  
+    boolean returnValue = (heightOfModifiedImage > -1 && heightOfModifiedImage > -1);
+
     if (heightString == null || widthString == null) 
-      return false;
+      return returnValue;
     
     int setHeight = Integer.parseInt(heightString);
     int setWidth = Integer.parseInt(widthString);
     
     if ((setHeight <= 0) && (setWidth <= 0))
-      return false;
+      return returnValue;
+
+    heightOfModifiedImage = 0;
+    widthOfModifiedImage = 0;
 
     boolean imageMustBeModified = false;
     
@@ -193,13 +258,77 @@ public class AdvancedImage extends Image {
   }
  
 
-  private int getHeightOfOriginalImage(IWContext iwc) throws Exception  {
-  	return getOriginalImage(iwc).getHeight();
+  public int getHeightOfOriginalImage(IWContext iwc) throws Exception{
+    String heightOfOriginalImage = getImageEntity(iwc).getHeight();
+    if (heightOfOriginalImage == null)  {
+      PlanarImage image = getOriginalImage(iwc);
+      int height = image.getHeight();
+      int width = image.getWidth();
+      setHeightAndWidthOfOriginalImageAtEntity(width, height, iwc);
+      return height;
+    }
+    return Integer.parseInt(heightOfOriginalImage);
   }
-   
-  private int getWidthOfOriginalImage(IWContext iwc) throws Exception  {
-  	return getOriginalImage(iwc).getWidth();
+
+
+  public int getWidthOfOriginalImage(IWContext iwc) throws Exception {
+   String widthOfOriginalImage = getImageEntity(iwc).getWidth();
+    if (widthOfOriginalImage == null)  {
+      PlanarImage image = getOriginalImage(iwc);
+      int height = image.getHeight();
+      int width = image.getWidth();
+      setHeightAndWidthOfOriginalImageAtEntity(width, height, iwc);
+      return width;
+    }
+    return Integer.parseInt(widthOfOriginalImage);
   }
+
+
+  public void addLinkToDisplayWindow(IWContext iwc)  {
+    Link link = new Link();
+    String imageID = Integer.toString(originalImageId);
+    String widthString;
+    String heightString;
+    try {
+      widthString = Integer.toString(getWidthOfOriginalImage(iwc));
+      heightString = Integer.toString(getHeightOfOriginalImage(iwc));
+      // if an exception occurs the width and height parameters are not set.
+      // In this case default values are used.
+      link.setParameter(ImageDisplayWindow.PARAMETER_BORDER, BORDER);
+      link.setParameter(ImageDisplayWindow.PARAMETER_WIDTH, widthString);
+      link.setParameter(ImageDisplayWindow.PARAMETER_HEIGHT, heightString);
+    }
+    catch (Exception ex)  { 
+      // do nothing
+      // default values of height and width will be used
+    }
+    String title = getResourceBundle(iwc).getLocalizedString("image","Image");
+    link.setParameter(ImageDisplayWindow.PARAMETER_TITLE, title);
+    link.setParameter(ImageDisplayWindow.PARAMETER_IMAGE_ID,imageID);
+    link.setParameter(ImageDisplayWindow.PARAMETER_INFO, getName());
+    link.setWindowToOpen(ImageDisplayWindow.class);
+    setImageZoomLink(link);
+    setImageLinkZoomView();
+  }
+
+
+
+
+
+
+
+	/**
+	 * Method setHeightAndWidthOfOriginalImageAtEntity.
+	 * @param width
+	 * @param height
+	 */
+	private void setHeightAndWidthOfOriginalImageAtEntity(int width, int height, IWContext iwc) 
+    throws Exception {
+     ImageProvider imageProvider = getImageProvider(iwc);
+     ImageEntity entity = getImageEntity(iwc);
+     imageProvider.setHeightAndWidthOfOriginalImageToEntity(width, height, entity);     
+	}
+
 
 
   private ImageEntity getImageEntity(IWContext iwc) {
@@ -239,25 +368,14 @@ public class AdvancedImage extends Image {
 
 
 	private Cache getCachedImage(IWContext iwc, int imageId) {
-		// this method is very similar to the private getImage() method of the super class Image
+		// this method is similar to the private getImage() method of the super class Image
 		IWMainApplication iwma = iwc.getApplication(); 
-		String mmProp = iwma.getSettings().getProperty(MediaServlet.USES_OLD_TABLES);
-		
-		boolean usesOldImageTables = (mmProp!=null);
-		
-		Cache cachedImage;
-		
-		if( usesOldImageTables ){
-		  cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.jmodule.image.data.ImageEntity.class.getName(),imageId ,iwma);
-		}
-		else{
-		  cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
-		}
-		return cachedImage;
+	
+	  return (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
 	}
 
  
-  private String createAndStoreImage(int width, int height, IWContext iwc) throws Exception {
+  private int createAndStoreImage(int width, int height, IWContext iwc) throws Exception {
     
     
       // get image encoder
@@ -267,23 +385,28 @@ public class AdvancedImage extends Image {
       ImageEntity imageEntity = getImageEntity(iwc);
       String mimeType = imageEntity.getMimeType();
             
-      // get path of the (sometimes not yet created) modified image
+      // look up the file extension of the result file the image encoder returns 
+      // for this mime type
       String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
       if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension))
         throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
+    
+      String nameOfModifiedImage = getNameOfModifiedImageWithExtension(width, height ,extension);
       
+       // Does the image already exist? Then there is nothing to do.
+      int imageID = getImageIDByName(nameOfModifiedImage);
+      if ( imageID > -1)
+      	return imageID;
       
       // get real path and virtual path to modified image
+      // (this does not mean that the modified image already exists)
       IWMainApplication mainApp = iwc.getApplication();
             
       String virtualPathOfModifiedImage = 
         getVirtualPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp);
       
       String pathOfModifiedImage = 
-      	mainApp.getApplicationRealPath() + virtualPathOfModifiedImage;
-      // Does the image already exist? Then there is nothing to do.
-      if (new File(pathOfModifiedImage).canRead()) 
-        return virtualPathOfModifiedImage;
+        mainApp.getApplicationRealPath() + virtualPathOfModifiedImage;
       
       // now create the new image...  
       
@@ -309,42 +432,38 @@ public class AdvancedImage extends Image {
     input.close();
     FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);  
     String name = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage, extension);
-    uploadImage(inputStream, mimeType, name, iwc);
+    
+    ImageEntity motherImage = getImageEntity(iwc);
+    ImageProvider imageProvider = getImageProvider(iwc);
+    int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, name, width, height,motherImage);
     inputStream.close();
-    return virtualPathOfModifiedImage;
+    return modifiedImageId;
   }
  
  
-  
+	private int getImageIDByName(String name) {
+  	ICFileHome icFileHome = (ICFileHome) com.idega.data.IDOLookup.getHomeLegacy(ICFile.class);
+    ICFile icFile;
+  	try {
+			icFile = (ICFile) icFileHome.findByFileName(name);
+		}
+		catch (FinderException e) {
+			return -1;
+		}
+    return icFile.getID();
+	}
   
   private ImageEncoder getImageEncoder(IWContext iwc)  throws RemoteException{
       return (ImageEncoder) IBOLookup.getServiceInstance(iwc,ImageEncoder.class);
   }  
   
-  private void uploadImage(FileInputStream inputStream, String mimeType, String name, IWContext iwc)  {
-    // create new image entity
-    ImageEntityHome imageEntityHome = (ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class);
-    ImageEntity imageEntity;
-		try {
-			imageEntity = imageEntityHome.create();
-		} catch (CreateException e) {
-      return;
-		}
-    // store value of File
-    imageEntity.setFileValue(inputStream);
-    imageEntity.setMimeType(mimeType);
-    
-    
-    
-    imageEntity.setName(name);
-    imageEntity.store();
-    try {
-			getImageEntity(iwc).addChild(imageEntity);
-		} catch (SQLException e) {
-      return;
-		}
+  
+  private ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
+    return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
   }
   
+ 
+
   
   
   private String getVirtualPathOfModifiedImage(int width, int height, String extension, IWMainApplication mainApp) throws IOException {
@@ -373,11 +492,11 @@ public class AdvancedImage extends Image {
     int length = name.length();
     // cut extension (name.a  name.ab name.abc but not name.abcd)
     if ( (pointPosition > 0) && pointPosition > (length - 5))  
-      name = name.substring(0,pointPosition);
-        
+      name = name.substring(0,pointPosition);        
     StringBuffer nameOfImage = new StringBuffer();
-    nameOfImage.append(width).append("_").append(height).append("_")
-      .append(originalImageId).append("_").append(name)
+    // add new extension
+    nameOfImage.append(width).append("_").append(height)
+      .append("_").append(name)
       .append(".").append(extension);
     
     return nameOfImage.toString();
