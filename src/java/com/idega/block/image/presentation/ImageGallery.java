@@ -18,6 +18,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Window;
 
 import com.idega.presentation.Block;
 import com.idega.presentation.PresentationObject;
@@ -26,18 +27,25 @@ import com.idega.presentation.Image;
 import com.sun.image.codec.jpeg.*;
 
 /**
- * @author Thomas
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ *  * 
+ * 
+ * Title:         idegaWeb
+ * Description:   ImageGallery is a block to show images that are stored in
+ *                a specified folder. A subset of these images is shown in a table.
+ *                The sample can be changed by clicking on a forward and a back button.
+ *                If there are more than one ImageGallery on a single page 
+ *                each gallery works independently of the others. 
+ *                  
+ * Copyright:     Copyright (c) 2003
+ * Company:       idega software
+ * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>
+ * @version 1.0
  */
 public class ImageGallery extends Block {
     
 	// folder with the images 
   private ICFile imageFileFolder = null;
-  // enlarge image to given height and width
+  // enlarge image to specified height and width
   private boolean enlargeImage = false;
   // heigth of the images
   private int heightOfImages = -1;
@@ -45,16 +53,26 @@ public class ImageGallery extends Block {
   private int widthOfImages = -1;
   // page where the images are shown when you click on it
   private IBPage viewerPage;
-    
+  // show image in a special popup window
+  private boolean popUpOriginalImageOnClick = false;
+  // show name of image in table
+  private boolean showNameOfImage = false;
+  // number of new images that is shown per step
+  private int numberOfImagesPerStep = 0;
+ 
+      
   private int rows = 1;
-  private int columns = 2;   
+  private int columns = 1;   
     
              
   // corresponding bundle
   private static final String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
-
-  private int step;
-  	
+  
+  // string forward button
+  private static final String STRING_FORWARD_BUTTON = ">";
+  // string back button
+  private static final String STRING_BACK_BUTTON = "<";
+    	
   public ImageGallery() {
         }
 
@@ -83,12 +101,27 @@ public class ImageGallery extends Block {
   }
         
   public void setRows(int rows) {
-    this.rows = rows;
+    if (rows > 0)
+      this.rows = rows;
   }
     
   public void setColumns(int columns)  {
-    this.columns = columns;
+    if (columns > 0)
+      this.columns = columns;
   }  
+
+  public void setShowNameOfImage(boolean showNameOfImage)  {
+    this.showNameOfImage = showNameOfImage;
+  }
+
+  public void setPopUpOriginalImageOnClick(boolean popUpOriginalImageOnClick) {
+    this.popUpOriginalImageOnClick = popUpOriginalImageOnClick;
+  }
+
+  public void setNumberOfImagesPerStep(int numberOfImagesPerStep) {
+    this.numberOfImagesPerStep = numberOfImagesPerStep;
+  }
+  
 
   public void main(IWContext iwc) throws Exception{
     Table mainTable = new Table(1,2); 
@@ -99,7 +132,9 @@ public class ImageGallery extends Block {
 
   private Table getImageTable(IWContext iwc) throws Exception {
     ArrayList images = getImages(iwc);
-    Table galleryTable = new Table(columns,rows); 
+    // insert rows if names should be shown
+    int rowsOfTable = (showNameOfImage)? (rows * 2) : (rows);
+    Table galleryTable = new Table(columns,rowsOfTable); 
     AdvancedImage image;              
     int count = -1;
     Iterator iterator = images.iterator();
@@ -114,7 +149,35 @@ public class ImageGallery extends Block {
       if (heightOfImages > 0)
         image.setWidth(widthOfImages);
       image.setEnlargeProperty(enlargeImage);
-      galleryTable.add(image, ((count%columns)+1), ((count/columns)+1));
+
+      int xPositionImage = ((count%columns)+1);
+      int yPositionImage;          
+      if (showNameOfImage)  {
+        yPositionImage = ((count/columns)*2)+1;
+        galleryTable.add(image.getName(), xPositionImage, yPositionImage+1); 
+      }
+      else  {
+        yPositionImage = ((count/columns)+1);     
+      }  
+      PresentationObject pres = null;
+      // check if a link to a viewer page should be added
+      if (viewerPage != null) {
+        Link link;
+        link = new Link(image);
+        link.setPage(viewerPage);
+        link.addParameter(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME,image.getImageID(iwc));
+        pres = (PresentationObject) link;
+      }
+      // check if a link to a popup window should be added
+      else if (popUpOriginalImageOnClick)  {
+        image.addLinkToDisplayWindow(iwc);
+        pres = (PresentationObject) image;
+      }
+      // show only the image without a link
+      else  {
+        pres = (PresentationObject) image;
+      }
+      galleryTable.add(pres, xPositionImage, yPositionImage);
     }
     return galleryTable;
   }
@@ -126,21 +189,27 @@ public class ImageGallery extends Block {
   }
     
   private Table getButtonTable(IWContext iwc)  throws Exception{
-    SubmitButton backButton = createButton("<<");
-    SubmitButton forwardButton = createButton(">>");
+    SubmitButton backButton = createButton(STRING_BACK_BUTTON);
+    SubmitButton forwardButton = createButton(STRING_FORWARD_BUTTON);
     int limit = getImageProvider(iwc).getImageCount(imageFileFolder);
     int startPosition = restoreNumberOfFirstImage(iwc);
     int endPosition;
-    if ((endPosition = startPosition + getStep() - 1) >= limit)
+    if ((endPosition = startPosition + getNumberOfImagePlaces() - 1) >= limit)
       endPosition = limit;
-    // special case: If there are any imgages do not show start position one but zero  
+    // special case: If there are not any imgages do not show start position one but zero  
     int displayedStartPosition = (limit == 0) ? 0 : startPosition;
+    // create an info text showing the number of the first image and the last image
+    // that are currently shown and the total numbers of imgages:
+    // for example: 2 - 6 of 9
     StringBuffer infoText = new StringBuffer(); 
-      infoText.
-      append(" ").
+    // show: "2 - 6 of 9"
+    // special case: Only one image is shown, in this case avoid showing: "2 - 2 of 9"
+    if (displayedStartPosition != endPosition)  {
+      infoText.append(" ").
       append(displayedStartPosition).
-      append("-").
-      append(endPosition).
+      append("-");
+    }
+    infoText.append(endPosition).
       append(" ").
       append(this.getResourceBundle(iwc).getLocalizedString("of","of")).
       append(" ").
@@ -169,18 +238,18 @@ public class ImageGallery extends Block {
     int startPosition = restoreNumberOfFirstImage(iwc);
     int newStartPosition;
     String parameterValue =  getParameter(iwc);
-    if (">>".equals(parameterValue)) 
+    if (STRING_FORWARD_BUTTON.equals(parameterValue)) 
       newStartPosition = startPosition + step;
-    else if ("<<".equals(parameterValue)) 
+    else if (STRING_BACK_BUTTON.equals(parameterValue)) 
       newStartPosition = startPosition - step;
     else 
       newStartPosition = startPosition;
     if (newStartPosition > 0 && newStartPosition <= getImageProvider(iwc).getImageCount(imageFileFolder))
       startPosition = newStartPosition;
     storeNumberOfFirstImage(iwc,startPosition);
-    return getImagesFromTo(iwc, startPosition, startPosition + step - 1);
+    //return getImagesFromTo(iwc, startPosition, startPosition + step - 1);
+    return getImagesFromTo(iwc, startPosition, startPosition + getNumberOfImagePlaces() - 1);
   }
-
     
   private ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException, java.sql.SQLException{
     return getImageProvider(iwc).getImagesFromTo(imageFileFolder, startPosition, endPosition);
@@ -206,6 +275,14 @@ public class ImageGallery extends Block {
   }
     
   private int getStep() {
+    int totalSumOfImagesInTable = getNumberOfImagePlaces();
+    return (numberOfImagesPerStep > 0 && 
+            numberOfImagesPerStep < totalSumOfImagesInTable) ?
+            numberOfImagesPerStep : totalSumOfImagesInTable;
+  }
+  
+  private int getNumberOfImagePlaces()  {
+    // how many images can I show in the current table?
     return rows * columns;
   }
 }
