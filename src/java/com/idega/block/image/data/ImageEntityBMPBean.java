@@ -12,7 +12,7 @@ import com.idega.data.IDOLegacyEntity;
 
 
 
-public class ImageEntityBMPBean extends com.idega.core.data.ICFileBMPBean implements com.idega.block.image.data.ImageEntity,IDOLegacyEntity {
+public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean implements com.idega.block.image.data.ImageEntity,IDOLegacyEntity {
 
   public ImageEntityBMPBean(){
 

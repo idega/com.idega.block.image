@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.media.data.MediaProperties;
-import com.idega.core.data.ICFileCategory;
+import com.idega.core.file.data.ICFileCategory;
 import com.idega.data.DatastoreInterface;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOLegacyEntity;
@@ -79,7 +79,7 @@ public static void handleEvent(IWContext iwc,ImageHandler handler) throws Except
           try{
 
             ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy( imageId );
-            image.removeFrom(((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy());
+            image.removeFrom(((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy());
             image.delete();
             iwc.removeSessionAttribute("image_in_session");
             iwc.removeSessionAttribute("handler");
@@ -169,7 +169,7 @@ public static void makeDefaultSizes(IWContext iwc){
 
     public static List getImageCategories(){
       try {
-        return EntityFinder.findAll(((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy());
+        return EntityFinder.findAll(((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy());
       }
       catch (Exception ex) {
         return null;
@@ -211,12 +211,12 @@ public static void makeDefaultSizes(IWContext iwc){
               String tempName = categoryName[i];
 
               if( i >= k ){//insert
-                temp = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
+                temp = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
                 temp.setName(tempName);
                 temp.insert();
               }
               else{//updates
-                temp = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(Integer.parseInt(ids[i]));
+                temp = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(Integer.parseInt(ids[i]));
                 if( !temp.getName().equalsIgnoreCase(tempName) ){
                    temp.setName(tempName);
                    temp.update();
@@ -236,7 +236,7 @@ public static void makeDefaultSizes(IWContext iwc){
         try {
           if(deleteValue != null){
             for(int i = 0; i < deleteValue.length; i++){
-              ICFileCategory cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy( Integer.parseInt(deleteValue[i]) );
+              ICFileCategory cat = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy( Integer.parseInt(deleteValue[i]) );
               cat.removeFrom((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"));
               cat.delete();
             }
@@ -404,7 +404,7 @@ public static void setImageDimensions(MediaProperties ip) {
 
       try{
         ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(imageId);
-        ICFileCategory cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(Integer.parseInt(categoryId));
+        ICFileCategory cat = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(Integer.parseInt(categoryId));
         cat.addTo(image);
       }
       catch(SQLException e){

@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.idega.block.image.business.ImageProvider;
-import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
-import com.idega.core.data.ICFile;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.file.data.ICFile;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -42,7 +42,7 @@ public class ImageGallery extends Block {
   // width of the images
   private int widthOfImages = -1;
   // page where the images are shown when you click on it
-  private IBPage viewerPage;
+  private ICPage viewerPage;
   // show image in a special popup window
   private boolean popUpOriginalImageOnClick = false;
   // show name of image in table
@@ -119,7 +119,7 @@ public class ImageGallery extends Block {
     this.enlargeImage = enlargeImage;
   }
 
-  public void setViewerPage(IBPage viewerPage) {
+  public void setViewerPage(ICPage viewerPage) {
     this.viewerPage = viewerPage;
   }
   

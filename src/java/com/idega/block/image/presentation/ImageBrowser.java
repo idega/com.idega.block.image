@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.StringTokenizer;
 
 import com.idega.block.image.data.ImageEntity;
-import com.idega.core.data.ICFileCategory;
+import com.idega.core.file.data.ICFileCategory;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -292,7 +292,7 @@ private ImageViewer viewer = new ImageViewer();
 
 
 
-   ICFileCategory[] category = (ICFileCategory[]) (((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
+   ICFileCategory[] category = (ICFileCategory[]) (((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
 
 
 

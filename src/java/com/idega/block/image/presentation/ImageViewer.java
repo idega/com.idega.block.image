@@ -30,7 +30,7 @@ import java.util.List;
 import com.idega.block.image.business.ImageBusiness;
 import com.idega.block.image.business.ImageHandler;
 import com.idega.block.image.data.ImageEntity;
-import com.idega.core.data.ICFileCategory;
+import com.idega.core.file.data.ICFileCategory;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -607,7 +607,7 @@ public void main(IWContext iwc)throws Exception{
 
             categoryId = Integer.parseInt(imageCategoryId);
 
-            ICFileCategory category = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(categoryId);
+            ICFileCategory category = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(categoryId);
 
             if ( inApplication == null ){
 
@@ -1220,7 +1220,7 @@ private void refresh(IWContext iwc) throws SQLException{
 
    */
 
-  ICFileCategory[] catagories = (ICFileCategory[])(((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
+  ICFileCategory[] catagories = (ICFileCategory[])(((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
 
 
 

@@ -8,7 +8,7 @@ import com.idega.block.media.data.MediaProperties;
 import com.idega.presentation.text.*;
 import com.idega.presentation.*;
 import com.idega.presentation.ui.*;
-import com.idega.core.data.ICFileCategory;
+import com.idega.core.file.data.ICFileCategory;
 /**
  * Title:
  * Description:
@@ -233,7 +233,7 @@ public class EditWindow extends Window {
 
 
 
-      ICFileCategory[] imgCat = (ICFileCategory[]) (((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
+      ICFileCategory[] imgCat = (ICFileCategory[]) (((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
       DropdownMenu category = new DropdownMenu("category_id");
       for (int i = 0 ; i < imgCat.length ; i++ ) {
         category.addMenuElement(imgCat[i].getID(),imgCat[i].getName());

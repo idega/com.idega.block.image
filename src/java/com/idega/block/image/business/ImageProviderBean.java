@@ -14,7 +14,7 @@ import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageEntityHome;
 import com.idega.block.image.presentation.AdvancedImage;
 import com.idega.business.IBOServiceBean;
-import com.idega.core.data.ICFile;
+import com.idega.core.file.data.ICFile;
 /**
  *  * 
  * 

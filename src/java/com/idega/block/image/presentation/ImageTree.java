@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import com.idega.block.image.data.ImageEntity;
-import com.idega.core.data.ICFileCategory;
+import com.idega.core.file.data.ICFileCategory;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -37,7 +37,7 @@ public Table getTreeTable(IWContext iwc) throws SQLException {
 
 
 
-    ICFileCategory[] catagory = (ICFileCategory[]) (((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
+    ICFileCategory[] catagory = (ICFileCategory[]) (((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
 
     ImageEntity[] images;
 
@@ -257,7 +257,7 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
         ++row;
 
-        catagory = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(id);
+        catagory = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(id);
 
         preCatId = id;
 
@@ -557,7 +557,7 @@ private void refresh(IWContext iwc) throws SQLException{
 
 
 
-        ICFileCategory[] catagories = (ICFileCategory[])(((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
+        ICFileCategory[] catagories = (ICFileCategory[])(((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
 
 
 
