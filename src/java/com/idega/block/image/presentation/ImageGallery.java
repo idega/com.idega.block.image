@@ -119,71 +119,6 @@ public class ImageGallery extends Block {
     return galleryTable;
   }
 
-//  private PresentationObject getCheckedAndModifiedImage(AdvancedImage image) {
-//
-//    try {
-//		  adjustSizeOfImage(image);
-//    } 
-//    catch (Exception ex)  {
-//      return new Text("Can't adjust image");
-//    }
-//
-//    /*Image modifiedImage;
-//    try {
-//      modifiedImage = image.getModifiedImage();
-//    }
-//    catch (Exception ex)  {
-//      return new Text("Can't retrieve image");
-//    }*/
-//    Link link;
-//    try {
-//      link = new Link(image);
-//    } 
-//    catch (Exception ex)  {
-//      return new Text("Can't build Link");
-//    }
-//      
-//    link.setPage(viewerPage);
-//    //link.addParameter(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME,image.getIDOfFile() );
-//    return link; 
-//  }
-
-//	private void adjustSizeOfImage(AdvancedImage image) throws Exception {
-//		/* modify height, if
-//		+ desired height is defined
-//		+ image should be enlarged (if it is smaller than the desired height)
-//		+ imgage is too large for the desired heigth
-//		*/
-//		int newHeight = 0;
-//		int newWidth = 0;
-//		boolean imageMustBeModified = false;
-//    
-//		if ( heightOfImages > 0 && 
-//		      ( enlargeImage ||
-//		        (newHeight = Integer.decode(image.getHeight()).intValue()) > heightOfImages)) {
-//		    newHeight = heightOfImages;
-//		    imageMustBeModified = true;
-//    }
-//            
-//		/* modify width, if...
-//		see explanation above 
-//		*/
-//		if ( widthOfImages > 0 && 
-//		    ( enlargeImage ||
-//		        (newWidth = Integer.decode(image.getWidth()).intValue()) > widthOfImages))  {
-//		    newWidth = widthOfImages;
-//		    imageMustBeModified = true;
-//    }
-//    // now adjust size of image if necessary
-//		if  (imageMustBeModified) {
-//		  if (newHeight == 0)
-//		    newHeight = Integer.decode(image.getHeight()).intValue();
-//		  if (newWidth == 0)
-//		    newWidth = Integer.decode(image.getWidth()).intValue();
-//		  image.scaleImage(newWidth,newHeight);
-//		}
-//	}
-
   private SubmitButton createButton(String displayText) {
     SubmitButton button = new SubmitButton(Integer.toString(this.getICObjectInstanceID()),displayText);
     button.setToEncloseByForm(true);
@@ -198,10 +133,12 @@ public class ImageGallery extends Block {
     int endPosition;
     if ((endPosition = startPosition + getStep() - 1) >= limit)
       endPosition = limit;
+    // special case: If there are any imgages do not show start position one but zero  
+    int displayedStartPosition = (limit == 0) ? 0 : startPosition;
     StringBuffer infoText = new StringBuffer(); 
       infoText.
       append(" ").
-      append(startPosition).
+      append(displayedStartPosition).
       append("-").
       append(endPosition).
       append(" ").
@@ -250,17 +187,13 @@ public class ImageGallery extends Block {
   }
     
   private void storeNumberOfFirstImage(IWContext iwc, int firstImageNumber) {
-    System.out.println("ObjectInstance: "+ getObjectInstanceIdentifierString());
-    System.out.println("Stored Number: "+ new Integer(firstImageNumber));
     iwc.setSessionAttribute( getObjectInstanceIdentifierString() , new Integer(firstImageNumber));
   }
     
   private int restoreNumberOfFirstImage(IWContext iwc)  {
     Integer i = (Integer) iwc.getSessionAttribute(getObjectInstanceIdentifierString());
-    System.out.println("ObjectInstance: "+ getObjectInstanceIdentifierString());
-    if (i ==null)
+    if (i == null)
       return 1;  
-    System.out.println("Restored: "+ i.toString());
     return i.intValue();           
   }
   
