@@ -115,7 +115,8 @@ public class ImageDisplayWindow extends Window{
 		if (script == null)
 		  script = new Script();
 		  
-		script.addFunction("resizeWindow", "function resizeWindow(width,height) { if (parseInt(navigator.appVersion)>3) {   if (navigator.appName==\"Netscape\") {    top.outerWidth=width;    top.outerHeight=height;   }   else top.resizeTo(width,height); }}");
+		//script.addFunction("resizeWindow", "function resizeWindow(width,height) { if (parseInt(navigator.appVersion)>3 && navigator.appName==\"Netscape\") {    top.outerWidth=width;    top.outerHeight=height;   }   else top.resizeTo(width,height); }");
+		script.addFunction("resizeWindow", "function resizeWindow(width,height) {\n\ttop.resizeTo(width,height);\n}");
 		
 		// fetch desired border 
 		if (iwc.isParameterSet(PARAMETER_BORDER)) {
