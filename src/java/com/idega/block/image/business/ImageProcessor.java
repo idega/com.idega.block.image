@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.4 2004/10/01 09:10:47 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.5 2004/10/01 14:20:34 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2004/10/01 09:10:47 $ by $Author: eiki $
+ * Last modified: $Date: 2004/10/01 14:20:34 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -217,21 +217,13 @@ public class ImageProcessor implements Runnable {
 
 	public void start() {
 		runThread = true;
-		if (thread == null) {
+		if (thread == null || !isRunning) {
+			//a new thread must be created here because it was null or 
+			//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
 			thread = new Thread(this, "ImageProcessor Thread");
 			//this is a backround task
 			thread.setPriority(thread.NORM_PRIORITY);
 			thread.start();
-		}
-		else {
-			//if already finished with the last batch, start again
-			if (!isRunning) {
-//				thread = new Thread(this, "ImageProcessor Thread");
-//				//this is a backround task
-//				thread.setPriority(thread.NORM_PRIORITY);
-//				thread.start();
-				thread.run();
-			}
 		}
 	}
 

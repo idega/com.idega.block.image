@@ -79,7 +79,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 			trans = this.getSessionContext().getUserTransaction();
 			trans.begin();
 			// create new image entity
-			ImageEntityHome imageEntityHome = (ImageEntityHome) com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class);
+			ImageEntityHome imageEntityHome = (ImageEntityHome) IDOLookup.getHome(ImageEntity.class);
 			ImageEntity imageEntity;
 			// create throws CreateException
 			imageEntity = imageEntityHome.create();
