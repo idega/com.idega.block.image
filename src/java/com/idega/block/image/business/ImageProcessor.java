@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.7 2004/10/04 11:07:57 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.8 2004/10/11 12:39:08 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2004/10/04 11:07:57 $ by $Author: eiki $
+ * Last modified: $Date: 2004/10/11 12:39:08 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -160,7 +160,7 @@ public class ImageProcessor implements Runnable {
 		FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);
 		ImageEntity motherImage = imageEntity;
 		ImageProvider imageProvider = getImageProvider();
-		int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage,
+		imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage,
 				widthOfModifiedImage, heightOfModifiedImage, motherImage);
 		inputStream.close();
 	}
