@@ -52,13 +52,13 @@ public class AdvancedImage extends Image {
   /** Folder where the modified images are stored */  
   public static final String MODIFIED_IMAGES_FOLDER = "modified_images";
   
-  /** cached Value not an attribute */
+  /** cached value not an attribute */
   private ImageEntity imageEntity;
 
-  /** cached Value not an attribute */
+  /** cached value not an attribute */
   private PlanarImage originalImage;
   
-  /** cached Value not an attribute */
+  /** cached value not an attribute */
   private String realPathToImage;
   
   /** id of the original image. The image id of this instance 
@@ -124,36 +124,27 @@ public class AdvancedImage extends Image {
 
     
   private void scaleImage(IWContext iwc) {
-    
-    if (checkAndCalculateNewWidthAndHeight(iwc)) {
+    try {
+    	if (checkAndCalculateNewWidthAndHeight(iwc)) {
         
-      // Does the desired image already exist?
-      // If so then there is nothing to do.
-    
-      String pathOfModifiedImage; // = getPathOfModifiedImage(heightOfModifiedImage,widthOfModifiedImage,iwc);
-    
-      
-      //if (! new File(pathOfModifiedImage).canRead()) {
-        // create and store the new image*/
-        try {
-          pathOfModifiedImage = createAndStoreImage(widthOfModifiedImage,heightOfModifiedImage,iwc);
-          setURL(pathOfModifiedImage);
-          setImageID(-1);
-          
-        }
-        catch (Exception ex)  {
-          System.out.println("weser");
-        }    
-      
-
+      	// Does the desired image already exist?
+      	// If so then there is nothing to do.
+        String pathOfModifiedImage = createAndStoreImage(widthOfModifiedImage,heightOfModifiedImage,iwc);
+        setURL(pathOfModifiedImage);
+       	setImageID(-1);
+   		}
+   		// remove these attributes to prevent scaling by the browser client 
+    	removeAttribute(HEIGHT);
+    	removeAttribute(WIDTH);
     }
-    removeAttribute(HEIGHT);
-    removeAttribute(WIDTH);
+    catch (Exception ex)  {
+      System.out.println("weser");
+    }      
   }
  
  
  
-  private boolean checkAndCalculateNewWidthAndHeight(IWContext iwc) {
+  private boolean checkAndCalculateNewWidthAndHeight(IWContext iwc) throws Exception {
     
     heightOfModifiedImage = 0;
     widthOfModifiedImage = 0;
@@ -202,20 +193,12 @@ public class AdvancedImage extends Image {
   }
  
 
-  private int getHeightOfOriginalImage(IWContext iwc)  {
-    int height = 0;
-    try {
-      height = getOriginalImage(iwc).getHeight();
-    } catch (Exception ex)  {}
-    return height;
+  private int getHeightOfOriginalImage(IWContext iwc) throws Exception  {
+  	return getOriginalImage(iwc).getHeight();
   }
    
-  private int getWidthOfOriginalImage(IWContext iwc)  {
-    int width = 0;
-    try {
-      width = getOriginalImage(iwc).getWidth();
-    } catch (Exception ex)  {}
-    return width;
+  private int getWidthOfOriginalImage(IWContext iwc) throws Exception  {
+  	return getOriginalImage(iwc).getWidth();
   }
 
 
@@ -246,7 +229,7 @@ public class AdvancedImage extends Image {
     if (originalImage != null) 
       return originalImage;
     MemoryCacheSeekableStream stream = new MemoryCacheSeekableStream(
-      new BufferedInputStream(imageEntity.getFileValue()));
+      new BufferedInputStream(new FileInputStream(getRealPathToImage(iwc))));
     originalImage = JAI.create("stream", stream);
     stream.close();
 
@@ -289,12 +272,18 @@ public class AdvancedImage extends Image {
       if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension))
         throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
       
-      String pathOfModifiedImage = 
-        getPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension,iwc);
       
+      // get real path and virtual path to modified image
+      IWMainApplication mainApp = iwc.getApplication();
+            
+      String virtualPathOfModifiedImage = 
+        getVirtualPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp);
+      
+      String pathOfModifiedImage = 
+      	mainApp.getApplicationRealPath() + virtualPathOfModifiedImage;
       // Does the image already exist? Then there is nothing to do.
       if (new File(pathOfModifiedImage).canRead()) 
-        return pathOfModifiedImage;
+        return virtualPathOfModifiedImage;
       
       // now create the new image...  
       
@@ -322,7 +311,7 @@ public class AdvancedImage extends Image {
     String name = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage, extension);
     uploadImage(inputStream, mimeType, name, iwc);
     inputStream.close();
-    return pathOfModifiedImage;
+    return virtualPathOfModifiedImage;
   }
  
  
@@ -358,15 +347,12 @@ public class AdvancedImage extends Image {
   
   
   
-  private String getPathOfModifiedImage(int width, int height, String extension, IWContext iwc) throws IOException {
+  private String getVirtualPathOfModifiedImage(int width, int height, String extension, IWMainApplication mainApp) throws IOException {
     
     String separator = FileUtil.getFileSeparator();
     
     StringBuffer nameOfImage = new StringBuffer();
-    
-    IWMainApplication mainApp = iwc.getApplication();
-    nameOfImage.append(mainApp.getApplicationRealPath());
-    
+           
     nameOfImage.append(mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY);
     nameOfImage.append(separator);
     nameOfImage.append(MODIFIED_IMAGES_FOLDER);
@@ -396,15 +382,4 @@ public class AdvancedImage extends Image {
     
     return nameOfImage.toString();
   }
-    
-    
-  
-  
-/*  
-  private String getAbsolutePathToCache(IWContext iwc) {
-    IWMainApplication mainApp = iwc.getApplication();
-    return (mainApp.getApplicationRealPath()) 
-        + (mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY);
-  }
-*/
 }
