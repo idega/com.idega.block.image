@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.2 2004/09/30 16:08:45 thomas Exp $ Created on Sep 30, 2004
+ * $Id: ImageProcessor.java,v 1.3 2004/09/30 17:32:05 thomas Exp $ Created on Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -12,9 +12,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import com.idega.block.image.data.ImageEntity;
+import com.idega.block.image.data.ImageProcessJob;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
@@ -24,11 +27,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2004/09/30 16:08:45 $ by $Author: thomas $
+ * Last modified: $Date: 2004/09/30 17:32:05 $ by $Author: thomas $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 class ImageProcessor implements Runnable {
 	
@@ -92,13 +95,28 @@ class ImageProcessor implements Runnable {
 		
 	}
 	
-    // get image encoder
-    ImageEncoder imageEncoder = getImageEncoder(iwc);
+
     
 	
 	
-	private void processImage() {
+	private int processImage(ImageProcessJob job, IWContext iwc) {
     	IWMainApplication mainApp = iwc.getIWMainApplication();
+    	
+        // get image encoder
+        ImageEncoder imageEncoder = getImageEncoder(iwc);
+        
+        // get mime type
+        Cache cachedImage = job.getCachedImage();
+        String realPathToImage = cachedImage.getRealPathToFile();
+        ImageEntity imageEntity = (ImageEntity) cachedImage.getEntity();
+        String mimeType = imageEntity.getMimeType();
+        String imageName = imageEntity.getEntityName();
+        String originalImageID = imageEntity.getPrimaryKey().toString();
+        int widthOfModifiedImage = job.getNewWidth();
+        int heightOfModifiedImage = job.getNewHeight();
+        String extension = job.getNewExtension();
+        String nameOfModifiedImage = job.getJobKey();
+        
     
 		String pathOfModifiedImage = 
 			getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp, imageName, originalImageID);
@@ -108,7 +126,7 @@ class ImageProcessor implements Runnable {
 		// get input
 		// get fileFileValue() causes End-Of-File Exception when JAI tries to read the file fully 
 		// InputStream input = imageEntity.getFileValue();
-		FileInputStream input = new FileInputStream(getRealPathToImage(iwc));
+		FileInputStream input = new FileInputStream(realPathToImage);
 		
 		// get output
 		OutputStream output = new FileOutputStream(pathOfModifiedImage);
@@ -127,7 +145,7 @@ class ImageProcessor implements Runnable {
 		input.close();
 		FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);  
 		
-		ImageEntity motherImage = getImageEntity(iwc);
+		ImageEntity motherImage = imageEntity;
 		ImageProvider imageProvider = getImageProvider(iwc);
 		int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage, widthOfModifiedImage, heightOfModifiedImage ,motherImage);
 		inputStream.close();
@@ -135,7 +153,7 @@ class ImageProcessor implements Runnable {
 	}
 		
 
-	private String getRealPathOfModifiedImage(int width, int height, String extension,IWMainApplication mainApp, String imageName, int originalImageID) {	    
+	private String getRealPathOfModifiedImage(int width, int height, String extension,IWMainApplication mainApp, String imageName, String originalImageID) {	    
 	    String separator = FileUtil.getFileSeparator();
 	    
 	    StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
@@ -153,7 +171,7 @@ class ImageProcessor implements Runnable {
 	    return path.toString();
 	  }
   
-	private String getNameOfModifiedImageWithExtension(int width, int height, String extension, String imageName, int originalImageID)  {
+	private String getNameOfModifiedImageWithExtension(int width, int height, String extension, String imageName, String originalImageID)  {
 	    
 	    int pointPosition = imageName.lastIndexOf('.');
 	    int length = imageName.length();
@@ -181,8 +199,14 @@ class ImageProcessor implements Runnable {
 	    Cache cachedImage = getCachedImage(iwc, originalImageID);
 	    return cachedImage.getRealPathToFile();
 	}
-		
 
+	private ImageEncoder getImageEncoder(IWContext iwc)  throws RemoteException{
+	      return (ImageEncoder) IBOLookup.getServiceInstance(iwc,ImageEncoder.class);
+	  }  
+
+	private ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
+	    return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
+	}
 
 	public void start() {
 		runThread = true;

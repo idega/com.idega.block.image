@@ -15,8 +15,10 @@ import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 
 import com.idega.block.image.business.ImageEncoder;
+import com.idega.block.image.business.ImageProcessor;
 import com.idega.block.image.business.ImageProvider;
 import com.idega.block.image.data.ImageEntity;
+import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -28,6 +30,7 @@ import com.idega.presentation.text.Link;
 import com.idega.util.FileUtil;
 import com.idega.util.caching.Cache;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
+import com.sun.rsasign.c;
 
 /**
  *   
@@ -453,21 +456,21 @@ public class AdvancedImage extends Image {
     ImageEncoder imageEncoder = getImageEncoder(iwc);
     
     // get mime type
-    ImageEntity imageEntity = getImageEntity(iwc);
+    Cache cachedImage = getCachedImage(iwc, originalImageId);
+    ImageEntity imageEntity = (ImageEntity) cachedImage.getEntity();
     String mimeType = imageEntity.getMimeType();
     
     // is it necessary to convert the image?  
     if (! checkAndCalculateNewWidthAndHeight(iwc))
       // okay: the desired width and height is the same as the original image
       // check if the image would be converted to another type
-      if (imageEncoder.isInputTypeEqualToResultType(mimeType))
-        // do nothing, use the original image
+      if (imageEncoder.isInputTypeEqualToResultType(mimeType)) {
+        // do nothing, use the original image -----
         return -1;
-      else  {
-        // convert the original image using the same size
-        heightOfModifiedImage = getHeightOfOriginalImage(iwc);
-        widthOfModifiedImage = getWidthOfOriginalImage(iwc);  
       }
+    // convert the original image using the same size
+    heightOfModifiedImage = getHeightOfOriginalImage(iwc);
+    widthOfModifiedImage = getWidthOfOriginalImage(iwc);  
            
     // look up the file extension of the result file the image encoder returns 
     // for this mime type
@@ -485,10 +488,28 @@ public class AdvancedImage extends Image {
     //otherwise get the id from the database.
     // setURL(path);
       
+    // image already exist!
     int imageID = getImageIDByName(nameOfModifiedImage);
-      if ( imageID > -1)
-        return imageID;
-      
+    if ( imageID > -1) {
+    	// nothing to do, use the already existing modified image ---
+    	return imageID;
+    }
+    
+    // ------------------ image has to be processed ---------------------------------------
+    // get the processer
+    // create a image process job
+    ImageProcessJob job = new ImageProcessJob();
+    job.setCachedImage(cachedImage);
+    job.setNewExtension(extension);
+    job.setNewWidth(widthOfModifiedImage);
+    job.setNewHeight(heightOfModifiedImage);
+        
+    ImageProcessor.getInstance(iwc);
+    
+    // and so on
+    
+    
+    
       // get real path to modified image
       // (this does not mean that the modified image already exists!)
       IWMainApplication mainApp = iwc.getIWMainApplication();
