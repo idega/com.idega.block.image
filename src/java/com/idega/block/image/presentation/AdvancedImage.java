@@ -470,13 +470,20 @@ public class AdvancedImage extends Image {
     // look up the file extension of the result file the image encoder returns 
     // for this mime type
     String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
-    if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension))
-      throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
+  
     
-    String nameOfModifiedImage = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage ,extension);
+    if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension)){
+      throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
+    }
+    
+    String nameOfModifiedImage = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage ,extension, imageEntity);
       
        // Does the image already exist? Then there is nothing to do.
-      int imageID = getImageIDByName(nameOfModifiedImage);
+    //TODO if the image exists on HARD DISK then set the Image url to that path
+    //otherwise get the id from the database.
+    // setURL(path);
+      
+    int imageID = getImageIDByName(nameOfModifiedImage);
       if ( imageID > -1)
         return imageID;
       
@@ -485,7 +492,7 @@ public class AdvancedImage extends Image {
       IWMainApplication mainApp = iwc.getIWMainApplication();
             
       String pathOfModifiedImage = 
-        getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp);
+        getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp, imageEntity);
       
       // now create the new image...  
       
@@ -510,11 +517,10 @@ public class AdvancedImage extends Image {
     output.close();
     input.close();
     FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);  
-    String name = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage, extension);
     
     ImageEntity motherImage = getImageEntity(iwc);
     ImageProvider imageProvider = getImageProvider(iwc);
-    int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, name, widthOfModifiedImage, heightOfModifiedImage ,motherImage);
+    int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage, widthOfModifiedImage, heightOfModifiedImage ,motherImage);
     inputStream.close();
     return modifiedImageId;
   }
@@ -542,7 +548,7 @@ public class AdvancedImage extends Image {
   }
   
   
-  private String getRealPathOfModifiedImage(int width, int height, String extension,IWMainApplication mainApp) {
+  private String getRealPathOfModifiedImage(int width, int height, String extension,IWMainApplication mainApp,ImageEntity entity) {
     
     String separator = FileUtil.getFileSeparator();
     
@@ -557,14 +563,15 @@ public class AdvancedImage extends Image {
     // the folder is never deleted by this class
     FileUtil.createFolder(path.toString());
     path.append(separator) 
-        .append(getNameOfModifiedImageWithExtension(width, height, extension));
+        .append(getNameOfModifiedImageWithExtension(width, height, extension,entity));
     return path.toString();
   }
   
 
 
-  private String getNameOfModifiedImageWithExtension(int width, int height, String extension)  {
+  private String getNameOfModifiedImageWithExtension(int width, int height, String extension, ImageEntity entity)  {
     String name = getName();
+    
     int pointPosition = name.lastIndexOf('.');
     int length = name.length();
     // cut extension (name.a  name.ab name.abc but not name.abcd)
@@ -572,6 +579,7 @@ public class AdvancedImage extends Image {
       name = name.substring(0,pointPosition);        
     StringBuffer nameOfImage = new StringBuffer();
     // add new extension
+    nameOfImage.append(entity.getPrimaryKey());
     nameOfImage.append(width).append("_").append(height)
       .append("_").append(name)
       .append(".").append(extension);
