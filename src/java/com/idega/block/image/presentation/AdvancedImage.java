@@ -573,7 +573,7 @@ public class AdvancedImage extends Image {
     nameOfImage.append(MODIFIED_IMAGES_FOLDER);
     
     // check if this folder exist create it if necessary
-    FileUtil.createFolder(nameOfImage.toString());
+    FileUtil.createFolder(mainApp.getApplicationRealPath() + nameOfImage.toString());
     
     nameOfImage.append(separator);  
         
