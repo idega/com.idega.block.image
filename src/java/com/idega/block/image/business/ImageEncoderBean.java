@@ -321,6 +321,7 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
   private PlanarImage createImageWithSize(PlanarImage originalImage, int width, int height) {
     ParameterBlock pb = new ParameterBlock();
     pb.addSource(originalImage);
+    //WTF??
     pb.add(null).add(null).add(null).add(null).add(null);
     RenderableImage ren = JAI.createRenderable("renderable", pb);
     return (PlanarImage) ren.createScaledRendering(width, height, null);

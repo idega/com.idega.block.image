@@ -1,19 +1,14 @@
 package com.idega.block.image.presentation;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-
 import javax.ejb.FinderException;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-
 import com.idega.block.image.business.ImageEncoder;
 import com.idega.block.image.business.ImageProcessor;
 import com.idega.block.image.business.ImageProvider;
@@ -27,10 +22,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
-import com.idega.util.FileUtil;
 import com.idega.util.caching.Cache;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
-import com.sun.rsasign.c;
 
 /**
  *   
@@ -129,13 +122,14 @@ public class AdvancedImage extends Image {
   
 
   public void main(IWContext iwc) {
-  	
-  	
     super.main(iwc);
     scaleImage(iwc);
   }
   
   public void print(IWContext iwc) throws Exception  {
+  	//TODO Eiki show a message that the image is being prepared if the id is -1
+  	//or have it as a setting
+  	
     // set id temporary to id of the modified image
     if (modifiedImageId > -1) {
       setImageID(modifiedImageId);
@@ -143,8 +137,9 @@ public class AdvancedImage extends Image {
       // set old value
       setImageID(originalImageId);
     }
-    else
+    else{
       printOriginalImage(iwc);
+    }
   }
    
   public void printOriginalImage(IWContext iwc) throws Exception {
@@ -461,91 +456,56 @@ public class AdvancedImage extends Image {
     String mimeType = imageEntity.getMimeType();
     
     // is it necessary to convert the image?  
-    if (! checkAndCalculateNewWidthAndHeight(iwc))
+    if (!checkAndCalculateNewWidthAndHeight(iwc)){
       // okay: the desired width and height is the same as the original image
       // check if the image would be converted to another type
       if (imageEncoder.isInputTypeEqualToResultType(mimeType)) {
         // do nothing, use the original image -----
         return -1;
+      }else{
+      	// convert the original image using the same size
+    		heightOfModifiedImage = getHeightOfOriginalImage(iwc);
+    		widthOfModifiedImage = getWidthOfOriginalImage(iwc);  
       }
-    // convert the original image using the same size
-    heightOfModifiedImage = getHeightOfOriginalImage(iwc);
-    widthOfModifiedImage = getWidthOfOriginalImage(iwc);  
+    }
+    
            
     // look up the file extension of the result file the image encoder returns 
     // for this mime type
     String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
-  
-    
     if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension)){
       throw new IOException("ImageEncoder do not known this mime type:"+mimeType); 
     }
     
     String nameOfModifiedImage = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage ,extension, imageEntity);
       
-       // Does the image already exist? Then there is nothing to do.
     //TODO if the image exists on HARD DISK then set the Image url to that path
     //otherwise get the id from the database.
     // setURL(path);
-      
-    // image already exist!
+    // check if the image already exists and return the value if found
     int imageID = getImageIDByName(nameOfModifiedImage);
     if ( imageID > -1) {
     	// nothing to do, use the already existing modified image ---
-    	return imageID;
+    		return imageID;
     }
-    
-    // ------------------ image has to be processed ---------------------------------------
-    // get the processer
-    // create a image process job
-    ImageProcessJob job = new ImageProcessJob();
-    job.setCachedImage(cachedImage);
-    job.setNewExtension(extension);
-    job.setNewWidth(widthOfModifiedImage);
-    job.setNewHeight(heightOfModifiedImage);
-        
-    ImageProcessor.getInstance(iwc);
-    
-    // and so on
-    
-    
-    
-      // get real path to modified image
-      // (this does not mean that the modified image already exists!)
-      IWMainApplication mainApp = iwc.getIWMainApplication();
-            
-      String pathOfModifiedImage = 
-        getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension, mainApp, imageEntity);
-      
-      // now create the new image...  
-      
-      // get input
-        // get fileFileValue() causes End-Of-File Exception when JAI tries to read the file fully 
-        // InputStream input = imageEntity.getFileValue();
-      FileInputStream input = new FileInputStream(getRealPathToImage(iwc));
-     
-      // get output
-      OutputStream output = new FileOutputStream(pathOfModifiedImage);
-      // encode     
-    try {  
-      imageEncoder.encode(mimeType, input ,output,widthOfModifiedImage, heightOfModifiedImage);
+    else{
+	    //------------------------------------------------------------------------------------//
+	    // ------------------ image has to be processed ---------------------------------------
+	    // get the processer
+	    // create a image process job
+	    ImageProcessJob job = new ImageProcessJob();
+	    job.setCachedImage(cachedImage);
+	    job.setNewExtension(extension);
+	    job.setNewWidth(widthOfModifiedImage);
+	    job.setNewHeight(heightOfModifiedImage);
+	    job.setJobKey(nameOfModifiedImage);
+	        
+	    ImageProcessor processor = ImageProcessor.getInstance(iwc);
+	    processor.addImageProcessJobToQueu(job);
+	    
+	    //the scaled image is not ready yet
+	    return -1;
     }
-    catch (Exception ex)  {
-      // delete the created file (you can not use the result)
-      output.close();
-      input.close();
-      (new File(pathOfModifiedImage)).delete();
-      throw ex;
-    }
-    output.close();
-    input.close();
-    FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);  
-    
-    ImageEntity motherImage = getImageEntity(iwc);
-    ImageProvider imageProvider = getImageProvider(iwc);
-    int modifiedImageId = imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage, widthOfModifiedImage, heightOfModifiedImage ,motherImage);
-    inputStream.close();
-    return modifiedImageId;
   }
  
  
@@ -571,25 +531,7 @@ public class AdvancedImage extends Image {
   }
   
   
-  private String getRealPathOfModifiedImage(int width, int height, String extension,IWMainApplication mainApp,ImageEntity entity) {
-    
-    String separator = FileUtil.getFileSeparator();
-    
-    StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
-           
-    path.append(mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY)
-      .append(separator)
-      .append(MODIFIED_IMAGES_FOLDER);
-    
-    // check if the folder exists create it if necessary
-    // usually the folder should be already be there.
-    // the folder is never deleted by this class
-    FileUtil.createFolder(path.toString());
-    path.append(separator) 
-        .append(getNameOfModifiedImageWithExtension(width, height, extension,entity));
-    return path.toString();
-  }
-  
+
 
 
   private String getNameOfModifiedImageWithExtension(int width, int height, String extension, ImageEntity entity)  {
