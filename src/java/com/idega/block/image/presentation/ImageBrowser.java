@@ -310,13 +310,13 @@ private ImageViewer viewer = new ImageViewer();
 
     categoryMenu.keepStatusOnAction();
 
-    categoryMenu.setAttribute("style","font-size: 7pt");
+    categoryMenu.setMarkupAttribute("style","font-size: 7pt");
 
 
 
    TextInput searchText = new TextInput("searchString");
 
-    searchText.setAttribute("style","font-size: 7pt");
+    searchText.setMarkupAttribute("style","font-size: 7pt");
 
     searchText.setLength(40);
 

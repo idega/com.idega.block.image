@@ -277,7 +277,7 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
         openLink.setFontColor("#FFFFFF");
 
-        openLink.setAttribute("style","text-decoration:none");
+        openLink.setMarkupAttribute("style","text-decoration:none");
 
 
 
@@ -287,7 +287,7 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
         idLink.setBold();
 
-        idLink.setAttribute("style","text-decoration:none");
+        idLink.setMarkupAttribute("style","text-decoration:none");
 
 
 
@@ -371,7 +371,7 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
         idLink.setFontColor("#FFFFFF");
 
-        idLink.setAttribute("style","text-decoration:none");
+        idLink.setMarkupAttribute("style","text-decoration:none");
 
         if (preCatId != -1 ) {
 

@@ -177,8 +177,8 @@ public class AdvancedImage extends Image {
     try {
       modifiedImageId  = createAndStoreImage(iwc);
       // remove these attributes to prevent scaling by the browser client 
-      removeAttribute(HEIGHT);
-      removeAttribute(WIDTH);
+      removeMarkupAttribute(HEIGHT);
+      removeMarkupAttribute(WIDTH);
     }
     catch (Exception ex)  {
       // set modified image id back

@@ -90,7 +90,7 @@ public class ImageAttributeSetter extends Block{
 
   public PresentationObject getForm(Map map,String sAttributeKey,String sImageEntityId){
     Form form = new Form();
-      form.add(new HiddenInput(sHiddenInputName,getAttributeString(map)));
+      form.add(new HiddenInput(sHiddenInputName,getAttributesString(map)));
       form.add(new HiddenInput(prmAttributeKey,sAttributeKey));
       form.add(new HiddenInput(prmImageEntityId, sImageEntityId));
 
@@ -143,7 +143,7 @@ public class ImageAttributeSetter extends Block{
     if ( zpage != null )
       addAttribute(ZOOMPAGE,zpage,oldMap );
 
-    return getAttributeString(oldMap);
+    return getAttributesString(oldMap);
   }
 
   private void addAttribute(String key, String value,Map map){
