@@ -45,9 +45,6 @@ public class ImageDisplayWindow extends Window{
     Image image = null;
     String info = null;
     String title = "";
-    int width = 0;
-    int height = 0;
-    int border = 0;
     this.setAllMargins(0);
     // set size
 		setSize(iwc);

@@ -787,12 +787,6 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
 {
 
-  String texti = image.getDescription();
-
-  String link = image.getLink();
-
-
-
   int imageId = image.getID();
 
   Table imageTable = new Table(1,2);
@@ -918,9 +912,6 @@ return imageTable;
 private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException {
 
   int k = 0;
-
-  Image image;
-
 
 
   this.limitImageWidth = true;
@@ -1746,8 +1737,6 @@ private Form getCategoryEditForm(){
 
 
 private void getEditor(IWContext iwc) throws Exception{
-
-  String whichButton = iwc.getParameter("submit");
 
   String ImageId = iwc.getParameter("image_id");
 

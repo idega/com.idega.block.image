@@ -193,8 +193,6 @@ public static void makeDefaultSizes(IWContext iwc){
         String[] deleteValue = iwc.getParameterValues(deleteTextInputName);
         String[] ids = iwc.getParameterValues(idees);
 
-        ICFileCategory category = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
-
         //change
   //      if(categoryName != null && categoryName.length > 0){
   //        for (int i = 0; i < categoryName.length; i++) {

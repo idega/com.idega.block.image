@@ -197,8 +197,6 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
     more.setFontColor("#FFFFFF");
 
-  String imageId = iwc.getParameter("image_id");
-
   String openCat = iwc.getParameter("open_catagory_id");
 
     if (openCat == null) { openCat = "-3";}
@@ -613,10 +611,6 @@ public void main(IWContext iwc)throws Exception{
 
   String tempCatagoryId = iwc.getParameter("catagory_id");
 
-  String imageId = null;
-
-  String catagoryId = null;
-
 
 
   if (tempImageId != null) {
@@ -634,10 +628,6 @@ public void main(IWContext iwc)throws Exception{
      iwc.removeSessionAttribute("image_tree_image_id");
 
   }
-
-     imageId = (String) iwc.getSessionAttribute("image_tree_image_id");
-
-     catagoryId = (String) iwc.getSessionAttribute("image_tree_catagory_id");
 
 
 
