@@ -311,66 +311,71 @@ public static void makeDefaultSizes(IWContext iwc){
   }
 
   public static MediaProperties doUpload(IWContext iwc) throws Exception{
-    String sep = FileUtil.getFileSeparator();
-    StringBuffer pathToFile = new StringBuffer();
-    pathToFile.append(iwc.getApplication().getApplicationRealPath());
-    //pathToFile.append(sep);
-    pathToFile.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
-    pathToFile.append(sep);
 
-    FileUtil.createFolder(pathToFile.toString());
+    System.err.println("com.idega.block.image.business.ImageBusiness.doUpload(IWContext iwc)");
+    System.err.println("Warning: MediaProperties is constructed but with parameterMap = null");
+    return new MediaProperties(iwc.getUploadedFile());
 
-
-    MediaProperties  ip = null;
-
-    MultipartParser mp = new MultipartParser(iwc.getRequest(), 10*1024*1024); // 10MB
-    Part part;
-    File dir = null;
-    String value = null;
-    while ((part = mp.readNextPart()) != null) {
-      String name = part.getName();
-      if(part.isParam()){
-        ParamPart paramPart = (ParamPart) part;
-        value = paramPart.getStringValue();
-        //debug
-        System.out.println("Image Business"+name+" : "+value+Text.getBreak());
-      }
-      else if (part.isFile()) {
-        // it's a file part
-        FilePart filePart = (FilePart) part;
-        String fileName = filePart.getFileName();
-
-        if (fileName != null) {
-          pathToFile.append(fileName);
-          String filePath = pathToFile.toString();
-          StringBuffer webPath = new StringBuffer();
-          webPath.append('/');
-          webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
-          webPath.append('/');
-          webPath.append(fileName);
-
-          File file = new File(filePath);
-          int size = (int) filePart.writeTo(file);
-                  //debug
-
-        String mimetype = filePart.getContentType();
-        if(mimetype!=null){
-          StringTokenizer tokenizer = new StringTokenizer(mimetype," ;:");
-          if(tokenizer.hasMoreTokens())
-            mimetype = tokenizer.nextToken();
-        }
-        System.out.println("ImageBusiness : File size"+size);
-        System.out.println("ImageBusiness : File filePath"+filePath);
-        System.out.println("ImageBusiness : File webPath"+webPath.toString());
-        System.out.println("ImageBusiness : File getContentType"+mimetype);
-        System.out.println("ImageBusiness : File fileName"+fileName);
-
-          ip = new MediaProperties(fileName,mimetype,filePath,webPath.toString(),size);
-        }
-      }
-    }
-
-    return ip;
+//    String sep = FileUtil.getFileSeparator();
+//    StringBuffer pathToFile = new StringBuffer();
+//    pathToFile.append(iwc.getApplication().getApplicationRealPath());
+//    //pathToFile.append(sep);
+//    pathToFile.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+//    pathToFile.append(sep);
+//
+//    FileUtil.createFolder(pathToFile.toString());
+//
+//
+//    MediaProperties  ip = null;
+//
+//    MultipartParser mp = new MultipartParser(iwc.getRequest(), 10*1024*1024); // 10MB
+//    Part part;
+//    File dir = null;
+//    String value = null;
+//    while ((part = mp.readNextPart()) != null) {
+//      String name = part.getName();
+//      if(part.isParam()){
+//        ParamPart paramPart = (ParamPart) part;
+//        value = paramPart.getStringValue();
+//        //debug
+//        System.out.println("Image Business"+name+" : "+value+Text.getBreak());
+//      }
+//      else if (part.isFile()) {
+//        // it's a file part
+//        FilePart filePart = (FilePart) part;
+//        String fileName = filePart.getFileName();
+//
+//        if (fileName != null) {
+//          pathToFile.append(fileName);
+//          String filePath = pathToFile.toString();
+//          StringBuffer webPath = new StringBuffer();
+//          webPath.append('/');
+//          webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+//          webPath.append('/');
+//          webPath.append(fileName);
+//
+//          File file = new File(filePath);
+//          int size = (int) filePart.writeTo(file);
+//                  //debug
+//
+//        String mimetype = filePart.getContentType();
+//        if(mimetype!=null){
+//          StringTokenizer tokenizer = new StringTokenizer(mimetype," ;:");
+//          if(tokenizer.hasMoreTokens())
+//            mimetype = tokenizer.nextToken();
+//        }
+//        System.out.println("ImageBusiness : File size"+size);
+//        System.out.println("ImageBusiness : File filePath"+filePath);
+//        System.out.println("ImageBusiness : File webPath"+webPath.toString());
+//        System.out.println("ImageBusiness : File getContentType"+mimetype);
+//        System.out.println("ImageBusiness : File fileName"+fileName);
+//
+//          ip = new MediaProperties(fileName,mimetype,filePath,webPath.toString(),size);
+//        }
+//      }
+//    }
+//
+//    return ip;
 }
 
 public static boolean deleteImageFile(String pathToImage){
