@@ -770,7 +770,7 @@ protected void writeModifiedImageToFile(String filename) throws Exception{
 
 
 
-  ImageEncoder imageEncoder;
+  com.sun.media.jai.codec.ImageEncoder imageEncoder;
 
 
 
