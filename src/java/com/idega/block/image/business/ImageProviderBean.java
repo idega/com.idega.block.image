@@ -36,6 +36,8 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider{
     
 
   public int getImageCount(ICFile imageFolder) {
+  	if (imageFolder == null)
+  		return 0;
     return imageFolder.getChildCount();
   }
     
