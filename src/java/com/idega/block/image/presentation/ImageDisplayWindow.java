@@ -4,6 +4,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Window;
 
 /**
@@ -35,7 +36,7 @@ public class ImageDisplayWindow extends Window{
 
   public ImageDisplayWindow() {
     setResizable(true);
-    
+    //(Unsolved problem: why do the gifs images stop when this window pop up?)
   }
 
 
@@ -73,12 +74,20 @@ public class ImageDisplayWindow extends Window{
 		Table frameTable = setFrameTable();
     
     // define table with the image and the info
-    Table table = new Table(1,2);
+    Table table = new Table(1,3);
+    // set aligments
+    table.setAlignment(1,1,Table.HORIZONTAL_ALIGN_CENTER);
+    table.setAlignment(1,2,Table.HORIZONTAL_ALIGN_CENTER);
+    table.setAlignment(1,3,Table.HORIZONTAL_ALIGN_CENTER);
+    // add image if available
     if(image !=null){
       table.add(image,1,1);
+    // add info if necessary
       if(info!=null)
         table.add(info,1,2);
     }
+    // add close Button
+    table.add(new CloseButton(),1,3);
     frameTable.add(table);
     add(frameTable);
 
