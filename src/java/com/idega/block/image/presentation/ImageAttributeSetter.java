@@ -14,6 +14,7 @@ import java.util.Map;
 import com.idega.block.image.business.ImageFinder;
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.builder.presentation.IBPageChooser;
+import com.idega.core.file.business.FileSystemConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -43,8 +44,6 @@ public class ImageAttributeSetter extends Block{
 
   public static final String ALIGNMENT = "align",BORDER = "border",VSPACE = "vspace",
 			      HSPACE = "hspace",WIDTH = "width",HEIGHT="height";
-  public static final String ZOOMIMAGE = "zoom_image", ZOOMHEIGHT = "zoom_height",
-			      ZOOMWIDTH = "zoom_width", ZOOMPAGE = "zoom_page";
 
   private IWBundle iwb;
   private IWResourceBundle iwrb;
@@ -127,21 +126,21 @@ public class ImageAttributeSetter extends Block{
     String vspace = iwc.getParameter(VSPACE);
     String width = iwc.getParameter(WIDTH);
     String height = iwc.getParameter(HEIGHT);
-    String zwidth = iwc.getParameter(ZOOMWIDTH);
-    String zheight = iwc.getParameter(ZOOMHEIGHT);
-    String zimage = iwc.getParameter(ZOOMIMAGE);
-    String zpage = iwc.getParameter(ZOOMPAGE);
+    String zwidth = iwc.getParameter(FileSystemConstants.ZOOMWIDTH);
+    String zheight = iwc.getParameter(FileSystemConstants.ZOOMHEIGHT);
+    String zimage = iwc.getParameter(FileSystemConstants.ZOOMIMAGE);
+    String zpage = iwc.getParameter(FileSystemConstants.ZOOMPAGE);
     addAttribute(ALIGNMENT,alignment,oldMap );
     addAttribute(BORDER,border,oldMap  );
     addAttribute(HSPACE,hspace,oldMap );
     addAttribute(VSPACE,vspace,oldMap );
     addAttribute(WIDTH,width,oldMap );
     addAttribute(HEIGHT,height,oldMap );
-    addAttribute(ZOOMWIDTH,zwidth,oldMap );
-    addAttribute(ZOOMHEIGHT,zheight,oldMap );
-    addAttribute(ZOOMIMAGE,zimage,oldMap );
+    addAttribute(FileSystemConstants.ZOOMWIDTH,zwidth,oldMap );
+    addAttribute(FileSystemConstants.ZOOMHEIGHT,zheight,oldMap );
+    addAttribute(FileSystemConstants.ZOOMIMAGE,zimage,oldMap );
     if ( zpage != null )
-      addAttribute(ZOOMPAGE,zpage,oldMap );
+      addAttribute(FileSystemConstants.ZOOMPAGE,zpage,oldMap );
 
     return getAttributesString(oldMap);
   }
@@ -172,10 +171,10 @@ public class ImageAttributeSetter extends Block{
     String vspace = map.containsKey(VSPACE)?(String)map.get(VSPACE):"";
     String width = map.containsKey(WIDTH)?(String)map.get(WIDTH):"";
     String height = map.containsKey(HEIGHT)?(String)map.get(HEIGHT):"";
-    String zoomImage = map.containsKey(ZOOMIMAGE)?(String)map.get(ZOOMIMAGE):null;
-    String zoomPage = map.containsKey(ZOOMPAGE)?(String)map.get(ZOOMPAGE):null;
-    String zoomHeight = map.containsKey(ZOOMHEIGHT)?(String)map.get(ZOOMHEIGHT):"";
-    String zoomWidth = map.containsKey(ZOOMWIDTH)?(String)map.get(ZOOMWIDTH):"";
+    String zoomImage = map.containsKey(FileSystemConstants.ZOOMIMAGE)?(String)map.get(FileSystemConstants.ZOOMIMAGE):null;
+    String zoomPage = map.containsKey(FileSystemConstants.ZOOMPAGE)?(String)map.get(FileSystemConstants.ZOOMPAGE):null;
+    String zoomHeight = map.containsKey(FileSystemConstants.ZOOMHEIGHT)?(String)map.get(FileSystemConstants.ZOOMHEIGHT):"";
+    String zoomWidth = map.containsKey(FileSystemConstants.ZOOMWIDTH)?(String)map.get(FileSystemConstants.ZOOMWIDTH):"";
 
     T.add(toText( iwrb.getLocalizedString("alignment","Alignment")+":" ) ,1,1 );
     T.add(getAlignmentDropdownMenu(alignment),2,1);
@@ -190,7 +189,7 @@ public class ImageAttributeSetter extends Block{
     T.add(toText( iwrb.getLocalizedString("height","Height")+":" ), 1,6 );
     T.add(getHeightAndWidthInput(height,HEIGHT),2,6);
 
-    ImageInserter insert = new ImageInserter(ZOOMIMAGE);
+    ImageInserter insert = new ImageInserter(FileSystemConstants.ZOOMIMAGE);
       insert.setHasUseBox(false);
       insert.setImageHeight(40);
       insert.setMaxImageWidth(50);
@@ -198,7 +197,7 @@ public class ImageAttributeSetter extends Block{
     if ( zoomImage != null )
       insert.setImageId(Integer.parseInt(zoomImage));
 
-    IBPageChooser file = new IBPageChooser(ZOOMPAGE,IWConstants.BUILDER_FONT_STYLE_INTERFACE_SMALL);
+    IBPageChooser file = new IBPageChooser(FileSystemConstants.ZOOMPAGE,IWConstants.BUILDER_FONT_STYLE_INTERFACE_SMALL);
     if ( zoomPage != null )
       file.setSelectedPage(Integer.parseInt(zoomPage),"Page");
 
@@ -209,8 +208,8 @@ public class ImageAttributeSetter extends Block{
 
     T.add(insert,2,7);
     T.add(file,2,8);
-    T.add(getHeightAndWidthInput(zoomWidth,ZOOMWIDTH),2,9);
-    T.add(getHeightAndWidthInput(zoomHeight,ZOOMHEIGHT),2,10);
+    T.add(getHeightAndWidthInput(zoomWidth,FileSystemConstants.ZOOMWIDTH),2,9);
+    T.add(getHeightAndWidthInput(zoomHeight,FileSystemConstants.ZOOMHEIGHT),2,10);
 
     return T;
   }
