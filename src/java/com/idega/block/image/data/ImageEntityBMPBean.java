@@ -46,7 +46,7 @@ public class ImageEntityBMPBean extends com.idega.core.data.ICFileBMPBean implem
 
   public void setDefaultValues() {
 
-    super.setCreationDate(new com.idega.util.idegaTimestamp().getTimestampRightNow());
+    super.setCreationDate(new com.idega.util.IWTimeStamp().getTimestampRightNow());
 
   }
 
