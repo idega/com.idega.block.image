@@ -188,6 +188,7 @@ public class ImageAttributeSetter extends Block{
       insert.setHasUseBox(false);
       insert.setImageHeight(40);
       insert.setMaxImageWidth(50);
+      insert.setImageWidth(50);
     if ( zoomImage != null )
       insert.setImageId(Integer.parseInt(zoomImage));
 
