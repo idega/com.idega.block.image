@@ -2,25 +2,18 @@ package com.idega.block.image.presentation;
 
 
 
-import java.sql.*;
+import java.sql.SQLException;
+import java.util.Vector;
 
-import java.util.*;
-
-import com.idega.util.*;
-
-import com.idega.presentation.text.*;
-
-import	com.idega.presentation.*;
-
-import	com.idega.presentation.ui.*;
-
-import	com.idega.block.image.data.*;
-
-import	com.idega.data.*;
-
-import com.idega.util.text.*;
-
+import com.idega.block.image.data.ImageEntity;
 import com.idega.core.data.ICFileCategory;
+import com.idega.data.IDOLegacyEntity;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 
 
 

@@ -1,13 +1,15 @@
 package com.idega.block.image.presentation;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.presentation.PresentationObjectContainer;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
+import java.sql.SQLException;
+
 import com.idega.block.image.data.ImageEntity;
-import com.idega.util.IWTimestamp;
-import java.sql.*;
+import com.idega.block.media.business.MediaBusiness;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 
 /**
  * Title:

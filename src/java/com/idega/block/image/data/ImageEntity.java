@@ -1,6 +1,5 @@
 package com.idega.block.image.data;
 
-import javax.ejb.*;
 
 public interface ImageEntity extends com.idega.core.data.ICFile
 {

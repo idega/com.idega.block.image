@@ -1,6 +1,5 @@
 package com.idega.block.image.business;
 
-import javax.ejb.*;
 
 public interface ImageProvider extends com.idega.business.IBOService
 {

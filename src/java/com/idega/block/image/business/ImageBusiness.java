@@ -1,23 +1,17 @@
 package com.idega.block.image.business;
 
-import java.io.*;
-import java.util.*;
-import java.sql.*;
-import javax.servlet.http.HttpServlet;
-import com.idega.presentation.IWContext;
-import com.idega.data.IDOLegacyEntity;
-import com.idega.data.DatastoreInterface;
-import com.idega.data.EntityFinder;
-import com.idega.block.image.data.*;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.oreilly.servlet.multipart.*;
-import com.idega.io.ImageSave;
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.SQLException;
+import java.util.List;
+
+import com.idega.block.image.data.ImageEntity;
 import com.idega.block.media.data.MediaProperties;
 import com.idega.core.data.ICFileCategory;
-import com.idega.util.FileUtil;
-import com.idega.idegaweb.IWCacheManager;
+import com.idega.data.DatastoreInterface;
+import com.idega.data.EntityFinder;
+import com.idega.data.IDOLegacyEntity;
+import com.idega.presentation.IWContext;
 
 /**
  * Title: ImageBusiness

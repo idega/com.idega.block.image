@@ -1,8 +1,5 @@
 package com.idega.block.image.business;
 
-import javax.ejb.*;
-
-import com.idega.block.image.presentation.AdvancedImage;
 
 public interface ImageEncoder extends com.idega.business.IBOService
 {

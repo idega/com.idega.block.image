@@ -2,51 +2,27 @@ package com.idega.block.image.business;
 
 
 
-import javax.media.jai.*;
+import java.awt.RenderingHints;
+import java.awt.image.renderable.ParameterBlock;
+import java.awt.image.renderable.RenderableImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
 
-import com.sun.media.jai.codec.*;
+import javax.media.jai.JAI;
+import javax.media.jai.KernelJAI;
+import javax.media.jai.PlanarImage;
 
-import com.sun.media.jai.*;
-
-//import javax.media.jai.widget.*;
-
-//import javax.media.jai.iterator.*;
-
-import java.io.*;
-
-import java.sql.*;
-
-import javax.servlet.http.*;
-
-import java.awt.*;
-
-import java.awt.image.*;
-
-import java.awt.image.renderable.*;
-
-
-
-import oracle.sql.*;
-
-import oracle.jdbc.driver.*;
-
-
-
-import com.idega.data.BlobInputStream;
-
-import com.idega.data.IDOLegacyEntity;
-
-import com.idega.util.database.ConnectionBroker;
-
-import com.idega.data.BlobWrapper;
-
-import com.idega.block.image.data.*;
-
-import com.idega.presentation.IWContext;
-
-import com.idega.servlet.IWCoreServlet;
-
+import com.idega.block.image.data.ImageEntity;
 import com.idega.io.ImageSave;
+import com.idega.presentation.IWContext;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.JPEGEncodeParam;
+import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
 
 

@@ -1,22 +1,19 @@
 package com.idega.block.image.presentation;
 
-import com.idega.block.image.data.*;
-import com.idega.presentation.ui.Window;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import com.idega.block.image.business.ImageBusiness;
 import com.idega.block.image.business.SimpleImage;
 import com.idega.block.media.data.MediaProperties;
-import com.idega.block.image.business.ImageBusiness;
-import com.idega.presentation.ui.*;
-import com.idega.presentation.text.*;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
-import com.idega.presentation.Image;
-import com.idega.util.*;
-import java.sql.*;
-import java.io.*;
-import java.util.*;
-import com.oreilly.servlet.MultipartRequest;
-import com.idega.core.data.ICFileCategory;
+import com.idega.presentation.ui.FileInput;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Window;
 /**
  * Title:
  * Description:

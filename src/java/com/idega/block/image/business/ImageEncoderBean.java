@@ -2,7 +2,6 @@ package com.idega.block.image.business;
 
 import java.awt.Canvas;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageProducer;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.image.renderable.RenderableImage;
@@ -11,26 +10,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.RegistryMode;
 
 import com.idega.business.IBOServiceBean;
 import com.idega.graphics.encoder.gif.Gif89Encoder;
-
 import com.sun.jimi.core.Jimi;
 import com.sun.jimi.core.JimiException;
 import com.sun.jimi.core.JimiReader;
-import com.sun.jimi.core.options.FormatOptionSet;
 import com.sun.jimi.core.options.GIFOptions;
 import com.sun.jimi.core.raster.JimiRasterImage;
-
 import com.sun.media.jai.codec.BMPEncodeParam;
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncodeParam;

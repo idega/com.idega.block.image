@@ -1,47 +1,32 @@
 package com.idega.block.image.presentation;
 
-import java.awt.image.renderable.ParameterBlock;
-import java.awt.image.renderable.RenderableImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-import java.util.Vector;
 
-import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-import javax.transaction.UserTransaction;
 
 import com.idega.block.image.business.ImageEncoder;
 import com.idega.block.image.business.ImageProvider;
 import com.idega.block.image.data.ImageEntity;
-import com.idega.block.image.data.ImageEntityHome;
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.block.media.servlet.MediaServlet;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
 import com.idega.util.FileUtil;
 import com.idega.util.caching.Cache;
-import com.sun.media.jai.codec.ImageCodec;
-
-import com.sun.media.jai.codec.JPEGEncodeParam;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
 /**

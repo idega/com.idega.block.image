@@ -1,26 +1,20 @@
 package com.idega.block.image.presentation;
 
-import java.util.*;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.text.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.idega.block.image.business.ImageProvider;
-import com.idega.block.image.business.ImageProviderBean;
 import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.ICFile;
+import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Window;
-
-import com.idega.presentation.Block;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.Table;
-import com.idega.presentation.Image;
-import com.sun.image.codec.jpeg.*;
 
 /**
  *  * 

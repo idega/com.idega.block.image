@@ -4,8 +4,6 @@ package com.idega.block.image.data;
 
 import java.sql.SQLException;
 
-import com.idega.core.data.ICFile;
-
 //import com.idega.data.BlobWrapper;
 
 

@@ -24,31 +24,26 @@ package com.idega.block.image.presentation;
 
 
 
-import java.sql.*;
+import java.sql.SQLException;
+import java.util.List;
 
-import java.util.*;
-
-import java.io.*;
-
-import com.idega.util.*;
-
-import com.idega.presentation.text.*;
-
-import com.idega.presentation.*;
-
-import com.idega.presentation.ui.*;
-
-import com.idega.block.image.data.*;
-
-import com.idega.block.image.business.*;
-
-import com.idega.util.text.*;
-
-import com.idega.data.IDOLegacyEntity;
-
-import com.oreilly.servlet.MultipartRequest;
-
+import com.idega.block.image.business.ImageBusiness;
+import com.idega.block.image.business.ImageHandler;
+import com.idega.block.image.data.ImageEntity;
 import com.idega.core.data.ICFileCategory;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextInput;
+import com.idega.util.text.TextSoap;
 
 
 

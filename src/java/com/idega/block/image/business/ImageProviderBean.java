@@ -1,32 +1,20 @@
 package com.idega.block.image.business;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.CreateException;
 import javax.ejb.TransactionRolledbackLocalException;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.RegistryMode;
-import javax.media.jai.OperationRegistry;
-import javax.media.jai.*;
 import javax.transaction.SystemException;
-import javax.transaction.TransactionRolledbackException;
 import javax.transaction.UserTransaction;
-
 
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageEntityHome;
 import com.idega.block.image.presentation.AdvancedImage;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.data.ICFile;
-import com.idega.presentation.Image;
-import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 /**
  *  * 
  * 

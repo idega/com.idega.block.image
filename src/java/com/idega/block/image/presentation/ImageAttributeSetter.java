@@ -9,20 +9,26 @@ package com.idega.block.image.presentation;
  * @version 1.1
  */
 
-import com.idega.idegaweb.*;
-import com.idega.builder.presentation.IBPageChooser;
-import com.idega.block.media.presentation.ImageInserter;
-import com.idega.block.text.business.TextFormatter;
-import java.sql.*;
-import java.util.*;
-import java.io.*;
-import com.idega.util.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.*;
-import com.idega.presentation.ui.*;
-import com.idega.block.image.business.ImageBusiness;
-import com.idega.block.image.data.ImageEntity;
+import java.util.Map;
+
 import com.idega.block.image.business.ImageFinder;
+import com.idega.block.media.presentation.ImageInserter;
+import com.idega.builder.presentation.IBPageChooser;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextInput;
 
 public class ImageAttributeSetter extends Block{
 

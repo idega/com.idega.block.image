@@ -1,13 +1,8 @@
 package com.idega.block.image.presentation;
 
-import com.idega.idegaweb.presentation.IWAdminWindow;
-import com.idega.block.image.business.SimpleImage;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.idega.block.image.data.ImageEntity;
-import com.idega.util.IWTimestamp;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:
