@@ -149,9 +149,9 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
     HashMap mimeTypeForJai = new HashMap();
     
     ArrayList list = new ArrayList();
-    Enumeration enum = ImageCodec.getCodecs();
-    while (enum.hasMoreElements())   {
-      ImageCodec codec = (ImageCodec) enum.nextElement();
+    Enumeration enumer = ImageCodec.getCodecs();
+    while (enumer.hasMoreElements())   {
+      ImageCodec codec = (ImageCodec) enumer.nextElement();
       list.add(codec.getFormatName());
     }
     int i;
@@ -270,9 +270,9 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
   public static void main(String[] args) {
     //Collection coll = Arrays.asList(RegistryMode.getModeNames());
     //Collection coll = Arrays.asList(JAI.getDefaultInstance().getOperationRegistry().getDescriptorNames("rendered"));
-    Enumeration enum = ImageCodec.getCodecs();
-    while (enum.hasMoreElements())   {
-      ImageCodec codec = (ImageCodec) enum.nextElement();
+    Enumeration enumer = ImageCodec.getCodecs();
+    while (enumer.hasMoreElements())   {
+      ImageCodec codec = (ImageCodec) enumer.nextElement();
       String name = codec.getFormatName();
       System.out.println(name);
     }
@@ -354,7 +354,7 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
 
     Gif89Encoder gifenc = new Gif89Encoder();
     Canvas cv = new Canvas();
-    Enumeration enum = reader.getRasterImageEnumeration();
+    Enumeration enumer = reader.getRasterImageEnumeration();
     
     JimiRasterImage rasterImage;
     ImageProducer imageProducer;
@@ -365,8 +365,8 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
     int delay = 1;
     boolean notSetYet = true;
     
-    while (enum.hasMoreElements())  {
-      rasterImage = (JimiRasterImage) enum.nextElement();
+    while (enumer.hasMoreElements())  {
+      rasterImage = (JimiRasterImage) enumer.nextElement();
       imageProducer = rasterImage.getImageProducer();
       image = cv.createImage(imageProducer);
       scaledImage = image.getScaledInstance(width,height,Image.SCALE_DEFAULT);
