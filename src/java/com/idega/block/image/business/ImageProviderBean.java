@@ -113,7 +113,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		return id;
 	}
 
-	public void setHeightAndWidthOfOriginalImageToEntity(int width, int height, ImageEntity imageEntity)
+	public synchronized void setHeightAndWidthOfOriginalImageToEntity(int width, int height, ImageEntity imageEntity)
 			throws TransactionRolledbackLocalException {
 		UserTransaction trans = null;
 		try {

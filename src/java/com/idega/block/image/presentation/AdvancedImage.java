@@ -126,6 +126,8 @@ public class AdvancedImage extends Image {
   
 
   public void main(IWContext iwc) {
+  	
+  	
     super.main(iwc);
     scaleImage(iwc);
   }
@@ -281,7 +283,7 @@ public class AdvancedImage extends Image {
  
  /**  Gets height of original image. 
   */
-  public int getHeightOfOriginalImage(IWContext iwc) throws Exception{
+  public synchronized  int getHeightOfOriginalImage(IWContext iwc) throws Exception{
     String heightOfOriginalImage = getImageEntity(iwc).getHeight();
     if (heightOfOriginalImage == null)  {
       PlanarImage image = getOriginalImage(iwc);
@@ -295,7 +297,7 @@ public class AdvancedImage extends Image {
 
   /** Gets width of the original image
    */
-  public int getWidthOfOriginalImage(IWContext iwc) throws Exception {
+  public synchronized int getWidthOfOriginalImage(IWContext iwc) throws Exception {
    String widthOfOriginalImage = getImageEntity(iwc).getWidth();
     if (widthOfOriginalImage == null)  {
       PlanarImage image = getOriginalImage(iwc);
