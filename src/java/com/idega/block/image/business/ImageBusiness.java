@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.*;
 import javax.servlet.http.HttpServlet;
 import com.idega.presentation.IWContext;
-import com.idega.data.GenericEntity;
+import com.idega.data.IDOLegacyEntity;
 import com.idega.data.DatastoreInterface;
 import com.idega.data.EntityFinder;
 import com.idega.block.image.data.*;
@@ -39,7 +39,7 @@ public class ImageBusiness  {
 
 /*
 public static void saveImageToCategories(int imageId, String[] categoryId)throws SQLException {
-  ImageEntity image = new ImageEntity(imageId);
+  ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(imageId);
   image.setParentId(-1);//only top level images saved to categories
   image.update();
 
@@ -84,8 +84,8 @@ public static void handleEvent(IWContext iwc,ImageHandler handler) throws Except
         else if( action.equalsIgnoreCase("delete") ){
           try{
 
-            ImageEntity image = new ImageEntity( imageId );
-            image.removeFrom(new ICFileCategory());
+            ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy( imageId );
+            image.removeFrom(((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy());
             image.delete();
             iwc.removeSessionAttribute("image_in_session");
             iwc.removeSessionAttribute("handler");
@@ -107,10 +107,10 @@ public static void handleEvent(IWContext iwc,ImageHandler handler) throws Except
             }
 
 
-            ICFileCategory[] catagories = (ImageCategory[]) image.findReverseRelated(GenericEntity.getStaticInstance("com.idega.block.media.data.ImageCategory"));
+            ICFileCategory[] catagories = (ImageCategory[]) image.findReverseRelated(com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageCategory"));
 
 
-            image.removeFrom(GenericEntity.getStaticInstance("com.idega.block.media.data.ImageCategory"));
+            image.removeFrom(com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageCategory"));
 
             image.delete();
 */
@@ -175,7 +175,7 @@ public static void makeDefaultSizes(IWContext iwc){
 
     public static List getImageCategories(){
       try {
-        return EntityFinder.findAll(new ICFileCategory());
+        return EntityFinder.findAll(((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy());
       }
       catch (Exception ex) {
         return null;
@@ -184,7 +184,7 @@ public static void makeDefaultSizes(IWContext iwc){
     }
 
 
-    public static String getDatastoreType(GenericEntity entity){
+    public static String getDatastoreType(IDOLegacyEntity entity){
       return DatastoreInterface.getDatastoreType(entity.getDatasource());
     }
 
@@ -199,7 +199,7 @@ public static void makeDefaultSizes(IWContext iwc){
         String[] deleteValue = iwc.getParameterValues(deleteTextInputName);
         String[] ids = iwc.getParameterValues(idees);
 
-        ICFileCategory category = new ICFileCategory();
+        ICFileCategory category = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
 
         //change
   //      if(categoryName != null && categoryName.length > 0){
@@ -219,12 +219,12 @@ public static void makeDefaultSizes(IWContext iwc){
               String tempName = categoryName[i];
 
               if( i >= k ){//insert
-                temp = new ICFileCategory();
+                temp = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
                 temp.setName(tempName);
                 temp.insert();
               }
               else{//updates
-                temp = new ICFileCategory(Integer.parseInt(ids[i]));
+                temp = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(Integer.parseInt(ids[i]));
                 if( !temp.getName().equalsIgnoreCase(tempName) ){
                    temp.setName(tempName);
                    temp.update();
@@ -244,8 +244,8 @@ public static void makeDefaultSizes(IWContext iwc){
         try {
           if(deleteValue != null){
             for(int i = 0; i < deleteValue.length; i++){
-              ICFileCategory cat = new ICFileCategory( Integer.parseInt(deleteValue[i]) );
-              cat.removeFrom(GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"));
+              ICFileCategory cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy( Integer.parseInt(deleteValue[i]) );
+              cat.removeFrom(com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity"));
               cat.delete();
             }
           }
@@ -267,7 +267,7 @@ public static void makeDefaultSizes(IWContext iwc){
     try{
       FileInputStream input = new FileInputStream(ip.getRealPath());
       System.out.println("ImageBusiness FileSize:"+input.available());
-      ImageEntity image = new ImageEntity();
+      ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).createLegacy();
       image.setName(ip.getName());
       /**@todo make this non image specific*/
 
@@ -284,7 +284,7 @@ public static void makeDefaultSizes(IWContext iwc){
 
 
 /*      String dataBaseType = "";
-      Conn = GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity").getConnection();
+      Conn = com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity").getConnection();
 
       if (Conn!=null) dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
       else dataBaseType="oracle";
@@ -304,7 +304,7 @@ public static void makeDefaultSizes(IWContext iwc){
       return -1;
     }
     finally{
-     // if(Conn != null ) GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity").freeConnection(Conn);
+     // if(Conn != null ) com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity").freeConnection(Conn);
     }
 
     return id;
@@ -411,8 +411,8 @@ public static void setImageDimensions(MediaProperties ip) {
       makeDefaultSizes(iwc);
 
       try{
-        ImageEntity image = new ImageEntity(imageId);
-        ICFileCategory cat = new ICFileCategory(Integer.parseInt(categoryId));
+        ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(imageId);
+        ICFileCategory cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(Integer.parseInt(categoryId));
         cat.addTo(image);
       }
       catch(SQLException e){
@@ -438,7 +438,7 @@ public static void setImageDimensions(MediaProperties ip) {
       String imageId = iwc.getParameter("image_id");
       String imageText = iwc.getParameter("image_text");
       String imageLink = iwc.getParameter("image_link");
-      ImageEntity image = new ImageEntity(Integer.parseInt(imageId));
+      ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(Integer.parseInt(imageId));
 
       if( imageText!=null ) image.setDescription(imageText);
       else update = false;

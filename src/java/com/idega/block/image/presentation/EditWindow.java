@@ -124,7 +124,7 @@ public class EditWindow extends Window {
     table.setWidth(1,4,"20%");
 
 
-    ImageEntity image = new ImageEntity(Integer.parseInt(imageId));
+    ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(Integer.parseInt(imageId));
     String imageText = image.getDescription();
     String imageLink = image.getLink();
 
@@ -233,7 +233,7 @@ public class EditWindow extends Window {
 
 
 
-      ICFileCategory[] imgCat = (ICFileCategory[]) (new ICFileCategory()).findAll();
+      ICFileCategory[] imgCat = (ICFileCategory[]) (((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy()).findAll();
       DropdownMenu category = new DropdownMenu("category_id");
       for (int i = 0 ; i < imgCat.length ; i++ ) {
         category.addMenuElement(imgCat[i].getID(),imgCat[i].getName());

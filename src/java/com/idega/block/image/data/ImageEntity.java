@@ -1,73 +1,18 @@
 package com.idega.block.image.data;
 
-import java.sql.SQLException;
-import com.idega.core.data.ICFile;
-//import com.idega.data.BlobWrapper;
+import javax.ejb.*;
 
-
-public class ImageEntity extends ICFile{
-  public ImageEntity(){
-    super();
-  }
-
-  public ImageEntity(int id)throws SQLException{
-    super(id);
-  }
-
-  public void insertStartData()throws Exception{
-    ImageEntity image = new ImageEntity();
-    image.setName("Default no image");
-    image.insert();
-  }
-
-
-  public void setDefaultValues() {
-    super.setCreationDate(new com.idega.util.idegaTimestamp().getTimestampRightNow());
-  }
-
-  public String getImageLink(){
-    return (String) this.getMetaData("image_link");
-  }
-
-  public String getLink(){
-    return getImageLink();
-  }
-
-  public void setImageLink(String imageLink){
-    this.setMetaData("image_link", imageLink);
-  }
-
-  public String getWidth(){
-    return (String) this.getMetaData("width");
-  }
-
-  public String getHeight(){
-    return (String) this.getMetaData("height");
-  }
-
-  public void setWidth(String imageWidth){
-    this.setMetaData("width", imageWidth);
-  }
-
-  public void setHeight(String imageHeight){
-    this.setMetaData("height", imageHeight);
-  }
-
-  public String getImageLinkOwner(){
-    return (String) this.getMetaData("image_link_owner");
-  }
-
-  /*
-  * possible option image/text/both/none
-  */
-  public void setImageLinkOwner(String imageLinkOwner){
-    this.setMetaData("image_link_owner", imageLinkOwner);
-  }
-
-  public int getParentId() {
-    ImageEntity parent = (ImageEntity) this.getParentNode();
-    if( parent == null ) return -1;
-    else return parent.getNodeID();
-  }
-
+public interface ImageEntity extends com.idega.core.data.ICFile
+{
+ public java.lang.String getHeight();
+ public java.lang.String getImageLink();
+ public java.lang.String getImageLinkOwner();
+ public java.lang.String getLink();
+ public int getParentId();
+ public java.lang.String getWidth();
+ public void setDefaultValues();
+ public void setHeight(java.lang.String p0);
+ public void setImageLink(java.lang.String p0);
+ public void setImageLinkOwner(java.lang.String p0);
+ public void setWidth(java.lang.String p0);
 }

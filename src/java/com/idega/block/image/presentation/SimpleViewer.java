@@ -50,7 +50,7 @@ public class SimpleViewer extends PresentationObjectContainer{
        {
           int id = Integer.parseInt(sImageId);
           try {
-            ImageEntity ieImage = new ImageEntity(id);
+            ImageEntity ieImage = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(id);
             Table T = new Table();
             T.add(ieImage.getName(),1,1);
             T.add(new Image(id),1,2);
@@ -94,7 +94,7 @@ public class SimpleViewer extends PresentationObjectContainer{
 */
       try {
         int iImageId = Integer.parseInt(sImageId);
-        new ImageEntity(iImageId).delete();
+        ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(iImageId).delete();
         return true;
       }
       catch (SQLException ex) {
@@ -112,7 +112,7 @@ public class SimpleViewer extends PresentationObjectContainer{
        T.setHeight("100%");
        int id = Integer.parseInt(sImageId);
           try {
-            ImageEntity ieImage = new ImageEntity(id);
+            ImageEntity ieImage = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(id);
 
             Text warning = new Text("Are you sure ?");
             warning.setFontSize(6);

@@ -18,7 +18,7 @@ public class ImageFinder {
 
   public static String getImageAttributes(String key,int iImageId){
     try {
-      return new ImageEntity(iImageId).getMetaData(key);
+      return ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(iImageId).getMetaData(key);
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -29,7 +29,7 @@ public class ImageFinder {
   public static boolean saveImageAttributes(String key,String att,int id){
 
     try {
-      ImageEntity image = new ImageEntity(id);
+      ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(id);
       image.addMetaData(key,att);
       image.update();
       return true;

@@ -83,13 +83,13 @@ public class SimpleLister extends PresentationObjectContainer {
   public List listOfImages(){
     List L = null;
     try {
-      ImageEntity image = new ImageEntity();
+      ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).createLegacy();
       StringBuffer sql = new StringBuffer("select f.* ");
       sql.append(" from ic_file f, ic_mime_type m ,ic_file_type t ");
       sql.append(" where f.mime_type = m.mime_type ");
       sql.append(" and m.ic_file_type_id = t.ic_file_type_id ");
       sql.append(" and t.unique_name = 'ic_image' ");
-      sql.append(" order by ").append(ImageEntity.getColumnNameCreationDate()).append(" desc ");
+      sql.append(" order by ").append(com.idega.block.image.data.ImageEntityBMPBean.getColumnNameCreationDate()).append(" desc ");
       //EntityFinder.debug = true;
       L = EntityFinder.findAll(image,sql.toString());
       //EntityFinder.debug = false;
