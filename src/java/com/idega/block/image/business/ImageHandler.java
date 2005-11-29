@@ -792,7 +792,7 @@ protected static PlanarImage convertColorToGray(PlanarImage src, int brightness)
 
    PlanarImage dst = null;
 
-   double b = (double) brightness;
+   double b = brightness;
 
    double[][] matrix = {
 
@@ -836,7 +836,7 @@ protected static PlanarImage convertColorToGray(PlanarImage src, int brightness)
 
    PlanarImage dst = null;
 
-   double b = (double) brightness;
+   double b = brightness;
 
    double[][] matrix = {
 

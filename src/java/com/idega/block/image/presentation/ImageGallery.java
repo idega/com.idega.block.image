@@ -301,16 +301,16 @@ public class ImageGallery extends Block {
 				link = new Link(image);
 				link.setPage(viewerPage);
 				link.addParameter(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME, image.getImageID(iwc));
-				pres = (PresentationObject) link;
+				pres = link;
 			}
 			// check if a link to a popup window should be added
 			else if (popUpOriginalImageOnClick) {
 				image.setLinkToDisplayWindow(iwc, imageNumber);
-				pres = (PresentationObject) image;
+				pres = image;
 			}
 			// show only the image without a link
 			else {
-				pres = (PresentationObject) image;
+				pres = image;
 			}
 
 			int xPositionImage = ((count % columns) + 1);

@@ -241,7 +241,7 @@ public void main(IWContext iwc)throws Exception{
 
   String sessionImageId = (String) iwc.getSessionAttribute("im_image_id");
 
-  String imageSessionName = (String) iwc.getParameter("im_image_session_name");
+  String imageSessionName = iwc.getParameter("im_image_session_name");
 
   if( imageSessionName!=null ) callingModule = imageSessionName;
 
@@ -964,7 +964,7 @@ private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException 
 
     table.setAlignment((x%iNumberInRow)+1,(x/iNumberInRow)+1,"center");
 
-    table.setWidth((x%iNumberInRow)+1,Integer.toString((int)(100/iNumberInRow))+"%");
+    table.setWidth((x%iNumberInRow)+1,Integer.toString(100/iNumberInRow)+"%");
 
     table.add( displayImage(imageEntity[i]) ,(x%iNumberInRow)+1,(x/iNumberInRow)+1);
 

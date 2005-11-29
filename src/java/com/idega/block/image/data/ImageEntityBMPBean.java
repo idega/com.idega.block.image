@@ -54,7 +54,7 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 
   public String getImageLink(){
 
-    return (String) this.getMetaData("image_link");
+    return this.getMetaData("image_link");
 
   }
 
@@ -78,7 +78,7 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 
   public String getWidth(){
 
-    return (String) this.getMetaData("width");
+    return this.getMetaData("width");
 
   }
 
@@ -86,7 +86,7 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 
   public String getHeight(){
 
-    return (String) this.getMetaData("height");
+    return this.getMetaData("height");
 
   }
 
@@ -110,7 +110,7 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 
   public String getImageLinkOwner(){
 
-    return (String) this.getMetaData("image_link_owner");
+    return this.getMetaData("image_link_owner");
 
   }
 

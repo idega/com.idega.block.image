@@ -459,7 +459,7 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
 
 
-       options = (IDOLegacyEntity[]) (entity).findAllByColumn("parent_id",""+id);
+       options = entity.findAllByColumn("parent_id",""+id);
 
         int i = 0;
 

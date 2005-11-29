@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.8 2004/10/11 12:39:08 laddi Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.9 2005/11/29 12:53:50 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2004/10/11 12:39:08 $ by $Author: laddi $
+ * Last modified: $Date: 2005/11/29 12:53:50 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -93,7 +93,7 @@ public class ImageProcessor implements Runnable {
 	 * Does the actual image processing and saves the images to the database
 	 */
 	private void processImages() {
-		Object[] jobs = (Object[]) unprocessedImages.values().toArray();
+		Object[] jobs = unprocessedImages.values().toArray();
 		for (int i = 0; i < jobs.length; i++) {
 			ImageProcessJob job = (ImageProcessJob) jobs[i];
 			//put it in the "busy" list

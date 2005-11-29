@@ -446,7 +446,7 @@ public class AdvancedImage extends Image {
     // this method is similar to the private getImage() method of the super class Image
     IWMainApplication iwma = iwc.getIWMainApplication(); 
   
-    return (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
+    return IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
   }
 
  
@@ -522,7 +522,7 @@ public class AdvancedImage extends Image {
     ICFileHome icFileHome = (ICFileHome) com.idega.data.IDOLookup.getHomeLegacy(ICFile.class);
     ICFile icFile;
     try {
-      icFile = (ICFile) icFileHome.findByFileName(name);
+      icFile = icFileHome.findByFileName(name);
     }
     catch (FinderException e) {
       return -1;
