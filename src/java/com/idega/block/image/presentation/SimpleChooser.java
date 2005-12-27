@@ -1,12 +1,6 @@
 package com.idega.block.image.presentation;
 
-import java.io.IOException;
 import com.idega.block.image.business.SimpleImage;
-import com.idega.block.media.servlet.MediaServlet;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -31,7 +25,6 @@ import com.idega.presentation.ui.IFrame;
     private String sessImageParameter = "image_id";
     private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
     private boolean includeLinks;
-    private boolean usesOld = false;
 
     public void setToIncludeLinks(boolean includeLinks){
       this.includeLinks = includeLinks;
@@ -57,22 +50,8 @@ import com.idega.presentation.ui.IFrame;
     public void  main(IWContext iwc){
       IWBundle iwb = getBundle(iwc);
       checkParameterName(iwc);
-
-      try {
-      	ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
-      	String mmProp =applicationBindingBusiness.get(MediaServlet.USES_OLD_TABLES);
-      	// original condition, everything that is not null is true
-      	usesOld = (mmProp != null);
-      }
-      catch (IBOLookupException ex) {
-      	throw new IBORuntimeException(ex);
-      }
-      catch (IOException ex) {
-      	getLogger().warning("[SimpleChooser] Could not look up parameter " + MediaServlet.USES_OLD_TABLES);
-      	usesOld = false;
-      }
    
-        getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(sessImageParameter) );
+      getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(sessImageParameter) );
 
 
       //add("block.media");
