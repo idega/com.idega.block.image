@@ -95,7 +95,7 @@ public class ImageRotator extends PresentationObjectTransitional {
 	private WebdavResource getRandomResource(WebdavResource[] resources) {
     int num = (int) (Math.random() * resources.length);
     WebdavResource imageResource = resources[num];
-    if (imageResource.getName().indexOf("._") != -1) {
+    if (imageResource.getName().startsWith(".")) {
     		return getRandomResource(resources);
     }
     return imageResource;
