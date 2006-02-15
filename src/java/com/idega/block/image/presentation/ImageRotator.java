@@ -65,9 +65,8 @@ public class ImageRotator extends PresentationObjectTransitional {
 			if (resource.isCollection()) {
 				WebdavResources children = resource.getChildResources();
 				WebdavResource[] resources = children.listResources();
-	      int num = (int) (Math.random() * resources.length);
-	
-	      WebdavResource imageResource = resources[num];
+				WebdavResource imageResource = getRandomResource(resources);
+				
 	      Image image = new Image(imageResource.getPath());
 	      if (getAlt() != null) {
 	      		image.setAlt(getAlt());
@@ -91,6 +90,15 @@ public class ImageRotator extends PresentationObjectTransitional {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private WebdavResource getRandomResource(WebdavResource[] resources) {
+    int num = (int) (Math.random() * resources.length);
+    WebdavResource imageResource = resources[num];
+    if (imageResource.getName().indexOf("._") != -1) {
+    		return getRandomResource(resources);
+    }
+    return imageResource;
 	}
 	
 	/**
