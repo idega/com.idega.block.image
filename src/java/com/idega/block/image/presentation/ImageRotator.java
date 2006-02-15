@@ -105,8 +105,12 @@ public class ImageRotator extends PresentationObjectTransitional {
 	 * @see javax.faces.component.UIComponentBase#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[3];
+		Object values[] = new Object[5];
 		values[0] = super.saveState(ctx);
+		values[1] = getAlt();
+		values[2] = getFolderURI();
+		values[3] = getHeight();
+		values[4] = getWidth();
 		return values;
 	}
 
@@ -117,6 +121,10 @@ public class ImageRotator extends PresentationObjectTransitional {
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
+		setAlt((String) values[1]);
+		setFolderURI((String) values[2]);
+		setHeight((String) values[3]);
+		setWidth((String) values[4]);
 	}
 	
 	public String getAlt() {
