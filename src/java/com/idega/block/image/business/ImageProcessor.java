@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.9 2005/11/29 12:53:50 laddi Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.10 2006/02/17 14:53:10 gimmi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,30 +13,39 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.CreateException;
+import org.apache.commons.httpclient.HttpURL;
+import org.apache.webdav.lib.WebdavResource;
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
 import com.idega.presentation.IWContext;
+import com.idega.slide.business.IWSlideService;
+import com.idega.slide.util.WebdavExtendedResource;
 import com.idega.util.FileUtil;
 import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2005/11/29 12:53:50 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/17 14:53:10 $ by $Author: gimmi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -122,49 +131,112 @@ public class ImageProcessor implements Runnable {
 		// get image encoder
 		ImageEncoder imageEncoder = getImageEncoder();
 		// get all the job data
-		Cache cachedImage = job.getCachedImage();
-		String realPathToImage = cachedImage.getRealPathToFile();
-		ImageEntity imageEntity = (ImageEntity) cachedImage.getEntity();
-		String mimeType = imageEntity.getMimeType();
-		String imageName = imageEntity.getEntityName();
-		String originalImageID = imageEntity.getPrimaryKey().toString();
+		String realPathToImage = job.getImageLocation();
+		String mimeType = job.getMimeType();
+		String imageName = job.getName();
+		String originalImageID = job.getID();
 		int widthOfModifiedImage = job.getNewWidth();
 		int heightOfModifiedImage = job.getNewHeight();
 		String extension = job.getNewExtension();
 		String nameOfModifiedImage = job.getJobKey();
-		String pathOfModifiedImage = getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension,
-				imageName, originalImageID);
-		// now create the new image...
-		// get input from the cached file instead of from the database because
-		// get imageEntity.getFileValue() causes End-Of-File Exception when JAI
-		// tries to read the file fully
-		FileInputStream input = new FileInputStream(realPathToImage);
-		// get output
-		OutputStream output = new FileOutputStream(pathOfModifiedImage);
-		// encode the image
-		try {
-			imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
+		String pathOfModifiedImage = null;
+		if (job.getLocationIsURL()) {
+			try {
+
+				WebdavExtendedResource resource = new WebdavExtendedResource(new HttpURL(realPathToImage));
+				String parentPath = resource.getParentPath();
+				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(iwac, IWSlideService.class);
+				WebdavExtendedResource parentRes = ss.getWebdavExtendedResource(parentPath,ss.getRootUserCredentials());
+				WebdavResource root = ss.getWebdavRootResource(ss.getRootUserCredentials());
+				String complete = parentPath+"/thumbnails";
+				boolean exists = ss.getExistence(complete);
+				// create thumbnails folder
+				if (!exists) {
+					root.mkcolMethod(complete);
+				}
+				pathOfModifiedImage = getModifiedImagePath(widthOfModifiedImage, heightOfModifiedImage, extension,
+						imageName, parentPath);
+
+				InputStream input = new URL(realPathToImage).openStream();
+				// get output
+				MemoryFileBuffer buff = new MemoryFileBuffer();
+				OutputStream output = new MemoryOutputStream(buff);
+				// encode the image
+				try {
+					imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
+					InputStream s = new MemoryInputStream(buff);
+					//parentRes.putMethod(pathOfModifiedImage, new URL(realPathToImage).openStream());
+					parentRes.putMethod(pathOfModifiedImage, s);
+					s.close();
+				}
+				catch (Exception ex) {
+					// delete the created file (you can not use the result)
+					output.close();
+					input.close();
+					ex.printStackTrace();
+				}
+				finally {
+					output.close();
+					input.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+
+			pathOfModifiedImage = getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension,
+					imageName, originalImageID);
+
+			// now create the new image...
+			// get input from the cached file instead of from the database because
+			// get imageEntity.getFileValue() causes End-Of-File Exception when JAI
+			// tries to read the file fully
+			FileInputStream input = new FileInputStream(realPathToImage);
+			// get output
+			OutputStream output = new FileOutputStream(pathOfModifiedImage);
+			// encode the image
+			try {
+				imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
+			}
+			catch (Exception ex) {
+				// delete the created file (you can not use the result)
+				output.close();
+				input.close();
+				(new File(pathOfModifiedImage)).delete();
+				ex.printStackTrace();
+			}
+			finally {
+				output.close();
+				input.close();
+			}
+			
+			//Save the image to the database
+			FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);
+			ImageEntity motherImage = job.getImageEntity();
+			ImageProvider imageProvider = getImageProvider();
+			imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage,
+					widthOfModifiedImage, heightOfModifiedImage, motherImage);
+			inputStream.close();
 		}
-		catch (Exception ex) {
-			// delete the created file (you can not use the result)
-			output.close();
-			input.close();
-			(new File(pathOfModifiedImage)).delete();
-			ex.printStackTrace();
-		}
-		finally {
-			output.close();
-			input.close();
-		}
-		//Save the image to the database
-		FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);
-		ImageEntity motherImage = imageEntity;
-		ImageProvider imageProvider = getImageProvider();
-		imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage,
-				widthOfModifiedImage, heightOfModifiedImage, motherImage);
-		inputStream.close();
 	}
 
+	private String getModifiedImagePath(int width, int height, String extension, String imageName, String parentPath) {
+		int slashPos = imageName.lastIndexOf("/");
+		if (slashPos > 0) {
+			imageName = imageName.substring(slashPos+1);
+		}
+		int pointPosition = imageName.lastIndexOf('.');
+		int length = imageName.length();
+		if ((pointPosition > 0) && pointPosition > (length - 5))
+			imageName = imageName.substring(0, pointPosition);
+
+		StringBuffer buf = new StringBuffer(parentPath);
+		buf.append("/thumbnails/").
+		append(imageName).
+		append("_").append(width).append("x").append(height).append(".").append(extension);		
+		return buf.toString();
+	}
+	
 	private String getRealPathOfModifiedImage(int width, int height, String extension, String imageName,
 			String originalImageID) {
 		String separator = FileUtil.getFileSeparator();

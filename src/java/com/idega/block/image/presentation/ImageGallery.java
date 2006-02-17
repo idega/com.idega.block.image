@@ -35,6 +35,9 @@ public class ImageGallery extends Block {
 	// folder with the images
 	private ICFile imageFileFolder = null;
 
+	// slide path to resource folder
+	private String resourceFilePath = null;
+	
 	// enlarge image to specified height and width
 	private boolean enlargeImage = false;
 
@@ -123,6 +126,10 @@ public class ImageGallery extends Block {
 
 	public void setFilesFolder(ICFile imageFileFolder) {
 		this.imageFileFolder = imageFileFolder;
+	}
+	
+	public void setFolderResourcePath(String resourcePath) {
+		this.resourceFilePath = resourcePath;
 	}
 
 	public void setHeightOfImages(int heightOfImages) {
@@ -391,7 +398,12 @@ public class ImageGallery extends Block {
 	private Table getButtonTable(IWContext iwc) throws Exception {
 		SubmitButton backButton = createButton(STRING_BACK_BUTTON);
 		SubmitButton forwardButton = createButton(STRING_FORWARD_BUTTON);
-		int limit = getImageProvider(iwc).getImageCount(imageFileFolder);
+		int limit = 0;
+		if (imageFileFolder != null) {
+			limit = getImageProvider(iwc).getImageCount(imageFileFolder);
+		} else if (resourceFilePath != null) {
+			limit = getImageProvider(iwc).getImageCount(resourceFilePath);
+		}
 		int startPosition = restoreNumberOfFirstImage(iwc);
 		int endPosition;
 		if ((endPosition = startPosition + getNumberOfImagePlaces() - 1) >= limit)
@@ -434,6 +446,14 @@ public class ImageGallery extends Block {
 		int step = getStep();
 		int startPosition = restoreNumberOfFirstImage(iwc);
 		int newStartPosition;
+		int limit = 0;
+		if (imageFileFolder != null) {
+			limit = getImageProvider(iwc).getImageCount(imageFileFolder);
+		} else if (resourceFilePath != null) {
+			limit = getImageProvider(iwc).getImageCount(resourceFilePath);
+		}
+
+		
 		String parameterValue = getParameter(iwc);
 		if (STRING_FORWARD_BUTTON.equals(parameterValue))
 			newStartPosition = startPosition + step;
@@ -441,7 +461,7 @@ public class ImageGallery extends Block {
 			newStartPosition = startPosition - step;
 		else
 			newStartPosition = startPosition;
-		if (newStartPosition > 0 && newStartPosition <= getImageProvider(iwc).getImageCount(imageFileFolder))
+		if (newStartPosition > 0 && newStartPosition <= limit)
 			startPosition = newStartPosition;
 		storeNumberOfFirstImage(iwc, startPosition);
 		return getImagesFromTo(iwc, startPosition, startPosition + getNumberOfImagePlaces() - 1);
@@ -449,7 +469,11 @@ public class ImageGallery extends Block {
 
 	private ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException,
 			java.sql.SQLException {
-		return getImageProvider(iwc).getImagesFromTo(imageFileFolder, startPosition, endPosition);
+		if (imageFileFolder != null) {
+			return getImageProvider(iwc).getImagesFromTo(imageFileFolder, startPosition, endPosition);
+		} else {
+			return getImageProvider(iwc).getImagesFromTo(resourceFilePath, startPosition, endPosition);
+		}
 	}
 
 	private void storeNumberOfFirstImage(IWContext iwc, int firstImageNumber) {

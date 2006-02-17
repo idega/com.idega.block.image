@@ -4,11 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import javax.ejb.FinderException;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
+import org.apache.webdav.lib.WebdavResource;
 import com.idega.block.image.business.ImageEncoder;
 import com.idega.block.image.business.ImageProcessor;
 import com.idega.block.image.business.ImageProvider;
@@ -22,6 +24,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
+import com.idega.slide.business.IWSlideService;
+import com.idega.slide.util.WebdavExtendedResource;
 import com.idega.util.caching.Cache;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
@@ -108,7 +112,14 @@ public class AdvancedImage extends Image {
    */
   private boolean scaleProportional = true;
 
-
+  private WebdavResource resource = null;
+  private WebdavResource originalResource = null;
+  
+  public AdvancedImage(WebdavResource webdavResource) {
+	  super(webdavResource.getPath());
+	  resource = webdavResource;
+	  realPathToImage = resource.getHttpURL().toString();
+  }
     
   public AdvancedImage(int imageId) throws SQLException{
     super(imageId);
@@ -123,7 +134,34 @@ public class AdvancedImage extends Image {
 
   public void main(IWContext iwc) {
     super.main(iwc);
-    scaleImage(iwc);
+    
+    if (resource != null) {
+    	try {
+    		String name = resource.getName();
+    		String extension = name.substring(name.lastIndexOf(".")+1);
+    	    checkAndCalculateNewWidthAndHeight(iwc);
+    	    String newName = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage, extension, null);
+
+    	    IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
+			WebdavExtendedResource res = ss.getWebdavExtendedResource(resource.getPath(), ss.getRootUserCredentials());
+
+			String temp = res.getParentPath()+"/thumbnails/"+newName;
+			if (ss.getExistence(temp)) {
+        	    originalResource = resource;
+        	    resource = ss.getWebdavExtendedResource(temp, ss.getRootUserCredentials());
+    	    	setURL(temp);
+    	    } else {
+    	    	scaleImage(iwc);
+    	    }
+		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+
+    }
+    else {
+    	scaleImage(iwc);
+    }
   }
   
   public void print(IWContext iwc) throws Exception  {
@@ -175,7 +213,7 @@ public class AdvancedImage extends Image {
     
   private void scaleImage(IWContext iwc) {
     try {
-      modifiedImageId  = createAndStoreImage(iwc);
+		modifiedImageId  = createAndStoreImage(iwc);
       
       
       //commented because we want the browser to know the width and height (faster browser rendering)
@@ -187,6 +225,7 @@ public class AdvancedImage extends Image {
     }
     catch (Exception ex)  {
       // set modified image id back
+    	ex.printStackTrace();
       modifiedImageId = -1;
       System.err.println("Image could not be modified. Message was: "+ ex.getMessage());
     }      
@@ -287,21 +326,27 @@ public class AdvancedImage extends Image {
  /**  Gets height of original image. 
   */
   public synchronized  int getHeightOfOriginalImage(IWContext iwc) throws Exception{
-    String heightOfOriginalImage = getImageEntity(iwc).getHeight();
-    if (heightOfOriginalImage == null)  {
-      PlanarImage image = getOriginalImage(iwc);
-      int height = image.getHeight();
-      int width = image.getWidth();
-      setHeightAndWidthOfOriginalImageAtEntity(width, height, iwc);
-      return height;
-    }
-    return Integer.parseInt(heightOfOriginalImage);
+	  String heightOfOriginalImage =  null;
+	  if (resource == null) {
+		  heightOfOriginalImage = getImageEntity(iwc).getHeight();
+	  }
+	  if (heightOfOriginalImage == null)  {
+	      PlanarImage image = getOriginalImage(iwc);
+	      int height = image.getHeight();
+	      int width = image.getWidth();
+	      setHeightAndWidthOfOriginalImageAtEntity(width, height, iwc);
+	      return height;
+	  }
+	  return Integer.parseInt(heightOfOriginalImage);
   }
 
   /** Gets width of the original image
    */
   public synchronized int getWidthOfOriginalImage(IWContext iwc) throws Exception {
-   String widthOfOriginalImage = getImageEntity(iwc).getWidth();
+   String widthOfOriginalImage = null;
+	  if (resource == null) {
+		  widthOfOriginalImage = getImageEntity(iwc).getWidth();
+	  }
     if (widthOfOriginalImage == null)  {
       PlanarImage image = getOriginalImage(iwc);
       int height = image.getHeight();
@@ -350,11 +395,6 @@ public class AdvancedImage extends Image {
     return null;
   }
 
-
-
-
-      
-
   /** Adds a link to this image to a popup window that the original version of this image shows
    */
   public void setLinkToDisplayWindow(IWContext iwc, int imageNumber)  {
@@ -399,9 +439,11 @@ public class AdvancedImage extends Image {
    */
   private void setHeightAndWidthOfOriginalImageAtEntity(int width, int height, IWContext iwc) 
     throws Exception {
-     ImageProvider imageProvider = getImageProvider(iwc);
-     ImageEntity entity = getImageEntity(iwc);
-     imageProvider.setHeightAndWidthOfOriginalImageToEntity(width, height, entity);     
+	  if (resource == null) {
+	     ImageProvider imageProvider = getImageProvider(iwc);
+	     ImageEntity entity = getImageEntity(iwc);
+	     imageProvider.setHeightAndWidthOfOriginalImageToEntity(width, height, entity);
+	  }
   }
 
 
@@ -432,8 +474,13 @@ public class AdvancedImage extends Image {
     
     if (originalImage != null) 
       return originalImage;
-    MemoryCacheSeekableStream stream = new MemoryCacheSeekableStream(
-      new BufferedInputStream(new FileInputStream(getRealPathToImage(iwc))));
+    MemoryCacheSeekableStream stream = null;
+    if (resource == null) {
+    	stream = new MemoryCacheSeekableStream(new BufferedInputStream(new FileInputStream(getRealPathToImage(iwc))));
+    } else {
+    	URL url = new URL(getRealPathToImage(iwc));
+    	stream = new MemoryCacheSeekableStream(new BufferedInputStream(url.openStream()));
+    }
     originalImage = JAI.create("stream", stream);
     stream.close();
 
@@ -444,9 +491,16 @@ public class AdvancedImage extends Image {
 
   private Cache getCachedImage(IWContext iwc, int imageId) {
     // this method is similar to the private getImage() method of the super class Image
-    IWMainApplication iwma = iwc.getIWMainApplication(); 
-  
-    return IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
+	  
+	  
+	  if ( imageId > 0) {
+	    IWMainApplication iwma = iwc.getIWMainApplication(); 
+	  
+	    return IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
+	  } else if (resource != null) {
+		  return new Cache(resource.getPath(), resource.getPath());
+	  }
+	  return null;
   }
 
  
@@ -456,9 +510,17 @@ public class AdvancedImage extends Image {
     ImageEncoder imageEncoder = getImageEncoder(iwc);
     
     // get mime type
-    Cache cachedImage = getCachedImage(iwc, originalImageId);
-    ImageEntity imageEntity = (ImageEntity) cachedImage.getEntity();
-    String mimeType = imageEntity.getMimeType();
+    
+    String mimeType = null;
+    Cache cachedImage = null;
+    if (resource == null) {
+	    cachedImage = getCachedImage(iwc, originalImageId);
+	    ImageEntity imageEntity = (ImageEntity) cachedImage.getEntity();
+	    mimeType = imageEntity.getMimeType();
+    } else {
+    	cachedImage = new Cache(resource.getPath(), resource.getPath());
+    	mimeType = resource.getGetContentType();
+    }
     
     // is it necessary to convert the image?  
     if (!checkAndCalculateNewWidthAndHeight(iwc)){
@@ -467,7 +529,7 @@ public class AdvancedImage extends Image {
       if (imageEncoder.isInputTypeEqualToResultType(mimeType)) {
         // do nothing, use the original image -----
         return -1;
-      }else{
+      }else if (resource != null) {
       	// convert the original image using the same size
       	//e.g. bitmap to jpeg conversion because of load size
     		heightOfModifiedImage = getHeightOfOriginalImage(iwc);
@@ -503,7 +565,21 @@ public class AdvancedImage extends Image {
 	    // get the processer
 	    // create a image process job
 	    ImageProcessJob job = new ImageProcessJob();
-	    job.setCachedImage(cachedImage);
+	    if (resource != null) {
+	    	job.setImageLocation(resource.getHttpURL().toString());
+	    	job.setLocationIsURL(true);
+	    	job.setMimeType(resource.getGetContentType());
+	    	job.setName(resource.getName());
+	    	job.setID("");
+	    } else {
+	    	job.setImageEntity((ImageEntity)cachedImage.getEntity());
+		    job.setImageLocation(cachedImage.getRealPathToFile());
+	    	job.setLocationIsURL(false);
+	    	job.setMimeType(job.getImageEntity().getMimeType());
+	    	job.setName(job.getImageEntity().getName());
+	    	job.setID(job.getImageEntity().getPrimaryKey().toString());
+	    }
+	    //job.setCachedImage(cachedImage);
 	    job.setNewExtension(extension);
 	    job.setNewWidth(widthOfModifiedImage);
 	    job.setNewHeight(heightOfModifiedImage);
@@ -545,17 +621,26 @@ public class AdvancedImage extends Image {
 
   private String getNameOfModifiedImageWithExtension(int width, int height, String extension, ImageEntity entity)  {
     String name = getName();
+    if (resource != null) {
+    	String imageName = resource.getName();
+		int slashPos = imageName.lastIndexOf("/");
+		if (slashPos > 0) {
+			imageName = imageName.substring(slashPos+1);
+		}
+		int pointPosition = imageName.lastIndexOf('.');
+		int length = imageName.length();
+		if ((pointPosition > 0) && pointPosition > (length - 5)) {
+			imageName = imageName.substring(0, pointPosition);
+		}
+		name = imageName;
+    }
     
-    int pointPosition = name.lastIndexOf('.');
-    int length = name.length();
-    // cut extension (name.a  name.ab name.abc but not name.abcd)
-    if ( (pointPosition > 0) && pointPosition > (length - 5))  
-      name = name.substring(0,pointPosition);        
     StringBuffer nameOfImage = new StringBuffer();
     // add new extension
-    nameOfImage.append(entity.getPrimaryKey());
-    nameOfImage.append(width).append("_").append(height)
-      .append("_").append(name)
+    if (entity != null) {
+    	nameOfImage.append(entity.getPrimaryKey());
+    }
+    nameOfImage.append(name).append("_").append(width).append("x").append(height)
       .append(".").append(extension);
     
     return nameOfImage.toString();
