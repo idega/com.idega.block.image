@@ -11,6 +11,8 @@ package com.idega.block.image.presentation;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.faces.context.FacesContext;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.webdav.lib.WebdavResource;
@@ -26,11 +28,12 @@ import com.idega.slide.util.WebdavExtendedResource;
 
 public class ImageRotator extends PresentationObjectTransitional {
 
+	private static final String ATTRIBUTE_ROTATOR = "image_rotator_";
+	
 	private String iFolderURI;
 	private String iWidth;
 	private String iHeight;
 	private String iAlt;
-
 	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObjectTransitional#encodeBegin(javax.faces.context.FacesContext)
@@ -59,46 +62,63 @@ public class ImageRotator extends PresentationObjectTransitional {
 	protected void initializeComponent(FacesContext context) {
 		IWContext iwc = IWContext.getIWContext(context);
 
-		try {
-			IWSlideSession session = (IWSlideSession) IBOLookup.getSessionInstance(iwc, IWSlideSession.class);
-			WebdavExtendedResource resource = session.getWebdavResource(getFolderURI());
-			if (resource.isCollection()) {
-				WebdavResources children = resource.getChildResources();
-				WebdavResource[] resources = children.listResources();
-				WebdavResource imageResource = getRandomResource(resources);
-				
-	      Image image = new Image(imageResource.getPath());
-	      if (getAlt() != null) {
-	      		image.setAlt(getAlt());
-	      }
-	      if (getHeight() != null) {
-	      		image.setHeight(getHeight());
-	      }
-	      if (getWidth() != null) {
-	      		image.setWidth(getWidth());
-	      }
-	      
-	      getChildren().add(image);
+		List imageURLs = (List) iwc.getApplicationAttribute(ATTRIBUTE_ROTATOR + getICObjectID());
+		
+		if (imageURLs == null) {
+			try {
+				IWSlideSession session = (IWSlideSession) IBOLookup.getSessionInstance(iwc, IWSlideSession.class);
+				WebdavExtendedResource resource = session.getWebdavResource(getFolderURI());
+				if (resource.isCollection()) {
+					WebdavResources children = resource.getChildResources();
+					WebdavResource[] resources = children.listResources();
+					imageURLs = getImageURLs(resources);
+					iwc.setApplicationAttribute(ATTRIBUTE_ROTATOR + getICObjectID(), imageURLs);
+				}
+			}
+			catch (HttpException e) {
+				e.printStackTrace();
+			}
+			catch (RemoteException e) {
+				throw new IBORuntimeException(e);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
-		catch (HttpException e) {
-			e.printStackTrace();
-		}
-		catch (RemoteException e) {
-			throw new IBORuntimeException(e);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
+		
+		if (imageURLs != null) {
+			String imageURL = getRandomURL(imageURLs);
+			
+	    Image image = new Image(imageURL);
+	    if (getAlt() != null) {
+	    		image.setAlt(getAlt());
+	    }
+	    if (getHeight() != null) {
+	    		image.setHeight(getHeight());
+	    }
+	    if (getWidth() != null) {
+	    		image.setWidth(getWidth());
+	    }
+	    
+	    getChildren().add(image);
 		}
 	}
 	
-	private WebdavResource getRandomResource(WebdavResource[] resources) {
-    int num = (int) (Math.random() * resources.length);
-    WebdavResource imageResource = resources[num];
-    if (imageResource.getDisplayName().startsWith(".")) {
-    		return getRandomResource(resources);
-    }
-    return imageResource;
+	private List getImageURLs(WebdavResource[] resources) {
+		List list = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			WebdavResource resource = resources[i];
+			if (!resource.getDisplayName().startsWith(".")) {
+				list.add(resource.getPath());
+			}
+		}
+		
+		return list;
+	}
+	
+	private String getRandomURL(List imageURLs) {
+    int num = (int) (Math.random() * imageURLs.size());
+    return (String) imageURLs.get(num - 1);
 	}
 	
 	/**
