@@ -118,7 +118,7 @@ public class ImageRotator extends PresentationObjectTransitional {
 	
 	private String getRandomURL(List imageURLs) {
     int num = (int) (Math.random() * imageURLs.size());
-    return (String) imageURLs.get(num - 1);
+    return (String) imageURLs.get(num);
 	}
 	
 	/**
