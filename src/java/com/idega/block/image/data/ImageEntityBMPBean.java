@@ -5,6 +5,7 @@ package com.idega.block.image.data;
 import java.sql.SQLException;
 
 import com.idega.data.IDOLegacyEntity;
+import com.idega.util.IWTimestamp;
 
 //import com.idega.data.BlobWrapper;
 
@@ -46,7 +47,7 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 
   public void setDefaultValues() {
 
-    super.setCreationDate(new com.idega.util.IWTimestamp().getTimestampRightNow());
+    super.setCreationDate(IWTimestamp.getTimestampRightNow());
 
   }
 

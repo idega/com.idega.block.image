@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.10 2006/02/17 14:53:10 gimmi Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.11 2006/02/20 11:04:52 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -41,11 +41,11 @@ import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2006/02/17 14:53:10 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/02/20 11:04:52 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -294,7 +294,7 @@ public class ImageProcessor implements Runnable {
 			//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
 			thread = new Thread(this, "ImageProcessor Thread");
 			//this is a backround task
-			thread.setPriority(thread.NORM_PRIORITY);
+			thread.setPriority(Thread.NORM_PRIORITY);
 			thread.start();
 		}
 	}

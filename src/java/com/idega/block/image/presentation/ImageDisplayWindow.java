@@ -58,7 +58,7 @@ public class ImageDisplayWindow extends Window{
   }
 
 	public String getBundleIdentifier() {
-		return this.IW_BUNDLE_IDENTIFIER;
+		return ImageDisplayWindow.IW_BUNDLE_IDENTIFIER;
 	}
 
 

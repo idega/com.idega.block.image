@@ -121,7 +121,7 @@ public class ImageGallery extends Block {
 	}
 
 	public String getBundleIdentifier() {
-		return this.IW_BUNDLE_IDENTIFIER;
+		return ImageGallery.IW_BUNDLE_IDENTIFIER;
 	}
 
 	public void setFilesFolder(ICFile imageFileFolder) {
