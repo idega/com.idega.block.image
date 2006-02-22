@@ -489,14 +489,6 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
 
 
-    private void findNodes(Vector vector,int id, int position,IDOLegacyEntity entity) throws SQLException{
-
-        findNodes(vector,id,position,entity,new IDOLegacyEntity[1],0);
-
-    }
-
-
-
     private void findNodes(Vector vector,int id, int position,IDOLegacyEntity entity, int specialValue) throws SQLException{
 
         findNodes(vector,id,position,entity,new IDOLegacyEntity[1], specialValue);

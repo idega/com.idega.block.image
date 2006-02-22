@@ -71,8 +71,6 @@ private String callingModule = "image_id";
 
 
 
-private boolean backbutton = false;
-
 private boolean refresh = false;
 
 private Table outerTable = new Table(2,3);
@@ -99,12 +97,6 @@ private String percent = "100";
 
 private Link continueRefresh = new Link("Click here to continue...");
 
-private String lastViewAction = "";
-
-
-
-
-
 private Text textProxy = new Text();
 
 
@@ -123,8 +115,6 @@ private Image edit;
 
 private Image save;
 
-private Image cancel;
-
 private Image newImage;
 
 private Image newCategory;
@@ -136,22 +126,6 @@ private Image reload;
 
 
 private String language = "IS";
-
-
-
-private int textSize = 1;
-
-
-
-private String attributeName = "union_id";
-
-private int attributeId = 3;
-
-
-
-
-
-
 
 
 
@@ -180,30 +154,6 @@ public ImageViewer(ImageEntity[] entities){
   this.entities=entities;
 
 }
-
-
-
-
-
-public void setConnectionAttributes(String attributeName, int attributeId) {
-
-  this.attributeName = attributeName;
-
-  this.attributeId = attributeId;
-
-}
-
-
-
-public void setConnectionAttributes(String attributeName, String attributeId) {
-
-  this.attributeName = attributeName;
-
-  this.attributeId = Integer.parseInt(attributeId);
-
-}
-
-
 
 
 
@@ -288,8 +238,6 @@ public void main(IWContext iwc)throws Exception{
 
 
   save = new Image("/pics/jmodules/image/"+language+"/save.gif","Save");
-
-  cancel = new Image("/pics/jmodules/image/"+language+"/cancel.gif","Cancel");
 
   newImage = new Image("/pics/jmodules/image/"+language+"/newimage.gif","Upload a new image");
 
@@ -1239,16 +1187,6 @@ private void refresh(IWContext iwc) throws SQLException{
 }
 
 
-
-private Table getImageInfoTable(){
-
- Table table = new Table();
-
- table.setColor("");
-
-return table;
-
-}
 
 private Form getEditorForm(ImageHandler handler, String ImageId, IWContext iwc) throws Exception{
 

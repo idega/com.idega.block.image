@@ -48,8 +48,6 @@ public class ImageDisplayWindow extends Window{
   public static final String PARAMETER_TITLE = "parameter_title";
   
 
-	private String widthString;
-	private String heightString;
 	private int border;
 
   public ImageDisplayWindow() {

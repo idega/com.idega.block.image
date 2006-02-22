@@ -60,8 +60,6 @@ private PlanarImage modifiedImage = null;
 
 //private ImageDisplay canvas = null;
 
-private boolean state = false;
-
 private int imageId = -1;
 
 private int modifiedImageId = -1;
@@ -355,14 +353,6 @@ protected void setBrightness( int brightness ){
 private int getBrightness(){
 
   return this.brightness;
-
-}
-
-
-
-private void setModifiedImageId( int modifiedImageId ){
-
-  this.modifiedImageId = modifiedImageId;
 
 }
 

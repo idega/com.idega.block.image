@@ -113,8 +113,6 @@ public class AdvancedImage extends Image {
   private boolean scaleProportional = true;
 
   private WebdavResource resource = null;
-  private WebdavResource originalResource = null;
-  
   public AdvancedImage(WebdavResource webdavResource) {
 	  super(webdavResource.getPath());
 	  resource = webdavResource;
@@ -147,7 +145,6 @@ public class AdvancedImage extends Image {
 
 			String temp = res.getParentPath()+"/thumbnails/"+newName;
 			if (ss.getExistence(temp)) {
-        	    originalResource = resource;
         	    resource = ss.getWebdavExtendedResource(temp, ss.getRootUserCredentials());
     	    	setURL(temp);
     	    } else {

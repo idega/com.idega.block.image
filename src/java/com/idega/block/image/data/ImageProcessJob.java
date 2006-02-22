@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessJob.java,v 1.2 2006/02/17 14:53:10 gimmi Exp $
+ * $Id: ImageProcessJob.java,v 1.3 2006/02/22 20:58:16 laddi Exp $
  * Created on Sep 30, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,15 +9,13 @@
  */
 package com.idega.block.image.data;
 
-import com.idega.util.caching.Cache;
-
 
 /**
  * 
- *  Last modified: $Date: 2006/02/17 14:53:10 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/02/22 20:58:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ImageProcessJob {
 	
@@ -89,8 +87,6 @@ public class ImageProcessJob {
 	public void setJobKey(String jobKey) {
 		this.jobKey = jobKey;
 	}
-	private Cache cachedImage;
-	
 	private int newWidth;
 	
 	private int newHeight;

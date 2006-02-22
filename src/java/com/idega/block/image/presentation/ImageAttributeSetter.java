@@ -10,12 +10,13 @@ package com.idega.block.image.presentation;
  */
 
 import java.util.Map;
+
 import javax.faces.component.UIComponent;
+
 import com.idega.block.image.business.ImageFinder;
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.core.file.business.FileSystemConstants;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -34,18 +35,16 @@ import com.idega.presentation.ui.TextInput;
 public class ImageAttributeSetter extends Block{
 
   private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
-  private int imageId = -1;
   private String sSessionName =null;
   private String sHiddenInputName = null;
   public static final String sSessionParameterName = "im_image_session_name";
   public static String prmImageEntityId = "prmImageEntityId";
   public static String prmAttributeKey = "prmAttributeKey";
-  private Map oldMap,newMap;
+  private Map oldMap;
 
   public static final String ALIGNMENT = "align",BORDER = "border",VSPACE = "vspace",
 			      HSPACE = "hspace",WIDTH = "width",HEIGHT="height";
 
-  private IWBundle iwb;
   private IWResourceBundle iwrb;
 
   public ImageAttributeSetter(){
@@ -67,7 +66,6 @@ public class ImageAttributeSetter extends Block{
   }
 
   public void main(IWContext iwc)throws Exception{
-    iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
 
     String sAttributeKey = iwc.getParameter(prmAttributeKey );

@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.11 2006/02/20 11:04:52 laddi Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.12 2006/02/22 20:58:16 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,31 +21,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.CreateException;
+
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.webdav.lib.WebdavResource;
+
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
-import com.idega.presentation.IWContext;
 import com.idega.slide.business.IWSlideService;
 import com.idega.slide.util.WebdavExtendedResource;
 import com.idega.util.FileUtil;
-import com.idega.util.caching.Cache;
 
 /**
  * 
- * Last modified: $Date: 2006/02/20 11:04:52 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 20:58:16 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -264,27 +264,6 @@ public class ImageProcessor implements Runnable {
 		nameOfImage.append(originalImageID);
 		nameOfImage.append(width).append("_").append(height).append("_").append(imageName).append(".").append(extension);
 		return nameOfImage.toString();
-	}
-
-	private Cache getCachedImage(IWContext iwc, int imageId) {
-		// this method is similar to the private getImage() method of the super
-		// class Image
-		IWMainApplication iwma = iwc.getIWMainApplication();
-		return IWCacheManager.getInstance(iwma).getCachedBlobObject(
-				com.idega.block.image.data.ImageEntity.class.getName(), imageId, iwma);
-	}
-
-	private String getRealPathToImageAndImageEntity(IWContext iwc, int originalImageID) {
-		Cache cachedImage = getCachedImage(iwc, originalImageID);
-		return cachedImage.getRealPathToFile();
-	}
-
-	private ImageEncoder getImageEncoder(IWContext iwc) throws RemoteException {
-		return (ImageEncoder) IBOLookup.getServiceInstance(iwc, ImageEncoder.class);
-	}
-
-	private ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
-		return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
 	}
 
 	public void start() {
