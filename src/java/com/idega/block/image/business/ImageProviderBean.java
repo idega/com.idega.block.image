@@ -7,14 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import org.apache.commons.httpclient.HttpException;
-import org.apache.webdav.lib.WebdavResource;
-import org.apache.webdav.lib.WebdavResources;
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageEntityHome;
 import com.idega.block.image.presentation.AdvancedImage;
@@ -26,6 +25,7 @@ import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.slide.business.IWSlideService;
+import com.idega.util.ListUtil;
 
 /**
  * *
@@ -52,38 +52,15 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 	public int getImageCount(String imageFolderResourcePath) {
 		try {
 			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
-			WebdavResource resource = service.getWebdavResourceAuthenticatedAsRoot(imageFolderResourcePath);
-
-			if (resource.isCollection()) {
-				WebdavResources children = resource.getChildResources();
-				WebdavResource[] resources = children.listResources();
-				
-				int counter = 0;
-				for (int i = 0; i< resources.length; i++) {
-					String path = resources[i].getPath();
-					String fileName = path.substring(path.lastIndexOf("/")+1);
-					if (!resources[i].isCollection() && fileName.indexOf(".") != 0) {
-						++counter;
-					}
-				}
-				
-				return counter;
-				
-//				return children.listResources().length;
-			}
+			service.getChildCountExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
 		}
 		catch (IBOLookupException e) {
-			e.printStackTrace();
-		}
-		catch (HttpException e) {
 			e.printStackTrace();
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+
 		return 0;
 	}
 	
@@ -91,42 +68,68 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		if (imageFolderResourcePath == null) {
 			return new ArrayList();
 		}
-		try {
-			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
-			WebdavResource resource = service.getWebdavResourceAuthenticatedAsRoot(imageFolderResourcePath);
-			if (resource.isCollection()) {
-				WebdavResources children = resource.getChildResources();
-				WebdavResource[] resources = children.listResources();
-	
-				int length = endPosition - startPosition + 1;
-				ArrayList result = new ArrayList(length);
+		else{
+			try {
+				IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+				ArrayList result = new ArrayList();
+				List imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
 				
-				for (int i = (startPosition -1); i<= endPosition && i < resources.length; i++) {
-					String path = resources[i].getPath();
-					String fileName = path.substring(path.lastIndexOf("/")+1);
-					if (!resources[i].isCollection() && fileName.indexOf(".") != 0) {
-						AdvancedImage image = new AdvancedImage(resources[i]);
+				if(imagePaths!=null){
+					int realEnd = Math.min(endPosition, imagePaths.size());
+					for (int i = (startPosition -1);i < realEnd; i++) {
+						AdvancedImage image = new AdvancedImage(service.getWebdavResourceAuthenticatedAsRoot((String) imagePaths.get(i)));
 						result.add(image);
 					}
+						
+					return result;
 				}
-				
-				return result;
 			}
-		} catch (IBOLookupException e) {
-			e.printStackTrace();
+			catch (IBOLookupException e) {
+				e.printStackTrace();
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			catch (HttpException e) {
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		catch (HttpException e) {
-			e.printStackTrace();
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+			
 		return new ArrayList();
 	}
 
+	
+	public List getContainedFolders(String imageFolderResourcePath) {
+		List folders = null;
+		if (imageFolderResourcePath == null) {
+			return folders;
+		}
+		else{
+			try {
+				IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+				folders = service.getChildFolderPaths(imageFolderResourcePath);
+			}
+			catch (IBOLookupException e) {
+				e.printStackTrace();
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}				
+		}
+		
+		if(folders!=null){
+			return folders;
+		}
+		else{
+			return ListUtil.getEmptyList();
+		}
+	}
+	
+	
+	
 	public ArrayList getImagesFromTo(ICFile imageFolder, int startPosition, int endPosition) throws SQLException {
 		if (imageFolder == null || (startPosition < 1) || (startPosition > endPosition))
 			return new ArrayList();

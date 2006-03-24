@@ -1,6 +1,6 @@
 /*
- * $Id: ImageProviderHome.java 1.1 Feb 16, 2006 gimmi Exp $
- * Created on Feb 16, 2006
+ * $Id: ImageProviderHome.java 1.1 Mar 21, 2006 eiki Exp $
+ * Created on Mar 21, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -13,12 +13,10 @@ import com.idega.business.IBOHome;
 
 
 /**
- * <p>
- * TODO gimmi Describe Type ImageProviderHome
- * </p>
- *  Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: gimmi $
  * 
- * @author <a href="mailto:gimmi@idega.com">gimmi</a>
+ *  Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.1 $
  */
 public interface ImageProviderHome extends IBOHome {

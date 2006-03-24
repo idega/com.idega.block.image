@@ -1,0 +1,61 @@
+/* ImageGallery styles */
+
+/* the top div */
+.imageGallery{
+
+}
+
+/* Multiple image gallery div */
+.multiImageGallery{
+
+}
+
+/* the default style name for the layer containing an image(w/ow text) or link in an ImageGallery */
+.galleryImage{
+	float: left;
+	margin: 4px;
+}
+
+.galleryImage img{
+}
+
+.galleryImage a{
+}
+
+/* the name of the image if included */
+.galleryImage .galleryImageTitle{
+	font-size:14px;
+}
+
+.galleryImage .spacer{
+	clear:left;
+}
+
+.galleryImage .firstInRow{
+	clear: left;
+}
+
+.galleryImage .lastInRow{
+	clear: right;
+}
+
+/* the controller layer*/
+.imageGallery .galleryButtons {
+	font-size: 14px;
+	font-weight: bold;
+	padding:7px;
+	margin-left: auto;
+	margin-right: auto;
+	clear:both;
+	width: 140px;
+}
+
+.imageGallery .galleryButtons form{
+	display: inline;
+        clear: none;
+}
+
+.imageGallery .galleryButtons input{
+	 border: 1px solid #bbbbbb;
+	 font-size: 10px;
+}

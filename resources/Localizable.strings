@@ -11,6 +11,7 @@ horizontal_spacing=Horizontal spacing
 im_image_attributes=Image Attributes
 image=Image
 iw.component.com.idega.block.image.presentation.ImageGallery.name=ImageGallery
+iw.component.com.idega.block.image.presentation.MultiImageGallery.name=MultiImageGallery
 left=Left
 middle=Middle
 new_image=New image

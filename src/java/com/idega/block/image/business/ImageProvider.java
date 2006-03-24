@@ -1,6 +1,6 @@
 /*
- * $Id: ImageProvider.java 1.1 Feb 16, 2006 gimmi Exp $
- * Created on Feb 16, 2006
+ * $Id: ImageProvider.java 1.1 Mar 21, 2006 eiki Exp $
+ * Created on Mar 21, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.block.image.business;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.CreateException;
 import javax.ejb.TransactionRolledbackLocalException;
 import com.idega.block.image.data.ImageEntity;
@@ -20,12 +21,10 @@ import com.idega.core.file.data.ICFile;
 
 
 /**
- * <p>
- * TODO gimmi Describe Type ImageProvider
- * </p>
- *  Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: gimmi $
  * 
- * @author <a href="mailto:gimmi@idega.com">gimmi</a>
+ *  Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.1 $
  */
 public interface ImageProvider extends IBOService {
@@ -45,6 +44,11 @@ public interface ImageProvider extends IBOService {
 	 */
 	public ArrayList getImagesFromTo(String imageFolderResourcePath, int startPosition, int endPosition)
 			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.block.image.business.ImageProviderBean#getContainedFolders
+	 */
+	public List getContainedFolders(String imageFolderResourcePath) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.block.image.business.ImageProviderBean#getImagesFromTo
