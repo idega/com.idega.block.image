@@ -62,7 +62,7 @@ public class ImageRotator extends PresentationObjectTransitional {
 	protected void initializeComponent(FacesContext context) {
 		IWContext iwc = IWContext.getIWContext(context);
 
-		List imageURLs = (List) iwc.getApplicationAttribute(ATTRIBUTE_ROTATOR + getICObjectID());
+		List imageURLs = (List) iwc.getApplicationAttribute(ATTRIBUTE_ROTATOR + getICObjectID() + iFolderURI);
 		
 		if (imageURLs == null) {
 			try {
@@ -72,7 +72,7 @@ public class ImageRotator extends PresentationObjectTransitional {
 					WebdavResources children = resource.getChildResources();
 					WebdavResource[] resources = children.listResources();
 					imageURLs = getImageURLs(resources);
-					iwc.setApplicationAttribute(ATTRIBUTE_ROTATOR + getICObjectID(), imageURLs);
+					iwc.setApplicationAttribute(ATTRIBUTE_ROTATOR + getICObjectID() + iFolderURI, imageURLs);
 				}
 			}
 			catch (HttpException e) {
