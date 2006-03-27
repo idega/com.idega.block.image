@@ -282,6 +282,8 @@ public class ImageGallery extends Block {
 		SubmitButton forwardButton = createButton(STRING_FORWARD_BUTTON);
 		Layer buttonsLayer = new Layer(Layer.DIV);
 		buttonsLayer.setStyleClass(STYLE_CLASS_GALLERY_BUTTONS);
+//		add everything
+		imageGalleryLayer.add(buttonsLayer);
 		
 		
 		int limit = 0;
@@ -318,17 +320,16 @@ public class ImageGallery extends Block {
 		}
 		infoText.append(endPosition).append(" ").append(this.getResourceBundle(iwc).getLocalizedString("of", "of")).append(" ").append(limit);
 		// possibly disable buttons
-		if (startPosition == 1)
-			backButton.setDisabled(true);
-		if (endPosition == limit)
-			forwardButton.setDisabled(true);
-		//add everything
-		imageGalleryLayer.add(buttonsLayer);
+		if (startPosition == 1){
+		backButton.setDisabled(true);
+		}
 		
+		if (endPosition == limit){
+			forwardButton.setDisabled(true);
+		}
 		buttonsLayer.add(backButton);
 		buttonsLayer.add(new Text(infoText.toString()));
-		buttonsLayer.add(forwardButton);
-		
+		buttonsLayer.add(forwardButton);		
 	}
 
 	private String getParameter(IWContext iwc) throws Exception {
@@ -367,7 +368,7 @@ public class ImageGallery extends Block {
 		return getImagesFromTo(iwc, startPosition, startPosition + getNumberOfImagePlaces() - 1);
 	}
 
-	private ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException,
+	protected ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException,
 			java.sql.SQLException {
 		//todo optimize calls to imageprovider, this is almost the same as before
 		if (imageFileFolder != null) {
@@ -393,7 +394,7 @@ public class ImageGallery extends Block {
 		return Integer.toString(this.getICObjectInstanceID());
 	}
 
-	private ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
+	protected ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
 		return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
 	}
 
