@@ -33,10 +33,10 @@ import com.idega.util.ListUtil;
  * Title: idegaWeb Description: This class is mainly used by the ImageGallery
  * class to get, to store and to change stored images.
  * 
- * Copyright: Copyright (c) 2003 Company: idega software
+ * Copyright: Copyright (c) 2003-2006 Company: idega software
  * 
- * @author <a href="mailto:thomas@idega.is">Thomas Hilbig </a>
- * @version 1.0
+ * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>,<a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
+ * @version 2.0
  */
 public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 
@@ -52,7 +52,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 	public int getImageCount(String imageFolderResourcePath) {
 		try {
 			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
-			service.getChildCountExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
+			return service.getChildCountExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
@@ -226,6 +226,6 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 					"There was an error storing height and width of the image. Message was: " + e.getMessage());
 		}
 	}
-
+	
 }
 

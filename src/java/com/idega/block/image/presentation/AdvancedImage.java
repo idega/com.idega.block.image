@@ -1,15 +1,15 @@
 package com.idega.block.image.presentation;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import javax.ejb.FinderException;
-import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
 import org.apache.webdav.lib.WebdavResource;
 import com.idega.block.image.business.ImageEncoder;
 import com.idega.block.image.business.ImageProcessor;
@@ -19,14 +19,15 @@ import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
+import com.idega.graphics.ImageInfo;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
 import com.idega.slide.business.IWSlideService;
+import com.idega.slide.util.IWSlideConstants;
 import com.idega.util.caching.Cache;
-import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
 /**
  * 
@@ -44,8 +45,8 @@ import com.sun.media.jai.codec.MemoryCacheSeekableStream;
  * setWidth methods of the Image class.
  * 
  * The ImageEncoder service bean is used to create the new image. The new
- * created image is uploaded into the database into a branch of the original
- * image. The type of the new image is not necessary equal to the type of the
+ * created image is uploaded into the file repository (db or slide) into a branch of the original
+ * image(db) or under "/resized" in the images parent folder. The type of the new image is not necessary equal to the type of the
  * original image. The ImageEncoder is responsible for changing the type. (e.g.
  * bitmap is transformed to jpeg).
  * 
@@ -77,8 +78,6 @@ public class AdvancedImage extends Image {
 	/** cached value not an attribute */
 	private ImageEntity imageEntity;
 	/** cached value not an attribute */
-	private PlanarImage originalImage;
-	/** cached value not an attribute */
 	private String realPathToImage;
 	/**
 	 * id of the original image. The id is stored because during the execution
@@ -107,7 +106,7 @@ public class AdvancedImage extends Image {
 		resource = webdavResource;
 		realPathToImage = resource.getHttpURL().toString();
 	}
-
+	
 	public AdvancedImage(int imageId) throws SQLException {
 		super(imageId);
 		originalImageId = imageId;
@@ -124,13 +123,14 @@ public class AdvancedImage extends Image {
 			try {
 				String name = resource.getName();
 				String extension = name.substring(name.lastIndexOf(".") + 1);
+				//todo don't get original width and height unless absolutely necessery e.g. not if both height and width are set and scale proportionally is false
 				checkAndCalculateNewWidthAndHeight(iwc);
 				String newName = getNameOfModifiedImageWithExtension(widthOfModifiedImage, heightOfModifiedImage,extension, null);
 				
 				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
 				
 				
-				String temp = ss.getParentPath(resource) + "/thumbnails/" + newName;
+				String temp = ss.getParentPath(resource) + "/resized/" + newName;
 				if (ss.getExistence(temp)) {
 					//why was this set before??- eiki
 					//resource = ss.getWebdavResourceAuthenticatedAsRoot(temp);
@@ -208,14 +208,18 @@ public class AdvancedImage extends Image {
 	private boolean checkAndCalculateNewWidthAndHeight(IWContext iwc) throws Exception {
 		String heightString = getHeight();
 		String widthString = getWidth();
-		if (heightString == null || widthString == null)
+		if (heightString == null || widthString == null){
 			// image must be not modified
 			return false;
+		}
+		
 		int setHeight = Integer.parseInt(heightString);
 		int setWidth = Integer.parseInt(widthString);
-		if ((setHeight <= 0) && (setWidth <= 0))
+		if ((setHeight <= 0) && (setWidth <= 0)){
 			// image must not be modified
 			return false;
+		}
+		
 		// ...there are new settings for the height and the width
 		// calculate now the new values for the modified image....
 		// first assumption: image must not be modified:
@@ -225,6 +229,8 @@ public class AdvancedImage extends Image {
 		// get values of the original image
 		heightOfOriginalImage = getHeightOfOriginalImage();
 		widthOfOriginalImage = getWidthOfOriginalImage();
+		
+		
 		/*
 		 * modify height, if + desired height is defined + image should be
 		 * enlarged (if it is smaller than the desired height) + imgage is too
@@ -283,7 +289,7 @@ public class AdvancedImage extends Image {
 	/**
 	 * Gets height of original image.
 	 */
-	public synchronized int getHeightOfOriginalImage() throws Exception {
+	public int getHeightOfOriginalImage() throws Exception {
 		if (heightOfOriginalImage <= 0) {
 			// is not in Slide
 			if (resource == null) {
@@ -296,7 +302,7 @@ public class AdvancedImage extends Image {
 			// same for both db and slide
 			if (heightOfOriginalImage <= 0) {
 				// this actually sets both the width and height
-				getOriginalImage();
+				readWidthAndHeightFromOriginalImage();
 				if (resource == null) {
 					setWidthAndHeightInImageEntity(widthOfOriginalImage, heightOfOriginalImage);
 				}
@@ -308,7 +314,7 @@ public class AdvancedImage extends Image {
 	/**
 	 * Gets width of the original image
 	 */
-	public synchronized int getWidthOfOriginalImage() throws Exception {
+	public int getWidthOfOriginalImage() throws Exception {
 		if (widthOfOriginalImage <= 0) {
 			// is not in Slide
 			if (resource == null) {
@@ -320,7 +326,7 @@ public class AdvancedImage extends Image {
 			// same for both db and slide
 			if (widthOfOriginalImage <= 0) {
 				// this actually sets both the width and height
-				getOriginalImage();
+				readWidthAndHeightFromOriginalImage();
 				if (resource == null) {
 					setWidthAndHeightInImageEntity(widthOfOriginalImage, heightOfOriginalImage);
 				}
@@ -470,39 +476,80 @@ public class AdvancedImage extends Image {
 	}
 
 	/**
-	 * Get a stored or a fresh PlanarImage
+	 * Read width and height from the original image via slide properties or ImageInfo
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	private PlanarImage getOriginalImage() throws Exception {
-		if (originalImage != null) {
-			return originalImage;
+	protected void readWidthAndHeightFromOriginalImage() throws Exception {
+		String realOrURLPath = getRealPathToImage(IWContext.getInstance());
+		
+		// if in database
+		if (resource == null) {
+			ImageInfo ii = new ImageInfo();
+			InputStream stream = new FileInputStream(realOrURLPath);
+			ii.setInput(stream);
+			if (ii.check()) {
+				widthOfOriginalImage = ii.getWidth();
+				heightOfOriginalImage = ii.getHeight();
+			}
+			stream.close();
+			stream = null;
+			
 		}
 		else {
-			MemoryCacheSeekableStream stream = null;
-			String realOrURLPath = getRealPathToImage(IWContext.getInstance());
-			// if in database
-			if (resource == null) {
-				stream = new MemoryCacheSeekableStream(new BufferedInputStream(new FileInputStream(realOrURLPath)));
-				
-			//	Cache cachedImage = getCachedImage(iwc, originalImageId);
+			// in Slide
+			//Todo use slide local api/webdavlocal resource to get properties
+			String widthAndHeight = null;
+			Enumeration enumWidthAndHeight = resource.propfindMethod(IWSlideConstants.PROPERTYNAME_WIDTH_AND_HEIGHT_PROPERTY);
+			if(enumWidthAndHeight!=null && enumWidthAndHeight.hasMoreElements() && !"".equals((widthAndHeight = (String) enumWidthAndHeight.nextElement())) ){
+				widthOfOriginalImage = Integer.parseInt(widthAndHeight.substring(0,widthAndHeight.indexOf("x")));
+				heightOfOriginalImage = Integer.parseInt(widthAndHeight.substring(widthAndHeight.indexOf("x")+1));	
 			}
-			else {
-				// in Slide
+			else{
+				//TODO move to ImageProvider
 				URL url = new URL(realOrURLPath);
-				stream = new MemoryCacheSeekableStream(new BufferedInputStream(url.openStream()));
-//				so we can have access to that in javascript...very handy
-				setMarkupAttribute("orgIMGPath",url.getPath());
+				ImageInfo ii = new ImageInfo();
+				InputStream stream = url.openStream();
+				ii.setInput(stream);
+				if (ii.check()) {
+					widthOfOriginalImage = ii.getWidth();
+					heightOfOriginalImage = ii.getHeight();
+					final int bitsPerPixel = ii.getBitsPerPixel();
+					final int widthDpi = ii.getPhysicalWidthDpi();
+					
+					Hashtable props = new Hashtable();
+					props.put(IWSlideConstants.PROPERTY_HEIGHT, String.valueOf(heightOfOriginalImage));
+					props.put(IWSlideConstants.PROPERTY_WIDTH, String.valueOf(widthOfOriginalImage));
+
+					props.put(IWSlideConstants.PROPERTY_WIDTH_AND_HEIGHT, String.valueOf(widthOfOriginalImage)+"x"+String.valueOf(heightOfOriginalImage));
+					props.put(IWSlideConstants.PROPERTY_BITS_PER_PIXEL, String.valueOf(bitsPerPixel));
+					if (widthDpi != -1) {
+						props.put(IWSlideConstants.PROPERTY_DPI, String.valueOf(widthDpi));
+					}
+					
+					//close before to avoid thread lock
+					stream.close();
+					stream = null;
+					ii = null;
+					resource.proppatchMethod(props, true);
+					
+				}
+				//must close
+				if(stream!=null){
+					stream.close();
+					stream = null;
+					ii = null;
+				}
+				
+				
 			}
-			originalImage = JAI.create("stream", stream);
-			stream.close();
-			widthOfOriginalImage = originalImage.getWidth();
-			heightOfOriginalImage = originalImage.getHeight();
 			
-			
+			// so we can have access to that in javascript...very handy
+			//only set for slide stuff now...
+			setMarkupAttribute("orgIMGPath", resource.getPath());
 		}
-		return originalImage;
+		
 	}
 
 	private Cache getCachedImage(IWContext iwc, int imageId) {
@@ -575,9 +622,8 @@ public class AdvancedImage extends Image {
 			return imageID;
 		}
 		else {
-			// ------------------------------------------------------------------------------------//
-			// ------------------ image has to be processed
-			// ---------------------------------------
+			// -----------------------------------------------------------------------------
+			// ------------------ image has to be processed---------------------------------
 			// get the processer
 			// create a image process job
 			ImageProcessJob job = new ImageProcessJob();

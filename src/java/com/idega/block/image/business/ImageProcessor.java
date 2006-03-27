@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.12 2006/02/22 20:58:16 laddi Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.13 2006/03/27 14:59:47 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -41,11 +41,11 @@ import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/02/22 20:58:16 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/27 14:59:47 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -148,9 +148,9 @@ public class ImageProcessor implements Runnable {
 				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(iwac, IWSlideService.class);
 				WebdavExtendedResource parentRes = ss.getWebdavExtendedResource(parentPath,ss.getRootUserCredentials());
 				WebdavResource root = ss.getWebdavRootResource(ss.getRootUserCredentials());
-				String complete = parentPath+"/thumbnails";
+				String complete = parentPath+"/resized";
 				boolean exists = ss.getExistence(complete);
-				// create thumbnails folder
+				// create resized folder
 				if (!exists) {
 					root.mkcolMethod(complete);
 				}
@@ -231,7 +231,7 @@ public class ImageProcessor implements Runnable {
 			imageName = imageName.substring(0, pointPosition);
 
 		StringBuffer buf = new StringBuffer(parentPath);
-		buf.append("/thumbnails/").
+		buf.append("/resized/").
 		append(imageName).
 		append("_").append(width).append("x").append(height).append(".").append(extension);		
 		return buf.toString();
