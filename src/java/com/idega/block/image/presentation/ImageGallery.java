@@ -9,6 +9,7 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.data.ICFile;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
@@ -230,10 +231,10 @@ public class ImageGallery extends Block {
 				link.setPage(viewerPage);
 				String resourceURI = image.getResourceURI();
 				if (resourceURI != null) {
-					link.addParameter(image.PARAM_IMAGE_URL, resourceURI);
+					link.addParameter(Image.PARAM_IMAGE_URL, resourceURI);
 				}
 				else {
-					link.addParameter(image.PARAM_IMAGE_ID, image.getImageID(iwc));
+					link.addParameter(Image.PARAM_IMAGE_ID, image.getImageID(iwc));
 				}
 				pres = link;
 			}

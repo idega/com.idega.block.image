@@ -1,40 +1,30 @@
 /*
- * $Id$
- * Created on Feb 10, 2006
- *
+ * $Id$ Created on Feb 10, 2006
+ * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.block.image.presentation;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 
-import org.apache.webdav.lib.WebdavResource;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
-import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObjectTransitional;
 import com.idega.slide.business.IWSlideService;
 
 public class ImageRotator extends PresentationObjectTransitional {
 
-	private static final String ATTRIBUTE_ROTATOR = "image_rotator_";
-
 	private String iFolderURI;
-
 	private String iWidth;
-
 	private String iHeight;
-
 	private String iAlt;
 
 	/*
@@ -70,17 +60,12 @@ public class ImageRotator extends PresentationObjectTransitional {
 	 * @see com.idega.presentation.PresentationObjectTransitional#initializeComponent(javax.faces.context.FacesContext)
 	 */
 	protected void initializeComponent(FacesContext context) {
-		IWContext iwc = IWContext.getIWContext(context);
-
 		List imagePaths = null;
 		try {
-			IWSlideService service = (IWSlideService) IBOLookup
-					.getServiceInstance(getIWApplicationContext(),
-							IWSlideService.class);
-			ArrayList result = new ArrayList();
-			imagePaths = service
-					.getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
-		} catch (RemoteException e) {
+			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+			imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
+		}
+		catch (RemoteException e) {
 			throw new IBORuntimeException(e);
 		}
 
@@ -99,18 +84,6 @@ public class ImageRotator extends PresentationObjectTransitional {
 			}
 			getChildren().add(image);
 		}
-	}
-
-	private List getImageURLs(WebdavResource[] resources) {
-		List list = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			WebdavResource resource = resources[i];
-			if (!resource.getDisplayName().startsWith(".")) {
-				list.add(resource.getPath());
-			}
-		}
-
-		return list;
 	}
 
 	private String getRandomURL(List imageURLs) {
