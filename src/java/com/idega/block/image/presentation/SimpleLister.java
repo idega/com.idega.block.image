@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.idega.block.image.data.ImageEntity;
+import com.idega.core.file.data.ICFileBMPBean;
 import com.idega.data.EntityFinder;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
@@ -90,7 +91,7 @@ public class SimpleLister extends PresentationObjectContainer {
       sql.append(" where f.mime_type = m.mime_type ");
       sql.append(" and m.ic_file_type_id = t.ic_file_type_id ");
       sql.append(" and t.unique_name = 'ic_image' ");
-      sql.append(" order by ").append(com.idega.block.image.data.ImageEntityBMPBean.getColumnNameCreationDate()).append(" desc ");
+      sql.append(" order by ").append(ICFileBMPBean.getColumnNameCreationDate()).append(" desc ");
       //EntityFinder.debug = true;
       //TODO - ARON - move into ICFileBMPBean
       L = EntityFinder.findAll(image,sql.toString());
