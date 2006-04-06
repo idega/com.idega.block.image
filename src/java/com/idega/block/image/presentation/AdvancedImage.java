@@ -437,7 +437,7 @@ public class AdvancedImage extends Image {
 		link.addParameter(ImageDisplayWindow.PARAMETER_BORDER, BORDER);
 		link.addParameter(ImageDisplayWindow.PARAMETER_TITLE, title );
 		link.addParameter(ImageDisplayWindow.PARAMETER_INFO, title );
-		link.setWindowToOpen(ImageDisplayWindow.class);
+		link.setPublicWindowToOpen(ImageDisplayWindow.class);
 		return link;
 	}
 
