@@ -73,7 +73,7 @@ public Table getTreeTable(IWContext iwc) throws SQLException {
 
 
 
-            if ( showAll ) {
+            if ( this.showAll ) {
 
               images = (ImageEntity[])catagory[i].findRelated( (IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance("com.idega.block.media.data.ImageEntity") );
 
@@ -309,7 +309,7 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
         table.setHeight(row,"25");
 
-        if ( showAll ) {
+        if ( this.showAll ) {
 
           table.add(openLink,pos,row);
 
@@ -325,99 +325,99 @@ public Table writeTable(Vector items,IWContext iwc) throws SQLException {
 
 
 
-      if (openCat.equals(Integer.toString(preCatId)))
+      if (openCat.equals(Integer.toString(preCatId))) {
+				if (spe == 2) {
 
-      if (spe == 2) {
+				  ++row;
 
-        ++row;
-
-        image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(id);
-
-
-
-        StringBuffer extrainfo = new StringBuffer("");
-
-        extrainfo.append("&nbsp;");
-
-        extrainfo.append(image.getName());
+				  image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(id);
 
 
 
-        if ( ( image.getWidth()!=null)&& ( image.getHeight()!=null) ){
+				  StringBuffer extrainfo = new StringBuffer("");
 
-          extrainfo.append(" (");
+				  extrainfo.append("&nbsp;");
 
-          extrainfo.append(image.getWidth());
-
-          extrainfo.append("*");
-
-          extrainfo.append(image.getHeight());
-
-          extrainfo.append(")");
-
-        }
+				  extrainfo.append(image.getName());
 
 
 
-        text = new Text(extrainfo.toString());
+				  if ( ( image.getWidth()!=null)&& ( image.getHeight()!=null) ){
 
-        text.setFontSize(1);
+				    extrainfo.append(" (");
 
+				    extrainfo.append(image.getWidth());
 
+				    extrainfo.append("*");
 
-        idLink = new Link(text);
+				    extrainfo.append(image.getHeight());
 
-        idLink.setFontColor("#FFFFFF");
+				    extrainfo.append(")");
 
-        idLink.setMarkupAttribute("style","text-decoration:none");
-
-        if (preCatId != -1 ) {
-
-          idLink.addParameter("open_catagory_id",""+preCatId);
-
-        }
+				  }
 
 
 
-        table.mergeCells(pos,row,depth,row);
+				  text = new Text(extrainfo.toString());
 
-        table.setHeight(row,"21");
-
-
-
-        if ( pos == 2 ) {
-
-          table.setBackgroundImage(pos,row,new Image(color1));
-
-          table.setBackgroundImage(1,row,new Image(color1));
-
-          table.addText("",1,row);
-
-        }
-
-        else {
-
-          table.setBackgroundImage(pos,row,new Image(color2));
-
-          for ( int a = 1; a < pos; a++ ) {
-
-            table.setBackgroundImage(a,row,new Image(color2));
-
-            table.addText("",a,row);
-
-          }
-
-        }
+				  text.setFontSize(1);
 
 
 
-          idLink.addParameter("image_id",""+id);
+				  idLink = new Link(text);
+
+				  idLink.setFontColor("#FFFFFF");
+
+				  idLink.setMarkupAttribute("style","text-decoration:none");
+
+				  if (preCatId != -1 ) {
+
+				    idLink.addParameter("open_catagory_id",""+preCatId);
+
+				  }
 
 
 
-        table.add(idLink, pos,row);
+				  table.mergeCells(pos,row,depth,row);
 
-      }
+				  table.setHeight(row,"21");
+
+
+
+				  if ( pos == 2 ) {
+
+				    table.setBackgroundImage(pos,row,new Image(color1));
+
+				    table.setBackgroundImage(1,row,new Image(color1));
+
+				    table.addText("",1,row);
+
+				  }
+
+				  else {
+
+				    table.setBackgroundImage(pos,row,new Image(color2));
+
+				    for ( int a = 1; a < pos; a++ ) {
+
+				      table.setBackgroundImage(a,row,new Image(color2));
+
+				      table.addText("",a,row);
+
+				    }
+
+				  }
+
+
+
+				    idLink.addParameter("image_id",""+id);
+
+
+
+				  table.add(idLink, pos,row);
+
+				}
+			}
 
 
 
@@ -593,7 +593,9 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  if(refresh) refresh(iwc);
+  if(this.refresh) {
+		refresh(iwc);
+	}
 
 
 

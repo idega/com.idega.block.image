@@ -51,7 +51,7 @@ import com.idega.presentation.ui.IFrame;
       IWBundle iwb = getBundle(iwc);
       checkParameterName(iwc);
    
-      getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(sessImageParameter) );
+      getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(this.sessImageParameter) );
 
 
       //add("block.media");
@@ -76,26 +76,28 @@ import com.idega.presentation.ui.IFrame;
       Frame.add(ifList,1,1);
       Frame.add(ifViewer,2,1);
       Frame.setBorderColor("#00FF00");
-      if(includeLinks)
-        Frame.add(getLinkTable(iwb),2,2);
+      if(this.includeLinks) {
+				Frame.add(getLinkTable(iwb),2,2);
+			}
 
       add(Frame);
     }
 
     public void setSessionSaveParameterName(String prmName){
-      sessImageParameter = prmName;
+      this.sessImageParameter = prmName;
     }
     public String getSessionSaveParameterName(){
-      return sessImageParameter;
+      return this.sessImageParameter;
     }
      public void checkParameterName(IWContext iwc){
        if(iwc.getParameter(sessImageParameterName)!=null){
-        sessImageParameter = iwc.getParameter(sessImageParameterName);
+        this.sessImageParameter = iwc.getParameter(sessImageParameterName);
         //add(sessImageParameter);
-        iwc.setSessionAttribute(sessImageParameterName,sessImageParameter);
+        iwc.setSessionAttribute(sessImageParameterName,this.sessImageParameter);
       }
-      else if(iwc.getSessionAttribute(sessImageParameterName)!=null)
-        sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+      else if(iwc.getSessionAttribute(sessImageParameterName)!=null) {
+				this.sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+			}
     }
 
     public PresentationObject getLinkTable(IWBundle iwb){

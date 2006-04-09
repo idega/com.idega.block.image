@@ -131,7 +131,7 @@ private String language = "IS";
 
 public ImageViewer(){
 
-  continueRefresh.addParameter("refresh","true");
+  this.continueRefresh.addParameter("refresh","true");
 
 }
 
@@ -161,7 +161,7 @@ public ImageViewer(ImageEntity[] entities){
 
 public void main(IWContext iwc)throws Exception{
 
-  isAdmin= iwc.hasEditPermission(this);
+  this.isAdmin= iwc.hasEditPermission(this);
 
 
 
@@ -179,7 +179,7 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  percent = iwc.getParameter("percent");
+  this.percent = iwc.getParameter("percent");
 
   String sEdit = iwc.getParameter("edit");
 
@@ -193,7 +193,9 @@ public void main(IWContext iwc)throws Exception{
 
   String imageSessionName = iwc.getParameter("im_image_session_name");
 
-  if( imageSessionName!=null ) callingModule = imageSessionName;
+  if( imageSessionName!=null ) {
+		this.callingModule = imageSessionName;
+	}
 
 
 
@@ -207,11 +209,13 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  if( refreshing!=null ) refresh = true;
+  if( refreshing!=null ) {
+		this.refresh = true;
+	}
 
 
 
-  if( refresh ){
+  if( this.refresh ){
 
     refresh(iwc);
 
@@ -221,35 +225,35 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  view = new Image("/pics/jmodules/image/"+language+"/view.gif","View all sizes");
+  this.view = new Image("/pics/jmodules/image/"+this.language+"/view.gif","View all sizes");
 
-  delete = new Image("/pics/jmodules/image/"+language+"/delete.gif","Delete this image");
+  this.delete = new Image("/pics/jmodules/image/"+this.language+"/delete.gif","Delete this image");
 
-  use = new Image("/pics/jmodules/image/"+language+"/use.gif","Use this image");
+  this.use = new Image("/pics/jmodules/image/"+this.language+"/use.gif","Use this image");
 
-  copy = new Image("/pics/jmodules/image/"+language+"/copy.gif","Copy this image");
+  this.copy = new Image("/pics/jmodules/image/"+this.language+"/copy.gif","Copy this image");
 
-  cut = new Image("/pics/jmodules/image/"+language+"/cut.gif","Cut this image");
+  this.cut = new Image("/pics/jmodules/image/"+this.language+"/cut.gif","Cut this image");
 
-  edit = new Image("/pics/jmodules/image/"+language+"/edit.gif","Edit this image");
+  this.edit = new Image("/pics/jmodules/image/"+this.language+"/edit.gif","Edit this image");
 
-  text = new Image("/pics/jmodules/image/"+language+"/text.gif","Edit this image's text");
-
-
-
-  save = new Image("/pics/jmodules/image/"+language+"/save.gif","Save");
-
-  newImage = new Image("/pics/jmodules/image/"+language+"/newimage.gif","Upload a new image");
-
-  newCategory = new Image("/pics/jmodules/image/"+language+"/newcategory.gif","Edit categories");
-
-  reload = new Image("/pics/jmodules/image/"+language+"/refresh.gif","Refresh everything");
+  this.text = new Image("/pics/jmodules/image/"+this.language+"/text.gif","Edit this image's text");
 
 
 
+  this.save = new Image("/pics/jmodules/image/"+this.language+"/save.gif","Save");
+
+  this.newImage = new Image("/pics/jmodules/image/"+this.language+"/newimage.gif","Upload a new image");
+
+  this.newCategory = new Image("/pics/jmodules/image/"+this.language+"/newcategory.gif","Edit categories");
+
+  this.reload = new Image("/pics/jmodules/image/"+this.language+"/refresh.gif","Refresh everything");
 
 
-  Link uploadLink = new Link(newImage);
+
+
+
+  Link uploadLink = new Link(this.newImage);
 
   uploadLink.setWindowToOpen(EditWindow.class);
 
@@ -259,7 +263,7 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  Link reloads = new Link(reload);
+  Link reloads = new Link(this.reload);
 
   reloads.addParameter("refresh","true");
 
@@ -267,7 +271,7 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  Link categories = new Link(newCategory);
+  Link categories = new Link(this.newCategory);
 
   categories.addParameter("action","editcategories");
 
@@ -275,49 +279,49 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  if(isAdmin && (sEdit==null) ) {
+  if(this.isAdmin && (sEdit==null) ) {
 
-    outerTable.add(reloads,2,1);
+    this.outerTable.add(reloads,2,1);
 
-    outerTable.add(uploadLink,2,1);
+    this.outerTable.add(uploadLink,2,1);
 
-    outerTable.add(categories,2,1);
+    this.outerTable.add(categories,2,1);
 
   }
 
 
 
-  outerTable.setColor(1,1,headerFooterColor);
+  this.outerTable.setColor(1,1,this.headerFooterColor);
 
-  outerTable.setColor(1,3,headerFooterColor);
+  this.outerTable.setColor(1,3,this.headerFooterColor);
 
-  outerTable.setAlignment(1,1,"left");
+  this.outerTable.setAlignment(1,1,"left");
 
-  outerTable.setAlignment(2,1,"right");
+  this.outerTable.setAlignment(2,1,"right");
 
-  outerTable.setAlignment(1,2,"center");
+  this.outerTable.setAlignment(1,2,"center");
 
-  outerTable.setAlignment(1,3,"center");
+  this.outerTable.setAlignment(1,3,"center");
 
-  outerTable.setVerticalAlignment(1,2,"top");
+  this.outerTable.setVerticalAlignment(1,2,"top");
 
-  outerTable.setVerticalAlignment(1,1,"top");
+  this.outerTable.setVerticalAlignment(1,1,"top");
 
-  outerTable.mergeCells(1,2,2,2);
+  this.outerTable.mergeCells(1,2,2,2);
 
-  outerTable.mergeCells(1,3,2,3);
+  this.outerTable.mergeCells(1,3,2,3);
 
-  outerTable.setWidth(outerTableWidth);
+  this.outerTable.setWidth(this.outerTableWidth);
 
-  outerTable.setHeight(outerTableHeight);
+  this.outerTable.setHeight(this.outerTableHeight);
 
-  outerTable.setHeight(1,1,"23");
+  this.outerTable.setHeight(1,1,"23");
 
-  outerTable.setHeight(1,3,"23");
+  this.outerTable.setHeight(1,3,"23");
 
-  outerTable.setCellpadding(2);
+  this.outerTable.setCellpadding(2);
 
-  outerTable.setCellspacing(0);
+  this.outerTable.setCellspacing(0);
 
 
 
@@ -337,9 +341,13 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  if ( headerBackgroundImage != null ) outerTable.setBackgroundImage(1,1,headerBackgroundImage);
+  if ( this.headerBackgroundImage != null ) {
+		this.outerTable.setBackgroundImage(1,1,this.headerBackgroundImage);
+	}
 
-  if ( footerBackgroundImage != null ) outerTable.setBackgroundImage(1,3,footerBackgroundImage);
+  if ( this.footerBackgroundImage != null ) {
+		this.outerTable.setBackgroundImage(1,3,this.footerBackgroundImage);
+	}
 
 
 
@@ -349,7 +357,7 @@ public void main(IWContext iwc)throws Exception{
 
       getEditor(iwc);
 
-      outerTable.setColor(1,2,"FFFFFF");
+      this.outerTable.setColor(1,2,"FFFFFF");
 
     }
 
@@ -369,7 +377,7 @@ public void main(IWContext iwc)throws Exception{
 
         if( action == null){
 
-          limitImageWidth = false;
+          this.limitImageWidth = false;
 
           image[0] = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(Integer.parseInt(imageId));
 
@@ -377,13 +385,13 @@ public void main(IWContext iwc)throws Exception{
 
           imageName.setBold();
 
-          imageName.setFontColor(textColor);
+          imageName.setFontColor(this.textColor);
 
           imageName.setFontSize(3);
 
-          outerTable.add(imageName,1,1);
+          this.outerTable.add(imageName,1,1);
 
-          outerTable.add(displayImage(image[0]),1,2);
+          this.outerTable.add(displayImage(image[0]),1,2);
 
           Text backtext = new Text("Bakka <<");
 
@@ -391,13 +399,13 @@ public void main(IWContext iwc)throws Exception{
 
           Link backLink = new Link(backtext);
 
-          backLink.setFontColor(textColor);
+          backLink.setFontColor(this.textColor);
 
           backLink.setAsBackLink();
 
           links.add(backLink,1,1);
 
-          outerTable.add(links,1,3);
+          this.outerTable.add(links,1,3);
 
         }
 
@@ -435,7 +443,7 @@ public void main(IWContext iwc)throws Exception{
 
           else if( "use".equalsIgnoreCase(action) ){
 
-            iwc.setSessionAttribute(callingModule,imageId);
+            iwc.setSessionAttribute(this.callingModule,imageId);
 
             //debug is this legal? check if opened from another page or not. close or not
 
@@ -449,17 +457,17 @@ public void main(IWContext iwc)throws Exception{
 
           else if( "editcategories".equalsIgnoreCase(action) ){
 
-            outerTable.add(getCategoryEditForm(),1,2);
+            this.outerTable.add(getCategoryEditForm(),1,2);
 
             Text flokkar = new Text("Myndaflokkar");
 
             flokkar.setBold();
 
-            flokkar.setFontColor(textColor);
+            flokkar.setFontColor(this.textColor);
 
             flokkar.setFontSize(3);
 
-            outerTable.add(flokkar,1,1);
+            this.outerTable.add(flokkar,1,1);
 
           }
 
@@ -485,17 +493,19 @@ public void main(IWContext iwc)throws Exception{
 
             texti.setFontSize(3);
 
-            outerTable.add(texti,1,2);
+            this.outerTable.add(texti,1,2);
 
-            outerTable.add(Text.getBreak(),1,2);
+            this.outerTable.add(Text.getBreak(),1,2);
 
-            outerTable.add(Text.getBreak(),1,2);
+            this.outerTable.add(Text.getBreak(),1,2);
 
-            continueRefresh.setFontColor("#FFFFFF");
+            this.continueRefresh.setFontColor("#FFFFFF");
 
-            continueRefresh.setFontSize(3);
+            this.continueRefresh.setFontSize(3);
 
-            if( !("editcategories".equalsIgnoreCase(action)) ) outerTable.add(continueRefresh,1,2);
+            if( !("editcategories".equalsIgnoreCase(action)) ) {
+							this.outerTable.add(this.continueRefresh,1,2);
+						}
 
           }
 
@@ -521,13 +531,15 @@ public void main(IWContext iwc)throws Exception{
 
       try{
 
-        if ( (imageCategoryId != null) || (entities!=null) ){
+        if ( (imageCategoryId != null) || (this.entities!=null) ){
 
           ImageEntity[] imageEntity;
 
           String sFirst = iwc.getParameter("iv_first");//browsing from this image
 
-          if (sFirst!=null) ifirst = Integer.parseInt(sFirst);
+          if (sFirst!=null) {
+						this.ifirst = Integer.parseInt(sFirst);
+					}
 
 
 
@@ -553,17 +565,18 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-            categoryId = Integer.parseInt(imageCategoryId);
+            this.categoryId = Integer.parseInt(imageCategoryId);
 
-            ICFileCategory category = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(categoryId);
+            ICFileCategory category = ((com.idega.core.file.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).findByPrimaryKeyLegacy(this.categoryId);
 
             if ( inApplication == null ){
 
               imageEntity = (ImageEntity[]) category.findRelated(((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).createLegacy());
 
             }
-
-            else imageEntity = inApplication;
+						else {
+							imageEntity = inApplication;
+						}
 
 
 
@@ -581,25 +594,25 @@ public void main(IWContext iwc)throws Exception{
 
             categoryName.setBold();
 
-            categoryName.setFontColor(textColor);
+            categoryName.setFontColor(this.textColor);
 
             categoryName.setFontSize(3);
 
-            outerTable.add(categoryName,1,1);
+            this.outerTable.add(categoryName,1,1);
 
 
 
-            if( limitNumberOfImages ) {
+            if( this.limitNumberOfImages ) {
 
 
 
-              int too = (ifirst+numberOfDisplayedImages);
+              int too = (this.ifirst+this.numberOfDisplayedImages);
 
-              if( numberOfDisplayedImages >= imageEntity.length){
+              if( this.numberOfDisplayedImages >= imageEntity.length){
 
                  too = imageEntity.length;
 
-                 numberOfDisplayedImages = too;
+                 this.numberOfDisplayedImages = too;
 
               }
 
@@ -611,23 +624,25 @@ public void main(IWContext iwc)throws Exception{
 
               Link back = new Link(leftText);
 
-              back.setFontColor(textColor);
+              back.setFontColor(this.textColor);
 
-              int iback = ifirst-numberOfDisplayedImages;
+              int iback = this.ifirst-this.numberOfDisplayedImages;
 
-              if( iback<0 ) ifirst = 0;
+              if( iback<0 ) {
+								this.ifirst = 0;
+							}
 
-              back.addParameter("iv_first",ifirst);
+              back.addParameter("iv_first",this.ifirst);
 
               back.addParameter("image_catagory_id",category.getID());
 
-              String middle = (ifirst+1)+" til "+too+" af "+(imageEntity.length);
+              String middle = (this.ifirst+1)+" til "+too+" af "+(imageEntity.length);
 
               Text middleText = new Text(middle);
 
               middleText.setBold();
 
-              middleText.setFontColor(textColor);
+              middleText.setFontColor(this.textColor);
 
 
 
@@ -641,13 +656,15 @@ public void main(IWContext iwc)throws Exception{
 
               Link forward = new Link(rightText);
 
-              forward.setFontColor(textColor);
+              forward.setFontColor(this.textColor);
 
 
 
-              int inext = ifirst+numberOfDisplayedImages;
+              int inext = this.ifirst+this.numberOfDisplayedImages;
 
-              if( inext > (imageEntity.length-1)) inext = (imageEntity.length-1)-numberOfDisplayedImages;
+              if( inext > (imageEntity.length-1)) {
+								inext = (imageEntity.length-1)-this.numberOfDisplayedImages;
+							}
 
 
 
@@ -677,19 +694,19 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-            Text header = new Text(headerText);
+            Text header = new Text(this.headerText);
 
             header.setBold();
 
-            header.setFontColor(textColor);
+            header.setFontColor(this.textColor);
 
             header.setFontSize(3);
 
-            outerTable.add(header,1,1);
+            this.outerTable.add(header,1,1);
 
-            limitNumberOfImages=false;
+            this.limitNumberOfImages=false;
 
-            imageEntity=entities;
+            imageEntity=this.entities;
 
 
 
@@ -697,9 +714,9 @@ public void main(IWContext iwc)throws Exception{
 
           }
 
-          outerTable.add(links,1,3);
+          this.outerTable.add(links,1,3);
 
-          outerTable.add(displayCatagory(imageEntity),1,2);
+          this.outerTable.add(displayCatagory(imageEntity),1,2);
 
         }
 
@@ -723,7 +740,7 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-  add(outerTable);
+  add(this.outerTable);
 
 }
 
@@ -755,9 +772,9 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
 
 
-  if(limitImageWidth) {
+  if(this.limitImageWidth) {
 
-    theImage.setMaxImageWidth(maxImageWidth);
+    theImage.setMaxImageWidth(this.maxImageWidth);
 
   }
 
@@ -767,41 +784,41 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
 
 
-  if(isAdmin) {
+  if(this.isAdmin) {
 
     //String adminPage="/image/imageadmin.jsp";//change to same page and object
 
     Table editTable = new Table(5,1);
 
-    Link imageEdit = new Link(delete);
+    Link imageEdit = new Link(this.delete);
 
     imageEdit.addParameter("image_id",imageId);
 
     imageEdit.addParameter("action","delete");
 
-    Link imageEdit2 = new Link(cut);
+    Link imageEdit2 = new Link(this.cut);
 
     imageEdit2.addParameter("image_id",imageId);
 
     imageEdit2.addParameter("action","cut");
 
-    Link imageEdit3 = new Link(copy);
+    Link imageEdit3 = new Link(this.copy);
 
     imageEdit3.addParameter("image_id",imageId);
 
     imageEdit3.addParameter("action","copy");
 
-    Link imageEdit4 = new Link(view);
+    Link imageEdit4 = new Link(this.view);
 
     imageEdit4.addParameter("image_id",imageId);
 
-    Link imageEdit5 = new Link(use);
+    Link imageEdit5 = new Link(this.use);
 
     imageEdit5.addParameter("image_id",imageId);
 
     imageEdit5.addParameter("action","use");
 
-    Link imageEdit6 = new Link(edit);
+    Link imageEdit6 = new Link(this.edit);
 
     imageEdit6.addParameter("image_id",imageId);
 
@@ -809,7 +826,7 @@ private Table displayImage( ImageEntity image ) throws SQLException
 
 
 
-    Link imageEdit7 = new Link(text);
+    Link imageEdit7 = new Link(this.text);
 
     imageEdit7.setWindowToOpen(EditWindow.class);
 
@@ -862,17 +879,22 @@ private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException 
 
 
 
-  if( limitNumberOfImages ) k = numberOfDisplayedImages;
+  if( this.limitNumberOfImages ) {
+		k = this.numberOfDisplayedImages;
+	}
+	else {
+		k = imageEntity.length;
+	}
 
-  else k = imageEntity.length;
 
 
+  int heigth = k/this.iNumberInRow;
 
-  int heigth = k/iNumberInRow;
+  if( k%this.iNumberInRow!=0 ) {
+		heigth++;
+	}
 
-  if( k%iNumberInRow!=0 ) heigth++;
-
-  Table table = new Table(iNumberInRow,heigth);
+  Table table = new Table(this.iNumberInRow,heigth);
 
   table.setWidth("100%");
 
@@ -880,15 +902,15 @@ private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException 
 
   try {
 
-    if (ifirst < 0 ) {
+    if (this.ifirst < 0 ) {
 
-      ifirst = (-1)*ifirst;
+      this.ifirst = (-1)*this.ifirst;
 
     }
 
-    else if (ifirst > (imageEntity.length -1)) {
+    else if (this.ifirst > (imageEntity.length -1)) {
 
-        ifirst = (imageEntity.length -1);
+        this.ifirst = (imageEntity.length -1);
 
     }
 
@@ -906,15 +928,15 @@ private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException 
 
   int x=0;
 
-  for (int i = ifirst ; (x<k) && ( i < imageEntity.length ) ; i++ ) {
+  for (int i = this.ifirst ; (x<k) && ( i < imageEntity.length ) ; i++ ) {
 
-    table.setVerticalAlignment((x%iNumberInRow)+1,(x/iNumberInRow)+1,"bottom");
+    table.setVerticalAlignment((x%this.iNumberInRow)+1,(x/this.iNumberInRow)+1,"bottom");
 
-    table.setAlignment((x%iNumberInRow)+1,(x/iNumberInRow)+1,"center");
+    table.setAlignment((x%this.iNumberInRow)+1,(x/this.iNumberInRow)+1,"center");
 
-    table.setWidth((x%iNumberInRow)+1,Integer.toString(100/iNumberInRow)+"%");
+    table.setWidth((x%this.iNumberInRow)+1,Integer.toString(100/this.iNumberInRow)+"%");
 
-    table.add( displayImage(imageEntity[i]) ,(x%iNumberInRow)+1,(x/iNumberInRow)+1);
+    table.add( displayImage(imageEntity[i]) ,(x%this.iNumberInRow)+1,(x/this.iNumberInRow)+1);
 
     x++;
 
@@ -948,7 +970,7 @@ public Text getTextProxy(){
 
 
 
-return textProxy;
+return this.textProxy;
 
 }
 
@@ -964,7 +986,7 @@ public void setTextProxy(Text textProxy){
 
 public Text setTextAttributes( Text realText ){
 
-  Text tempText = (Text) textProxy.clone();
+  Text tempText = (Text) this.textProxy.clone();
 
   tempText.setText( realText.getText() );
 
@@ -980,7 +1002,9 @@ public void setNumberOfDisplayedImages(int numberOfDisplayedImages){
 
   this.limitNumberOfImages = true;
 
-  if( numberOfDisplayedImages<0 ) numberOfDisplayedImages = (-1)*numberOfDisplayedImages;
+  if( numberOfDisplayedImages<0 ) {
+		numberOfDisplayedImages = (-1)*numberOfDisplayedImages;
+	}
 
   this.numberOfDisplayedImages = numberOfDisplayedImages;
 
@@ -1104,7 +1128,7 @@ public void setTableHeight(String height){
 
 public void setViewImage(String imageName){
 
-  view = new Image(imageName);
+  this.view = new Image(imageName);
 
 }
 
@@ -1112,7 +1136,7 @@ public void setViewImage(String imageName){
 
 public void setDeleteImage(String imageName){
 
-  delete = new Image(imageName);
+  this.delete = new Image(imageName);
 
 }
 
@@ -1120,7 +1144,7 @@ public void setDeleteImage(String imageName){
 
 public void setUseImage(String imageName){
 
-  use = new Image(imageName);
+  this.use = new Image(imageName);
 
 }
 
@@ -1128,7 +1152,7 @@ public void setUseImage(String imageName){
 
 public void setCopyImage(String imageName){
 
-  copy = new Image(imageName);
+  this.copy = new Image(imageName);
 
 }
 
@@ -1136,7 +1160,7 @@ public void setCopyImage(String imageName){
 
 public void setCutImage(String imageName){
 
-  cut = new Image(imageName);
+  this.cut = new Image(imageName);
 
 }
 
@@ -1426,17 +1450,21 @@ private Form getEditorForm(ImageHandler handler, String ImageId, IWContext iwc) 
 
     String percent2  = iwc.getParameter("percent");
 
-    if (percent2!=null) percent = TextSoap.findAndReplace(percent2,"%","");
+    if (percent2!=null) {
+			this.percent = TextSoap.findAndReplace(percent2,"%","");
+		}
 
     int iPercent = 100;
 
-    if(percent==null) percent = "100";
+    if(this.percent==null) {
+			this.percent = "100";
+		}
 
 
 
     try{
 
-      iPercent = Integer.parseInt(percent);
+      iPercent = Integer.parseInt(this.percent);
 
     }
 
@@ -1444,7 +1472,7 @@ private Form getEditorForm(ImageHandler handler, String ImageId, IWContext iwc) 
 
       iPercent = 100;
 
-      percent = "100";
+      this.percent = "100";
 
     }
 
@@ -1466,7 +1494,7 @@ private Form getEditorForm(ImageHandler handler, String ImageId, IWContext iwc) 
 
 
 
-    TextInput percentInput = new TextInput("percent",percent+"%");
+    TextInput percentInput = new TextInput("percent",this.percent+"%");
 
     percentInput.setSize(4);
 
@@ -1516,7 +1544,7 @@ private void setAction(Link theLink, String action){
 
   theLink.addParameter("edit","true");
 
-  theLink.addParameter("percent",percent);
+  theLink.addParameter("percent",this.percent);
 
 }
 
@@ -1638,7 +1666,7 @@ private Form getCategoryEditForm(){
 
 
 
-  SubmitButton savebutton = new SubmitButton(save);
+  SubmitButton savebutton = new SubmitButton(this.save);
 
   //Link cancelLink = new Link(cancel);
 
@@ -1696,7 +1724,7 @@ private void getEditor(IWContext iwc) throws Exception{
 
       ImageBusiness.handleEvent(iwc,handler);
 
-      outerTable.add(getEditorForm(handler,ImageId,iwc),1,2);
+      this.outerTable.add(getEditorForm(handler,ImageId,iwc),1,2);
 
     }
 
@@ -1706,7 +1734,7 @@ private void getEditor(IWContext iwc) throws Exception{
 
       ImageBusiness.handleEvent(iwc,handler);
 
-      outerTable.add(getEditorForm(handler,ImageId,iwc),1,2);
+      this.outerTable.add(getEditorForm(handler,ImageId,iwc),1,2);
 
     }
 
@@ -1724,7 +1752,7 @@ private void getEditor(IWContext iwc) throws Exception{
 
       ImageBusiness.handleEvent(iwc,handler);
 
-      outerTable.add(getEditorForm(handler,ImageId,iwc),1,2);
+      this.outerTable.add(getEditorForm(handler,ImageId,iwc),1,2);
 
     }
 

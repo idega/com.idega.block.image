@@ -34,18 +34,19 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
     }
 
     public void setSessionSaveParameterName(String prmName){
-      sessImageParameter = prmName;
+      this.sessImageParameter = prmName;
     }
     public String getSessionSaveParameterName(){
-      return sessImageParameter;
+      return this.sessImageParameter;
     }
      public void checkParameterName(IWContext iwc){
        if(iwc.getParameter(sessImageParameterName)!=null){
-        sessImageParameter = iwc.getParameter(sessImageParameterName);
-        iwc.setSessionAttribute(sessImageParameterName,sessImageParameter);
+        this.sessImageParameter = iwc.getParameter(sessImageParameterName);
+        iwc.setSessionAttribute(sessImageParameterName,this.sessImageParameter);
       }
-      else if(iwc.getSessionAttribute(sessImageParameterName)!=null)
-        sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+      else if(iwc.getSessionAttribute(sessImageParameterName)!=null) {
+				this.sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+			}
     }
 
     public void main(IWContext iwc){
@@ -67,8 +68,9 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
         if(iwc.getParameter("save")!=null){
           save(iwc);
         }
-        else
-          add(getMultiForm(iwc));
+				else {
+					add(getMultiForm(iwc));
+				}
       }
 
 
@@ -119,7 +121,7 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
       }
       if(ip !=null){
         int i = ImageBusiness.SaveImage(ip);
-        iwc.setSessionAttribute(sessImageParameter,String.valueOf(i));
+        iwc.setSessionAttribute(this.sessImageParameter,String.valueOf(i));
         try {
           add(new Image(i));
         }

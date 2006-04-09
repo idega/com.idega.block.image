@@ -139,9 +139,9 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
  
   
   public ImageEncoderBean() {
-    extensionTypes = initializeFileExtension();
-    mimeTypes = initializeMimeTypes();    
-    mimeTypesForJai = initializeJaiMimeValues();
+    this.extensionTypes = initializeFileExtension();
+    this.mimeTypes = initializeMimeTypes();    
+    this.mimeTypesForJai = initializeJaiMimeValues();
   } 
 
 
@@ -208,12 +208,15 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
     String formatedInputMime = getFormatedMimeType(mimeType);
   
     if (ImageEncoder.UNKNOWN_MIME_TYPE.equals(resultMime) ||
-        ImageEncoder.UNKNOWN_MIME_TYPE.equals(formatedInputMime))
-      throw new IOException("Mime type "+ mimeType + " is not recognized");
-    else if (GIF.equals(formatedInputMime)) 
-      handleSpecialMimeTypGIF(input, output, width, heigth);
-    else
-      handleMimeType(formatedInputMime, resultMime, input, output, width, heigth); 
+        ImageEncoder.UNKNOWN_MIME_TYPE.equals(formatedInputMime)) {
+			throw new IOException("Mime type "+ mimeType + " is not recognized");
+		}
+		else if (GIF.equals(formatedInputMime)) {
+			handleSpecialMimeTypGIF(input, output, width, heigth);
+		}
+		else {
+			handleMimeType(formatedInputMime, resultMime, input, output, width, heigth);
+		} 
     output.flush();
   }
  
@@ -230,8 +233,9 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
 
   public boolean isInputTypeEqualToResultType(String mimeType)  {
     String formatedMimeType = getFormatedMimeType(mimeType);
-    if (UNKNOWN_MIME_TYPE.equals(formatedMimeType))
-      return false;
+    if (UNKNOWN_MIME_TYPE.equals(formatedMimeType)) {
+			return false;
+		}
     return formatedMimeType.equals(getResultMimeTypeForInputMimeType(mimeType));
   }
 
@@ -245,24 +249,27 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
 
     
   private String getValueForMimeType(String mimeType, int index, String errorString) {
-    String[] shortArray = (String[]) mimeTypes.get(mimeType);
-    if (shortArray == null)
-      return errorString;
+    String[] shortArray = (String[]) this.mimeTypes.get(mimeType);
+    if (shortArray == null) {
+			return errorString;
+		}
     return shortArray[index];  
   }        
     
   private String getExtensionForFormatedMimeType(String formatedMimeType) {
-    String extension = (String)extensionTypes.get(formatedMimeType);  
-    if (extension == null)
-      return ImageEncoder.INVALID_FILE_EXTENSION;    
+    String extension = (String)this.extensionTypes.get(formatedMimeType);  
+    if (extension == null) {
+			return ImageEncoder.INVALID_FILE_EXTENSION;
+		}    
     return extension;
   }
 
 
   private String getMimeTypeForJai(String formatedMimeType) {
-    String result = (String) mimeTypesForJai.get(formatedMimeType);
-    if (result == null)
-      return ImageEncoder.UNKNOWN_MIME_TYPE;
+    String result = (String) this.mimeTypesForJai.get(formatedMimeType);
+    if (result == null) {
+			return ImageEncoder.UNKNOWN_MIME_TYPE;
+		}
     return result;
   }
 
@@ -310,8 +317,9 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
     com.sun.media.jai.codec.ImageEncoder imageEncoder;
     
     String jaiMimeType = getMimeTypeForJai(outputMimeType);
-    if (ImageEncoder.UNKNOWN_MIME_TYPE.equals(jaiMimeType))
-      throw new IOException("Mime type "+ outputMimeType + " not recognized by JAI");
+    if (ImageEncoder.UNKNOWN_MIME_TYPE.equals(jaiMimeType)) {
+			throw new IOException("Mime type "+ outputMimeType + " not recognized by JAI");
+		}
 
     imageEncoder = ImageCodec.createImageEncoder(jaiMimeType , output, encodeParam);
     imageEncoder.encode(modifiedImage);
@@ -393,22 +401,24 @@ public class ImageEncoderBean extends IBOServiceBean implements com.idega.block.
       para = new JPEGEncodeParam();
 
     // if the image is converted to jpeg set quality      
-      if (! JPEG.equals(inputMimeType)) 
-        ((JPEGEncodeParam) para).setQuality(JPEG_QUALITY);
+      if (! JPEG.equals(inputMimeType)) {
+				((JPEGEncodeParam) para).setQuality(JPEG_QUALITY);
+			}
       
     }
     
-    else if (PNG.equals(outputMimeType))
-      para = PNGEncodeParam.getDefaultEncodeParam(image);
-        
-    else if (PNM.equals(outputMimeType))
-      para = new PNMEncodeParam();
-    
-    else if (TIFF.equals(outputMimeType))
-      para = new TIFFEncodeParam();
-    
-    else if (BMP.equals(outputMimeType)) 
-      para = new BMPEncodeParam();
+    else if (PNG.equals(outputMimeType)) {
+			para = PNGEncodeParam.getDefaultEncodeParam(image);
+		}
+		else if (PNM.equals(outputMimeType)) {
+			para = new PNMEncodeParam();
+		}
+		else if (TIFF.equals(outputMimeType)) {
+			para = new TIFFEncodeParam();
+		}
+		else if (BMP.equals(outputMimeType)) {
+			para = new BMPEncodeParam();
+		}
   
     return para;
   }

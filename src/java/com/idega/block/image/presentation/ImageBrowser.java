@@ -110,15 +110,17 @@ private ImageViewer viewer = new ImageViewer();
 
     String refreshing = (String) iwc.getSessionAttribute("refresh");
 
-    if( refreshing!=null ) refresh = true;
+    if( refreshing!=null ) {
+			this.refresh = true;
+		}
 
 
 
-    if ( refresh ) {
+    if ( this.refresh ) {
 
-      tree.refresh();
+      this.tree.refresh();
 
-      viewer.refresh();
+      this.viewer.refresh();
 
       iwc.removeSessionAttribute("refresh");
 
@@ -206,23 +208,23 @@ private ImageViewer viewer = new ImageViewer();
 
 
 
-      tree.setWidth(treeWidth);
+      this.tree.setWidth(this.treeWidth);
 
-      tree.setShowAll(showAll);
+      this.tree.setShowAll(this.showAll);
 
 
 
     if ( mode.equalsIgnoreCase("image") || (edit!=null)  || (action!=null) ) {
 
-      viewer.limitImageWidth(true);
+      this.viewer.limitImageWidth(true);
 
-      viewer.setNumberOfDisplayedImages(9);
+      this.viewer.setNumberOfDisplayedImages(9);
 
-      viewer.setHeaderFooterColor("#336699");
+      this.viewer.setHeaderFooterColor("#336699");
 
-      viewer.setFooterBackgroundImage("/pics/jmodules/image/myndamodule/footer/foottiler.gif");
+      this.viewer.setFooterBackgroundImage("/pics/jmodules/image/myndamodule/footer/foottiler.gif");
 
-      imageTable.add(viewer,3,1);
+      imageTable.add(this.viewer,3,1);
 
       //debug because of refresh problem could solve with an invisible businenss class that is added first
 

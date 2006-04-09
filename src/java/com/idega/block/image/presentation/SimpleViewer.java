@@ -67,12 +67,13 @@ public class SimpleViewer extends PresentationObjectContainer{
     }
 
     public void checkParameterName(IWContext iwc){
-     if(iwc.getParameter(sessImageParameterName)!=null){
-      sessImageParameter = iwc.getParameter(sessImageParameterName);
-      iwc.setSessionAttribute(sessImageParameterName,sessImageParameter);
+     if(iwc.getParameter(this.sessImageParameterName)!=null){
+      this.sessImageParameter = iwc.getParameter(this.sessImageParameterName);
+      iwc.setSessionAttribute(this.sessImageParameterName,this.sessImageParameter);
     }
-    else if(iwc.getSessionAttribute(sessImageParameterName)!=null)
-      sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+    else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null) {
+			this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
+		}
     }
 
     public boolean deleteImage(String sImageId){
@@ -129,7 +130,7 @@ public class SimpleViewer extends PresentationObjectContainer{
             T.setAlignment(1,2,"center");
             Link confirm = new Link("delete");
             confirm.addParameter(prmAction ,actConfirmDelete);
-            confirm.addParameter(sessImageParameter,sImageId);
+            confirm.addParameter(this.sessImageParameter,sImageId);
             T.add(confirm,1,3);
             //T.add(new Image(id),1,2);
             //add(T);
@@ -141,34 +142,37 @@ public class SimpleViewer extends PresentationObjectContainer{
     }
 
     public String getImageId(IWContext iwc){
-      if(iwc.getParameter(sessImageParameterName)!=null)
-       sessImageParameter = iwc.getParameter(sessImageParameterName);
-      else if(iwc.getSessionAttribute(sessImageParameterName)!=null){
-        sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+      if(iwc.getParameter(this.sessImageParameterName)!=null) {
+				this.sessImageParameter = iwc.getParameter(this.sessImageParameterName);
+			}
+			else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null){
+        this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
       }
       //add(sessImageParameter);
       String s = null;
-      if(iwc.getParameter(sessImageParameter)!=null){
-        s = iwc.getParameter(sessImageParameter);
-        iwc.setSessionAttribute(sessImageParameter+"_2",s);
+      if(iwc.getParameter(this.sessImageParameter)!=null){
+        s = iwc.getParameter(this.sessImageParameter);
+        iwc.setSessionAttribute(this.sessImageParameter+"_2",s);
       }
-      else if(iwc.getSessionAttribute(sessImageParameter)!=null)
-        s = (String) iwc.getSessionAttribute(sessImageParameter);
-      else if(iwc.getSessionAttribute(sessImageParameter+"_2")!=null)
-        s = (String) iwc.getSessionAttribute(sessImageParameter+"_2");
+      else if(iwc.getSessionAttribute(this.sessImageParameter)!=null) {
+				s = (String) iwc.getSessionAttribute(this.sessImageParameter);
+			}
+			else if(iwc.getSessionAttribute(this.sessImageParameter+"_2")!=null) {
+				s = (String) iwc.getSessionAttribute(this.sessImageParameter+"_2");
+			}
       //add(" " +s);
       return s;
     }
 
 
     public void removeFromSession(IWContext iwc){
-      iwc.removeSessionAttribute(sessImageParameter);
+      iwc.removeSessionAttribute(this.sessImageParameter);
     }
 
     public void saveImageId(IWContext iwc,String sImageId){
       //System.err.println("SimpleViewer : "+sessImageParameter+" "+ sImageId);
-      iwc.setSessionAttribute(sessImageParameter,sImageId);
-      iwc.removeSessionAttribute(sessImageParameter+"_2");
+      iwc.setSessionAttribute(this.sessImageParameter,sImageId);
+      iwc.removeSessionAttribute(this.sessImageParameter+"_2");
       //iwc.setSessionAttribute(sessImageParameter+"2",sImageId);
     }
 

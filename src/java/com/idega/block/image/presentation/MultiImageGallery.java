@@ -85,7 +85,7 @@ public class MultiImageGallery extends Block {
 
 	public void main(IWContext iwc) throws Exception {
 		Layer multiImageGalleryLayer = new Layer(Layer.DIV);
-		multiImageGalleryLayer.setStyleClass(styleClassName);
+		multiImageGalleryLayer.setStyleClass(this.styleClassName);
 		add(multiImageGalleryLayer);
 
 		addGalleries(iwc, multiImageGalleryLayer);
@@ -102,12 +102,12 @@ public class MultiImageGallery extends Block {
 			gallery.setColumns(1);
 			gallery.setRows(1);
 			gallery.setToShowButtons(false);
-			gallery.setScaleProportional(scaleProportional);
-			gallery.setHeightOfImages(heightOfImages);
-			gallery.setWidthOfImages(widthOfImages);
-			gallery.setEnlargeImage(enlargeImage);
-			gallery.setViewerPage(viewerPage);
-			gallery.setPopUpOriginalImageOnClick(popUpOriginalImageOnClick);
+			gallery.setScaleProportional(this.scaleProportional);
+			gallery.setHeightOfImages(this.heightOfImages);
+			gallery.setWidthOfImages(this.widthOfImages);
+			gallery.setEnlargeImage(this.enlargeImage);
+			gallery.setViewerPage(this.viewerPage);
+			gallery.setPopUpOriginalImageOnClick(this.popUpOriginalImageOnClick);
 			
 			multiImageGalleryLayer.add(gallery);
 		}
@@ -121,7 +121,7 @@ public class MultiImageGallery extends Block {
 	 * @throws Exception
 	 */
 	protected List getFolders(IWContext iwc) throws Exception {
-		return getImageProvider(iwc).getContainedFolders(resourceFilePath);
+		return getImageProvider(iwc).getContainedFolders(this.resourceFilePath);
 	}
 
 	protected ImageProvider getImageProvider(IWContext iwc) throws RemoteException {

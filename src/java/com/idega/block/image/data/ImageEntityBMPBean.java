@@ -135,9 +135,12 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 
     ImageEntity parent = (ImageEntity) this.getParentNode();
 
-    if( parent == null ) return -1;
-
-    else return parent.getNodeID();
+    if( parent == null ) {
+			return -1;
+		}
+		else {
+			return parent.getNodeID();
+		}
 
   }
 

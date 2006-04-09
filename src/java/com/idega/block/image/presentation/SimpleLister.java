@@ -48,7 +48,7 @@ public class SimpleLister extends PresentationObjectContainer {
         T.add(formatText("Pictures"),1,row++);
         for (int i = 0; i < len; i++) {
           ImageEntity image = (ImageEntity) L.get(i);
-          T.add(getImageLink(image,target,prmImageView),1,row);
+          T.add(getImageLink(image,this.target,this.prmImageView),1,row);
           /**@todo: localize
            *
            */
@@ -65,19 +65,20 @@ public class SimpleLister extends PresentationObjectContainer {
     }
 
   public void checkParameterName(IWContext iwc){
-     if(iwc.getParameter(sessImageParameterName)!=null){
-      sessImageParameter = iwc.getParameter(sessImageParameterName);
-      iwc.setSessionAttribute(sessImageParameterName,sessImageParameter);
+     if(iwc.getParameter(this.sessImageParameterName)!=null){
+      this.sessImageParameter = iwc.getParameter(this.sessImageParameterName);
+      iwc.setSessionAttribute(this.sessImageParameterName,this.sessImageParameter);
     }
-    else if(iwc.getSessionAttribute(sessImageParameterName)!=null)
-      sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+    else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null) {
+			this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
+		}
   }
 
   public Link getImageLink(ImageEntity image,String target,String prm){
     Link L = new Link(formatText(image.getName()),SimpleViewer.class);
     L.setFontSize(1);
     L.setOnClick("top.iImageId = "+image.getPrimaryKey().toString() );
-    L.addParameter(sessImageParameter,image.getPrimaryKey().toString());
+    L.addParameter(this.sessImageParameter,image.getPrimaryKey().toString());
     L.setTarget(target);
     return L;
   }

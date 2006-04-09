@@ -23,11 +23,13 @@ private boolean showAll = true;
 
     ImageBrowser browser = new ImageBrowser();
 
-    browser.setShowAll(showAll);
+    browser.setShowAll(this.showAll);
 
 
 
-    if( (sRefresh!=null) || refresh || (refreshing!=null) ) browser.refresh();
+    if( (sRefresh!=null) || this.refresh || (refreshing!=null) ) {
+			browser.refresh();
+		}
 
 
 

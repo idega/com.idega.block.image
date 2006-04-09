@@ -26,18 +26,19 @@ import com.idega.presentation.IWContext;
     }
 
     public String getBundleIdentifier(){
-      return IW_BUNDLE_IDENTIFIER;
+      return this.IW_BUNDLE_IDENTIFIER;
     }
 
     public void  main(IWContext iwc) throws Exception{
-      iwb = getBundle(iwc);
+      this.iwb = getBundle(iwc);
       SimpleChooser SC = new SimpleChooser();
       SC.setToIncludeLinks(false);
       add(SC);
-      addHeaderObject(SC.getLinkTable(iwb));
+      addHeaderObject(SC.getLinkTable(this.iwb));
       setTitle("Image Chooser Block Media");
       addTitle("Image Chooser" );
-      if(iwc.getParameter(prmReloadParent )!= null)
-        setParentToReload();
+      if(iwc.getParameter(prmReloadParent )!= null) {
+				setParentToReload();
+			}
     }
 }

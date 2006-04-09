@@ -55,21 +55,21 @@ public class EditWindow extends Window {
   }
 
   public void main(IWContext iwc)throws Exception{
-    setBackgroundColor(windowColor);
+    setBackgroundColor(this.windowColor);
     setAllMargins(0);
     setTitle("IdegaWeb : Image");
 
-    save = new Image("/pics/jmodules/image/"+language+"/save.gif");
-    cancel = new Image("/pics/jmodules/image/"+language+"/cancel.gif");
+    this.save = new Image("/pics/jmodules/image/"+this.language+"/save.gif");
+    this.cancel = new Image("/pics/jmodules/image/"+this.language+"/cancel.gif");
 
 
-    outerTable.setCellpadding(0);
-    outerTable.setCellspacing(0);
-    outerTable.setWidth("100%");
-    outerTable.setHeight("100%");
-    outerTable.setHeight(1,1,"25");
-    outerTable.setBackgroundImage(1,1,new Image("/pics/jmodules/image/myndamodule/topp/topptiler.gif"));
-    outerTable.setVerticalAlignment(1,2,"top");
+    this.outerTable.setCellpadding(0);
+    this.outerTable.setCellspacing(0);
+    this.outerTable.setWidth("100%");
+    this.outerTable.setHeight("100%");
+    this.outerTable.setHeight(1,1,"25");
+    this.outerTable.setBackgroundImage(1,1,new Image("/pics/jmodules/image/myndamodule/topp/topptiler.gif"));
+    this.outerTable.setVerticalAlignment(1,2,"top");
 
     String action = iwc.getParameter("action");
     if("save_text".equalsIgnoreCase(action)){
@@ -77,10 +77,10 @@ public class EditWindow extends Window {
        close(iwc);
     }
     else if("upload".equalsIgnoreCase(action)){
-      outerTable.add(getUploadForm(iwc),1,2);
+      this.outerTable.add(getUploadForm(iwc),1,2);
     }
     else if("text".equalsIgnoreCase(action)){
-      outerTable.add(getEditForm(iwc),1,2);
+      this.outerTable.add(getEditForm(iwc),1,2);
     }
     else if("save_image".equalsIgnoreCase(action)){
       ImageBusiness.handleSaveImage(iwc);
@@ -89,7 +89,7 @@ public class EditWindow extends Window {
     else{
       uploadAndSaveToCategory(iwc);
     }
-    add(outerTable);
+    add(this.outerTable);
 
   }
 
@@ -128,8 +128,12 @@ public class EditWindow extends Window {
     String imageText = image.getDescription();
     String imageLink = image.getLink();
 
-    if( imageText==null ) imageText = "";
-    if( imageLink==null ) imageLink= "";
+    if( imageText==null ) {
+			imageText = "";
+		}
+    if( imageLink==null ) {
+			imageLink= "";
+		}
 
 
     TextArea input = new TextArea("image_text",imageText);
@@ -154,8 +158,8 @@ public class EditWindow extends Window {
     table.add(input,1,2);
     table.add(texti2,1,3);
     table.add(input2,1,4);
-    table.add(new SubmitButton(cancel,"submit","cancel"),1,5);
-    table.add(new SubmitButton(save),1,5);
+    table.add(new SubmitButton(this.cancel,"submit","cancel"),1,5);
+    table.add(new SubmitButton(this.save),1,5);
 
 
     form.add(table);
@@ -243,18 +247,18 @@ public class EditWindow extends Window {
 
       toolbar.add(flokkur,1,1);
       toolbar.add(category,2,1);
-      toolbar.add(new SubmitButton(cancel,"submit","cancel"),5,1);
-      toolbar.add(new SubmitButton(save),6,1);
+      toolbar.add(new SubmitButton(this.cancel,"submit","cancel"),5,1);
+      toolbar.add(new SubmitButton(this.save),6,1);
 
       upload.add(toolbar);
       upload.add(imagefile,1,3);
 
       form.addAtBeginning(upload);
-      outerTable.add(form,1,2);
+      this.outerTable.add(form,1,2);
 
     }
     catch(Exception e){
-    outerTable.add("Error while uploading!",1,2);
+    this.outerTable.add("Error while uploading!",1,2);
     e.printStackTrace(System.err);
     }
   }

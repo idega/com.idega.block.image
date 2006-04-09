@@ -22,18 +22,18 @@ public class AdvancedImageWrapper extends PresentationObject  {
   }  
   
   public void main(IWContext iwc) {
-    image.main(iwc);
+    this.image.main(iwc);
   }
   
   public void _main(IWContext iwc) throws Exception {
-    image._main(iwc);
+    this.image._main(iwc);
   }
   
   public void print(IWContext iwc)throws Exception{
-    image.printOriginalImage(iwc);
+    this.image.printOriginalImage(iwc);
   }
   
   public void _print(IWContext iwc) throws Exception {
-    image._print(iwc);
+    this.image._print(iwc);
   }
 }

@@ -158,7 +158,7 @@ private void getImageFromFile(String fileName) throws Exception{
 
   if ( f.exists() && f.canRead() ) {
 
-    originalImage = JAI.create("fileload", fileName);
+    this.originalImage = JAI.create("fileload", fileName);
 
   } else {
 
@@ -212,23 +212,23 @@ private void getImageFromDatabase() throws Exception{
 
 
 
-  modifiedsize = inputStream.available();
+  this.modifiedsize = inputStream.available();
 
-  System.out.print("IMAGE_HANDLER: modifiedsize"+modifiedsize);
+  System.out.print("IMAGE_HANDLER: modifiedsize"+this.modifiedsize);
 
   BufferedInputStream bufStream = getBufferedInputStream(inputStream);
 
   MemoryCacheSeekableStream memStream = getMemoryCacheSeekableStream(bufStream);
 
-  originalImage = getPlanarImageFromStream(memStream);
+  this.originalImage = getPlanarImageFromStream(memStream);
 
   System.out.println("ImageHandler: After JAI.create!");
 
 
 
-  setWidth(originalImage.getWidth());
+  setWidth(this.originalImage.getWidth());
 
-  setHeight(originalImage.getHeight());
+  setHeight(this.originalImage.getHeight());
 
 
 
@@ -264,17 +264,17 @@ private void getImageFromDatabase() throws Exception{
 
 protected void updateOriginalInfo() throws SQLException{
 
-  ImageEntity imageInfo = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy( imageId );
+  ImageEntity imageInfo = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy( this.imageId );
 
   setMimeType( imageInfo.getMimeType() );
 
   setImageName( imageInfo.getName() );
 
-  imageInfo.setWidth(Integer.toString(originalImage.getWidth()));
+  imageInfo.setWidth(Integer.toString(this.originalImage.getWidth()));
 
-  imageInfo.setHeight(Integer.toString(originalImage.getHeight()));
+  imageInfo.setHeight(Integer.toString(this.originalImage.getHeight()));
 
-  imageInfo.setFileSize(modifiedsize);
+  imageInfo.setFileSize(this.modifiedsize);
 
  // imageInfo.update();
 
@@ -526,9 +526,12 @@ private void setModifiedImageAttributes(){
 
     if ( tempWidth == -1 ){//missing width
 
-      if ( keepProportions() ) setModifiedWidth( (getWidth()*tempHeight)/getHeight());
-
-      else setModifiedWidth( getWidth() );
+      if ( keepProportions() ) {
+				setModifiedWidth( (getWidth()*tempHeight)/getHeight());
+			}
+			else {
+				setModifiedWidth( getWidth() );
+			}
 
       setModifiedHeight( tempHeight );
 
@@ -536,9 +539,12 @@ private void setModifiedImageAttributes(){
 
     if( tempHeight == -1 ){//missing height
 
-      if ( keepProportions() ) setModifiedHeight( (getHeight()*tempWidth)/getWidth() );
-
-      else setModifiedHeight( getHeight() );
+      if ( keepProportions() ) {
+				setModifiedHeight( (getHeight()*tempWidth)/getWidth() );
+			}
+			else {
+				setModifiedHeight( getHeight() );
+			}
 
       setModifiedWidth( tempWidth );
 
@@ -634,11 +640,11 @@ protected void setModifiedImage( PlanarImage modifiedImage ){
 
 protected void setModifiedImageAsOriginal(){
 
-  this.setModifiedImage(originalImage);
+  this.setModifiedImage(this.originalImage);
 
-  setModifiedWidth(originalImage.getWidth());
+  setModifiedWidth(this.originalImage.getWidth());
 
-  setModifiedHeight(originalImage.getHeight());
+  setModifiedHeight(this.originalImage.getHeight());
 
 }
 
@@ -684,17 +690,19 @@ protected float getQuality(){
 
 public com.idega.presentation.Image getModifiedImageAsImageObject(IWContext iwc) throws Exception{
 
-  if( modifiedImageCounter != 1 ) ImageBusiness.deleteImageFile(modifiedImageURL);
+  if( this.modifiedImageCounter != 1 ) {
+		ImageBusiness.deleteImageFile(this.modifiedImageURL);
+	}
 
   String seperator = System.getProperty("file.separator");
 
-  modifiedImageURL = iwc.getServletContext().getRealPath(seperator)+seperator+"pics"+seperator+iwc.getSession().getId()+"ModifiedImagetemp"+modifiedImageCounter+".jpg";
+  this.modifiedImageURL = iwc.getServletContext().getRealPath(seperator)+seperator+"pics"+seperator+iwc.getSession().getId()+"ModifiedImagetemp"+this.modifiedImageCounter+".jpg";
 
-  writeModifiedImageToFile(modifiedImageURL);//temporary storage
+  writeModifiedImageToFile(this.modifiedImageURL);//temporary storage
 
-  com.idega.presentation.Image image = new com.idega.presentation.Image(modifiedImageURL,getImageName(),getModifiedWidth(),getModifiedHeight());
+  com.idega.presentation.Image image = new com.idega.presentation.Image(this.modifiedImageURL,getImageName(),getModifiedWidth(),getModifiedHeight());
 
-  modifiedImageCounter++;
+  this.modifiedImageCounter++;
 
 return image;
 
@@ -708,19 +716,20 @@ return image;
 
 protected void writeModifiedImageToDatabase(boolean update) throws Exception{
 
-  writeModifiedImageToFile(modifiedImageURL);//temporary storage
+  writeModifiedImageToFile(this.modifiedImageURL);//temporary storage
 
-  InputStream input = new FileInputStream(modifiedImageURL);
+  InputStream input = new FileInputStream(this.modifiedImageURL);
 
-  modifiedsize = input.available();
+  this.modifiedsize = input.available();
 
   if(update){
 
     ImageSave.saveImageToDataBase(getImageId(),-1,input,getmimeType(),getImageName(),Integer.toString(getModifiedWidth()),Integer.toString(getModifiedHeight()), false);
 
   }
-
-  else ImageSave.saveImageToDataBase(-1,getImageId(),input,getmimeType(),getImageName(),Integer.toString(getModifiedWidth()),Integer.toString(getModifiedHeight()), true);
+	else {
+		ImageSave.saveImageToDataBase(-1,getImageId(),input,getmimeType(),getImageName(),Integer.toString(getModifiedWidth()),Integer.toString(getModifiedHeight()), true);
+	}
 
 }
 
@@ -730,7 +739,9 @@ protected void writeModifiedImageToFile(String filename) throws Exception{
 
 
 
-  if ( filename.equalsIgnoreCase("")) filename = getImageName();
+  if ( filename.equalsIgnoreCase("")) {
+		filename = getImageName();
+	}
 
   OutputStream output = new FileOutputStream(filename);
 
@@ -762,9 +773,12 @@ protected void writeModifiedImageToFile(String filename) throws Exception{
 
 
 
-  if ( modified != null) imageEncoder.encode( getModifiedImage() );
-
-  else System.out.println("getModifiedImage() returned null!");
+  if ( modified != null) {
+		imageEncoder.encode( getModifiedImage() );
+	}
+	else {
+		System.out.println("getModifiedImage() returned null!");
+	}
 
 
 
@@ -948,7 +962,7 @@ protected static PlanarImage convertColorToGray(PlanarImage src, int brightness)
 
      pb.addSource(source);
 
-     pb.add(kernel);
+     pb.add(this.kernel);
 
      PlanarImage target = JAI.create("convolve", pb, null);
 
@@ -1116,7 +1130,7 @@ protected static PlanarImage convertColorToGray(PlanarImage src, int brightness)
 
         normalize(data);
 
-        kernel = new KernelJAI(3, 3, data);
+        this.kernel = new KernelJAI(3, 3, data);
 
 }
 
@@ -1124,25 +1138,25 @@ protected static PlanarImage convertColorToGray(PlanarImage src, int brightness)
 
 private void normalize(float[] data) {
 
-   sum = 0.0F;
+   this.sum = 0.0F;
 
     for ( int i = 0; i < data.length; i++ ) {
 
-       sum += data[i];
+       this.sum += data[i];
 
    }
 
-    if ( sum > 0.0F ) {
+    if ( this.sum > 0.0F ) {
 
        for ( int i = 0; i < data.length; i++ ) {
 
-          data[i] = data[i] / sum;
+          data[i] = data[i] / this.sum;
 
        }
 
    } else {
 
-       sum = 1.0F;
+       this.sum = 1.0F;
 
    }
 

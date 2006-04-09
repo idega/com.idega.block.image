@@ -63,13 +63,15 @@ public class ImageDisplayWindow extends Window {
 		// set size
 		setSize(iwc);
 		// get title
-		if (iwc.isParameterSet(PARAMETER_TITLE))
+		if (iwc.isParameterSet(PARAMETER_TITLE)) {
 			title = iwc.getParameter(PARAMETER_TITLE);
+		}
 		// set title
 		setTitle(title);
 		// get info text
-		if (iwc.isParameterSet(PARAMETER_INFO))
+		if (iwc.isParameterSet(PARAMETER_INFO)) {
 			info = iwc.getParameter(PARAMETER_INFO);
+		}
 		// get image
 		int id = -1;
 		if (iwc.isParameterSet(PARAMETER_IMAGE_URI)) {
@@ -118,8 +120,9 @@ public class ImageDisplayWindow extends Window {
 		if (image != null) {
 			table.add(image, 1, 1);
 			// add info if necessary
-			if (info != null)
+			if (info != null) {
 				table.add(info, 1, 2);
+			}
 		}
 		Table buttonTable = new Table(3, 1);
 		buttonTable.setWidth(Table.HUNDRED_PERCENT);
@@ -168,10 +171,11 @@ public class ImageDisplayWindow extends Window {
 	private void setSize(IWContext iwc) {
 		int width;
 		int height;
-		border = 0;
+		this.border = 0;
 		Script script = this.getAssociatedScript();
-		if (script == null)
+		if (script == null) {
 			script = new Script();
+		}
 		// script.addFunction("resizeWindow", "function
 		// resizeWindow(width,height) { if (parseInt(navigator.appVersion)>3 &&
 		// navigator.appName==\"Netscape\") { top.outerWidth=width;
@@ -181,12 +185,12 @@ public class ImageDisplayWindow extends Window {
 		if (iwc.isParameterSet(PARAMETER_BORDER)) {
 			String borderString = iwc.getParameter(PARAMETER_BORDER);
 			try {
-				border = Integer.parseInt(borderString);
+				this.border = Integer.parseInt(borderString);
 			}
 			catch (NumberFormatException ex) {
 				System.err.println("Parameter " + PARAMETER_BORDER + " was not an integer. Message was: "
 						+ ex.getMessage());
-				border = 0;
+				this.border = 0;
 			}
 		}
 		if (iwc.isParameterSet(PARAMETER_WIDTH) && iwc.isParameterSet(PARAMETER_HEIGHT)) {
@@ -196,8 +200,8 @@ public class ImageDisplayWindow extends Window {
 				width = Integer.parseInt(widthString);
 				height = Integer.parseInt(heightString);
 				if (height > 0 && width > 0) {
-					height += border;
-					width += border;
+					height += this.border;
+					width += this.border;
 					this.setOnLoad("resizeWindow(" + width + "," + height + ")");
 				}
 			}
@@ -243,7 +247,7 @@ public class ImageDisplayWindow extends Window {
 	private Link getImageLink(IWContext iwc, String displayString, AdvancedImage image, int imageNumber)
 			throws Exception {
 		Link link = new Link(displayString);
-		link.addParameter(ImageDisplayWindow.PARAMETER_BORDER, border);
+		link.addParameter(ImageDisplayWindow.PARAMETER_BORDER, this.border);
 		link.addParameter(ImageDisplayWindow.PARAMETER_WIDTH, image.getWidthOfOriginalImage());
 		link.addParameter(ImageDisplayWindow.PARAMETER_HEIGHT, image.getHeightOfOriginalImage());
 		link.addParameter(ImageDisplayWindow.PARAMETER_IMAGE_NUMBER, imageNumber);

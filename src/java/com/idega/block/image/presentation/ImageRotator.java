@@ -118,34 +118,34 @@ public class ImageRotator extends PresentationObjectTransitional {
 	}
 
 	public String getAlt() {
-		return iAlt;
+		return this.iAlt;
 	}
 
 	public void setAlt(String alt) {
-		iAlt = alt;
+		this.iAlt = alt;
 	}
 
 	public String getFolderURI() {
-		return iFolderURI;
+		return this.iFolderURI;
 	}
 
 	public void setFolderURI(String folderURI) {
-		iFolderURI = folderURI;
+		this.iFolderURI = folderURI;
 	}
 
 	public String getHeight() {
-		return iHeight;
+		return this.iHeight;
 	}
 
 	public void setHeight(String height) {
-		iHeight = height;
+		this.iHeight = height;
 	}
 
 	public String getWidth() {
-		return iWidth;
+		return this.iWidth;
 	}
 
 	public void setWidth(String width) {
-		iWidth = width;
+		this.iWidth = width;
 	}
 }

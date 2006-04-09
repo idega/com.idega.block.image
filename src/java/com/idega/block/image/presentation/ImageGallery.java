@@ -115,13 +115,15 @@ public class ImageGallery extends Block {
 	}
 
 	public void setRows(int rows) {
-		if (rows > 0)
+		if (rows > 0) {
 			this.rows = rows;
+		}
 	}
 
 	public void setColumns(int columns) {
-		if (columns > 0)
+		if (columns > 0) {
 			this.columns = columns;
+		}
 	}
 
 	public void setShowNameOfImage(boolean showNameOfImage) {
@@ -155,19 +157,19 @@ public class ImageGallery extends Block {
 
 	public void main(IWContext iwc) throws Exception {
 		Layer imageGalleryLayer = new Layer(Layer.DIV);
-		imageGalleryLayer.setStyleClass(styleClassName);
+		imageGalleryLayer.setStyleClass(this.styleClassName);
 		add(imageGalleryLayer);
 
-		switch (_posButton) {
+		switch (this._posButton) {
 			case BUTTON_POSITON_TOP:
-				if(showButtons){
+				if(this.showButtons){
 					addButtons(iwc, imageGalleryLayer);
 				}
 				addImages(iwc, imageGalleryLayer);
 				break;
 			default:
 				addImages(iwc, imageGalleryLayer);
-				if(showButtons){
+				if(this.showButtons){
 					addButtons(iwc, imageGalleryLayer);
 				}
 				break;
@@ -175,11 +177,11 @@ public class ImageGallery extends Block {
 		
 		
 		/* backward compatability */
-		if (heightOfGallery != null) {
-			imageGalleryLayer.setHeight(heightOfGallery);
+		if (this.heightOfGallery != null) {
+			imageGalleryLayer.setHeight(this.heightOfGallery);
 		}
-		if (widthOfGallery != null) {
-			imageGalleryLayer.setWidth(widthOfGallery);
+		if (this.widthOfGallery != null) {
+			imageGalleryLayer.setWidth(this.widthOfGallery);
 		}
 		/* backward compatability ends */
 	}
@@ -199,7 +201,7 @@ public class ImageGallery extends Block {
 		Text name = new Text("");
 		name.setStyle(STYLE_CLASS_GALLERY_IMAGE_TITLE);
 		Layer imageLayer = new Layer(Layer.DIV);
-		imageLayer.setStyleClass(imageStyleClassName);
+		imageLayer.setStyleClass(this.imageStyleClassName);
 		AdvancedImage image;
 		int count = -1;
 		Iterator iterator = images.iterator();
@@ -210,25 +212,25 @@ public class ImageGallery extends Block {
 			Layer imageAndTextLayer = (Layer) imageLayer.clone();
 			imageGalleryLayer.add(imageAndTextLayer);
 			// todo have a set method
-			if (widthOfImages > 0) {
-				image.setHeight(heightOfImages);
+			if (this.widthOfImages > 0) {
+				image.setHeight(this.heightOfImages);
 			}
-			if (heightOfImages > 0) {
-				image.setWidth(widthOfImages);
+			if (this.heightOfImages > 0) {
+				image.setWidth(this.widthOfImages);
 			}
 			// set properties of advanced image
-			image.setEnlargeProperty(enlargeImage);
-			image.setScaleProportional(scaleProportional);
+			image.setEnlargeProperty(this.enlargeImage);
+			image.setScaleProportional(this.scaleProportional);
 			// deprecated backward compatability stuff
-			if (paddingOfImage > 0) {
-				image.setPadding(paddingOfImage);
+			if (this.paddingOfImage > 0) {
+				image.setPadding(this.paddingOfImage);
 			}
 			PresentationObject pres = null;
 			// check if a link to a viewer page should be added
-			if (viewerPage != null) {
+			if (this.viewerPage != null) {
 				Link link;
 				link = new Link(image);
-				link.setPage(viewerPage);
+				link.setPage(this.viewerPage);
 				String resourceURI = image.getResourceURI();
 				if (resourceURI != null) {
 					link.addParameter(Image.PARAM_IMAGE_URL, resourceURI);
@@ -238,7 +240,7 @@ public class ImageGallery extends Block {
 				}
 				pres = link;
 			}
-			else if (popUpOriginalImageOnClick) {
+			else if (this.popUpOriginalImageOnClick) {
 				// check if a link to a popup window should be added
 				image.setLinkToDisplayWindow(imageNumber);
 				pres = image;
@@ -248,7 +250,7 @@ public class ImageGallery extends Block {
 				pres = image;
 			}
 			imageNumber++;
-			int xPositionImage = ((count % columns) + 1);
+			int xPositionImage = ((count % this.columns) + 1);
 			// why clone?
 			PresentationObject tmp = (PresentationObject) pres.clone();
 			imageAndTextLayer.add(tmp);
@@ -257,10 +259,10 @@ public class ImageGallery extends Block {
 			if (xPositionImage == 1) {
 				imageAndTextLayer.setStyleClass(STYLE_CLASS_FIRST_IN_ROW);
 			}
-			else if (xPositionImage == columns) {
+			else if (xPositionImage == this.columns) {
 				imageAndTextLayer.setStyleClass(STYLE_CLASS_LAST_IN_ROW);
 			}
-			if (showNameOfImage) {
+			if (this.showNameOfImage) {
 				Text theName = (Text) name.clone();
 				theName.setText(image.getName());
 				Layer spacer = new Layer(Layer.DIV);
@@ -287,11 +289,11 @@ public class ImageGallery extends Block {
 		
 		
 		int limit = 0;
-		if (imageFileFolder != null) {
-			limit = getImageProvider(iwc).getImageCount(imageFileFolder);
+		if (this.imageFileFolder != null) {
+			limit = getImageProvider(iwc).getImageCount(this.imageFileFolder);
 		}
-		else if (resourceFilePath != null) {
-			limit = getImageProvider(iwc).getImageCount(resourceFilePath);
+		else if (this.resourceFilePath != null) {
+			limit = getImageProvider(iwc).getImageCount(this.resourceFilePath);
 		}
 		int startPosition = restoreNumberOfFirstImage(iwc);
 		int endPosition;
@@ -348,22 +350,26 @@ public class ImageGallery extends Block {
 		int newStartPosition;
 		int limit = 0;
 		
-		if (imageFileFolder != null) {
-			limit = getImageProvider(iwc).getImageCount(imageFileFolder);
+		if (this.imageFileFolder != null) {
+			limit = getImageProvider(iwc).getImageCount(this.imageFileFolder);
 		}
-		else if (resourceFilePath != null) {
-			limit = getImageProvider(iwc).getImageCount(resourceFilePath);
+		else if (this.resourceFilePath != null) {
+			limit = getImageProvider(iwc).getImageCount(this.resourceFilePath);
 		}		
 		
 		String parameterValue = getParameter(iwc);
-		if (STRING_FORWARD_BUTTON.equals(parameterValue))
+		if (STRING_FORWARD_BUTTON.equals(parameterValue)) {
 			newStartPosition = startPosition + step;
-		else if (STRING_BACK_BUTTON.equals(parameterValue))
+		}
+		else if (STRING_BACK_BUTTON.equals(parameterValue)) {
 			newStartPosition = startPosition - step;
-		else
+		}
+		else {
 			newStartPosition = startPosition;
-		if (newStartPosition > 0 && newStartPosition <= limit)
+		}
+		if (newStartPosition > 0 && newStartPosition <= limit) {
 			startPosition = newStartPosition;
+		}
 		storeNumberOfFirstImage(iwc, startPosition);
 		return getImagesFromTo(iwc, startPosition, startPosition + getNumberOfImagePlaces() - 1);
 	}
@@ -371,11 +377,11 @@ public class ImageGallery extends Block {
 	protected ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException,
 			java.sql.SQLException {
 		//todo optimize calls to imageprovider, this is almost the same as before
-		if (imageFileFolder != null) {
-			return getImageProvider(iwc).getImagesFromTo(imageFileFolder, startPosition, endPosition);
+		if (this.imageFileFolder != null) {
+			return getImageProvider(iwc).getImagesFromTo(this.imageFileFolder, startPosition, endPosition);
 		}
 		else {
-			return getImageProvider(iwc).getImagesFromTo(resourceFilePath, startPosition, endPosition);
+			return getImageProvider(iwc).getImagesFromTo(this.resourceFilePath, startPosition, endPosition);
 		}
 	}
 
@@ -385,8 +391,9 @@ public class ImageGallery extends Block {
 
 	private int restoreNumberOfFirstImage(IWContext iwc) {
 		Integer i = (Integer) iwc.getSessionAttribute(getObjectInstanceIdentifierString());
-		if (i == null)
+		if (i == null) {
 			return 1;
+		}
 		return i.intValue();
 	}
 
@@ -400,12 +407,12 @@ public class ImageGallery extends Block {
 
 	private int getNumberOfImagesInStep() {
 		int totalSumOfImagesInTable = getNumberOfImagePlaces();
-		return (numberOfImagesPerStep > 0 && numberOfImagesPerStep < totalSumOfImagesInTable) ? numberOfImagesPerStep: totalSumOfImagesInTable;
+		return (this.numberOfImagesPerStep > 0 && this.numberOfImagesPerStep < totalSumOfImagesInTable) ? this.numberOfImagesPerStep: totalSumOfImagesInTable;
 	}
 
 	protected int getNumberOfImagePlaces() {
 		// how many images can I show in the current table?
-		return rows * columns;
+		return this.rows * this.columns;
 	}
 	
 	public void setToShowButtons(boolean showButtons){
@@ -416,7 +423,7 @@ public class ImageGallery extends Block {
 	 * @return
 	 */
 	public int getButtonPosition() {
-		return _posButton;
+		return this._posButton;
 	}
 
 	/**
@@ -424,7 +431,7 @@ public class ImageGallery extends Block {
 	 *            one of the BOTTON_POSITION_... constants
 	 */
 	public void setButtonPosition(int posConst) {
-		_posButton = posConst;
+		this._posButton = posConst;
 	}
 
 	/**
@@ -432,7 +439,7 @@ public class ImageGallery extends Block {
 	 * @deprecated use CSS styles instead
 	 */
 	public void setHeightOfGallery(String height) {
-		heightOfGallery = height;
+		this.heightOfGallery = height;
 	}
 
 	/**
@@ -440,6 +447,6 @@ public class ImageGallery extends Block {
 	 * @deprecated use CSS styles instead
 	 */
 	public void setWidthOfGallery(String width) {
-		widthOfGallery = width;
+		this.widthOfGallery = width;
 	}
 }

@@ -27,16 +27,16 @@ import com.idega.presentation.IWContext;
     }
 
     public String getBundleIdentifier(){
-      return IW_BUNDLE_IDENTIFIER;
+      return this.IW_BUNDLE_IDENTIFIER;
     }
 
     public void  main(IWContext iwc) throws Exception{
-      iwb = getBundle(iwc);
-      iwrb = iwb.getResourceBundle(iwc);
+      this.iwb = getBundle(iwc);
+      this.iwrb = this.iwb.getResourceBundle(iwc);
 
       ImageAttributeSetter SC = new ImageAttributeSetter();
       add(SC);
-      String title = iwrb.getLocalizedString("im_image_attributes","Image Attributes");
+      String title = this.iwrb.getLocalizedString("im_image_attributes","Image Attributes");
       setTitle(title);
       addTitle(title);
 

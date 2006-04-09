@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessJob.java,v 1.3 2006/02/22 20:58:16 laddi Exp $
+ * $Id: ImageProcessJob.java,v 1.4 2006/04/09 11:38:40 laddi Exp $
  * Created on Sep 30, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,21 +12,21 @@ package com.idega.block.image.data;
 
 /**
  * 
- *  Last modified: $Date: 2006/02/22 20:58:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 11:38:40 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ImageProcessJob {
 	
 	private ImageEntity entity;
 	
 	public void setImageEntity(ImageEntity ent) {
-		entity = ent;
+		this.entity = ent;
 	}
 	
 	public ImageEntity getImageEntity() {
-		return entity;
+		return this.entity;
 	}
 	
 	private String loc;
@@ -36,7 +36,7 @@ public class ImageProcessJob {
 	}
 	
 	public String getImageLocation() {
-		return loc;
+		return this.loc;
 	}
 	
 	private boolean locIsUrl = false;
@@ -46,7 +46,7 @@ public class ImageProcessJob {
 	}
 	
 	public boolean getLocationIsURL() {
-		return locIsUrl;
+		return this.locIsUrl;
 	}
 	
 	private String id;
@@ -56,7 +56,7 @@ public class ImageProcessJob {
 	}
 	
 	public String getID() {
-		return id;
+		return this.id;
 	}
 	
 	private String mimeType;
@@ -66,7 +66,7 @@ public class ImageProcessJob {
 	}
 	
 	public String getMimeType() {
-		return mimeType;
+		return this.mimeType;
 	}
 
 	private String name;
@@ -76,13 +76,13 @@ public class ImageProcessJob {
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	private String jobKey;
 	
 	public String getJobKey() {
-		return jobKey;
+		return this.jobKey;
 	}
 	public void setJobKey(String jobKey) {
 		this.jobKey = jobKey;
@@ -100,19 +100,19 @@ public class ImageProcessJob {
 //		this.cachedImage = cachedImage;
 //	}
 	public String getNewExtension() {
-		return newExtension;
+		return this.newExtension;
 	}
 	public void setNewExtension(String newExtension) {
 		this.newExtension = newExtension;
 	}
 	public int getNewHeight() {
-		return newHeight;
+		return this.newHeight;
 	}
 	public void setNewHeight(int newHeight) {
 		this.newHeight = newHeight;
 	}
 	public int getNewWidth() {
-		return newWidth;
+		return this.newWidth;
 	}
 	public void setNewWidth(int newWidth) {
 		this.newWidth = newWidth;

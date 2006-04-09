@@ -60,11 +60,19 @@ public static void handleEvent(IWContext iwc,ImageHandler handler) throws Except
   int imageId = (handler!=null)? handler.getOriginalImageId() : Integer.parseInt(imageId2);
 
   if ( action != null){
-        if ( action.equalsIgnoreCase("Grayscale") ) handler.convertModifiedImageToGrayscale();
-        else if ( action.equalsIgnoreCase("Emboss") ) handler.embossModifiedImage();
-        else if ( action.equalsIgnoreCase("Invert") ) handler.invertModifiedImage();
-        else if ( action.equalsIgnoreCase("Sharpen") ) handler.sharpenModifiedImage();
-        else if( action.equalsIgnoreCase("Save") ){
+        if ( action.equalsIgnoreCase("Grayscale") ) {
+					handler.convertModifiedImageToGrayscale();
+				}
+				else if ( action.equalsIgnoreCase("Emboss") ) {
+					handler.embossModifiedImage();
+				}
+				else if ( action.equalsIgnoreCase("Invert") ) {
+					handler.invertModifiedImage();
+				}
+				else if ( action.equalsIgnoreCase("Sharpen") ) {
+					handler.sharpenModifiedImage();
+				}
+				else if( action.equalsIgnoreCase("Save") ){
           //System.out.println("ImageBusiness: Saving");
           handler.writeModifiedImageToDatabase(true);
         }
@@ -133,14 +141,18 @@ public static void handleEvent(IWContext iwc,ImageHandler handler) throws Except
                   if ( Integer.parseInt(height) != handler.getModifiedHeight() ){
                           handler.setModifiedHeight(Integer.parseInt(height));
                   }
-                  else handler.setModifiedHeight(-1);
+									else {
+										handler.setModifiedHeight(-1);
+									}
           }
 
           if( (width!=null) &&(width!="") && !(width.equalsIgnoreCase("")) ) {
                   if ( Integer.parseInt(width) != handler.getModifiedWidth() ){
                           handler.setModifiedWidth(Integer.parseInt(width));
                   }
-                  else handler.setModifiedWidth(-1);
+									else {
+										handler.setModifiedWidth(-1);
+									}
           }
 
        }
@@ -432,14 +444,20 @@ public static void setImageDimensions(MediaProperties ip) {
       String imageLink = iwc.getParameter("image_link");
       ImageEntity image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(Integer.parseInt(imageId));
 
-      if( imageText!=null ) image.setDescription(imageText);
-      else update = false;
+      if( imageText!=null ) {
+				image.setDescription(imageText);
+			}
+			else {
+				update = false;
+			}
 
       if( (imageLink!=null) && !"".equals(imageLink) ){
         image.setImageLink(imageLink);
         image.setImageLinkOwner("both");
       }
-      else update = false;
+			else {
+				update = false;
+			}
 
       if(update){
         image.store();

@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.13 2006/03/27 14:59:47 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.14 2006/04/09 11:38:40 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -41,11 +41,11 @@ import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/03/27 14:59:47 $ by $Author: eiki $
+ * Last modified: $Date: 2006/04/09 11:38:40 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -83,30 +83,30 @@ public class ImageProcessor implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		isRunning = true;
+		this.isRunning = true;
 		try {
-			while (runThread && !unprocessedImages.isEmpty()) {
+			while (this.runThread && !this.unprocessedImages.isEmpty()) {
 				processImages();
 			}
 		}
 		catch (Exception e) {
-			if (runThread) {
-				runThread = false;
+			if (this.runThread) {
+				this.runThread = false;
 				e.printStackTrace();
 			}
 		}
-		isRunning = false;
+		this.isRunning = false;
 	}
 
 	/**
 	 * Does the actual image processing and saves the images to the database
 	 */
 	private void processImages() {
-		Object[] jobs = unprocessedImages.values().toArray();
+		Object[] jobs = this.unprocessedImages.values().toArray();
 		for (int i = 0; i < jobs.length; i++) {
 			ImageProcessJob job = (ImageProcessJob) jobs[i];
 			//put it in the "busy" list
-			inProcessOrDone.add(job.getJobKey());
+			this.inProcessOrDone.add(job.getJobKey());
 			try {
 				processImage(job);
 			}
@@ -114,7 +114,7 @@ public class ImageProcessor implements Runnable {
 				e.printStackTrace();
 			}
 			//we are done with it wether it worked or not
-			unprocessedImages.remove(job.getJobKey());
+			this.unprocessedImages.remove(job.getJobKey());
 		}
 	}
 
@@ -145,7 +145,7 @@ public class ImageProcessor implements Runnable {
 
 				WebdavExtendedResource resource = new WebdavExtendedResource(new HttpURL(realPathToImage));
 				String parentPath = resource.getParentPath();
-				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(iwac, IWSlideService.class);
+				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(this.iwac, IWSlideService.class);
 				WebdavExtendedResource parentRes = ss.getWebdavExtendedResource(parentPath,ss.getRootUserCredentials());
 				WebdavResource root = ss.getWebdavRootResource(ss.getRootUserCredentials());
 				String complete = parentPath+"/resized";
@@ -227,8 +227,9 @@ public class ImageProcessor implements Runnable {
 		}
 		int pointPosition = imageName.lastIndexOf('.');
 		int length = imageName.length();
-		if ((pointPosition > 0) && pointPosition > (length - 5))
+		if ((pointPosition > 0) && pointPosition > (length - 5)) {
 			imageName = imageName.substring(0, pointPosition);
+		}
 
 		StringBuffer buf = new StringBuffer(parentPath);
 		buf.append("/resized/").
@@ -240,7 +241,7 @@ public class ImageProcessor implements Runnable {
 	private String getRealPathOfModifiedImage(int width, int height, String extension, String imageName,
 			String originalImageID) {
 		String separator = FileUtil.getFileSeparator();
-		StringBuffer path = new StringBuffer(iwac.getIWMainApplication().getApplicationRealPath());
+		StringBuffer path = new StringBuffer(this.iwac.getIWMainApplication().getApplicationRealPath());
 		path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY).append(separator).append(MODIFIED_IMAGES_FOLDER);
 		// check if the folder exists create it if necessary
 		// usually the folder should be already be there.
@@ -257,8 +258,9 @@ public class ImageProcessor implements Runnable {
 		int length = imageName.length();
 		// cut extension (imageName.a imageName.ab imageName.abc but not
 		// imageName.abcd)
-		if ((pointPosition > 0) && pointPosition > (length - 5))
+		if ((pointPosition > 0) && pointPosition > (length - 5)) {
 			imageName = imageName.substring(0, pointPosition);
+		}
 		StringBuffer nameOfImage = new StringBuffer();
 		// add new extension
 		nameOfImage.append(originalImageID);
@@ -267,21 +269,21 @@ public class ImageProcessor implements Runnable {
 	}
 
 	public void start() {
-		runThread = true;
-		if (thread == null || !isRunning) {
+		this.runThread = true;
+		if (this.thread == null || !this.isRunning) {
 			//a new thread must be created here because it was null or 
 			//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
-			thread = new Thread(this, "ImageProcessor Thread");
+			this.thread = new Thread(this, "ImageProcessor Thread");
 			//this is a backround task
-			thread.setPriority(Thread.NORM_PRIORITY);
-			thread.start();
+			this.thread.setPriority(Thread.NORM_PRIORITY);
+			this.thread.start();
 		}
 	}
 
 	public void stop() {
-		if (thread != null) {
-			runThread = false;
-			thread.interrupt();
+		if (this.thread != null) {
+			this.runThread = false;
+			this.thread.interrupt();
 		}
 	}
 
@@ -302,7 +304,7 @@ public class ImageProcessor implements Runnable {
 	}
 
 	private synchronized void addToQueu(ImageProcessJob job) {
-		unprocessedImages.put(job.getJobKey(), job);
+		this.unprocessedImages.put(job.getJobKey(), job);
 	}
 
 	/**
@@ -312,20 +314,20 @@ public class ImageProcessor implements Runnable {
 	 * @return
 	 */
 	private boolean isInProcessOrDone(String key) {
-		return unprocessedImages.containsKey(key) || inProcessOrDone.contains(key);
+		return this.unprocessedImages.containsKey(key) || this.inProcessOrDone.contains(key);
 	}
 
 	/** Destroy the thread */
 	public void destroy() {
 		stop();
-		thread = null;
+		this.thread = null;
 	}
 
 	private ImageEncoder getImageEncoder() throws RemoteException {
-		return (ImageEncoder) IBOLookup.getServiceInstance(iwac, ImageEncoder.class);
+		return (ImageEncoder) IBOLookup.getServiceInstance(this.iwac, ImageEncoder.class);
 	}
 
 	private ImageProvider getImageProvider() throws RemoteException {
-		return (ImageProvider) IBOLookup.getServiceInstance(iwac, ImageProvider.class);
+		return (ImageProvider) IBOLookup.getServiceInstance(this.iwac, ImageProvider.class);
 	}
 }

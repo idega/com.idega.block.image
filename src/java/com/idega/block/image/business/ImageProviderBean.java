@@ -44,8 +44,9 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 	}
 
 	public int getImageCount(ICFile imageFolder) {
-		if (imageFolder == null)
+		if (imageFolder == null) {
 			return 0;
+		}
 		return imageFolder.getChildCount();
 	}
 	
@@ -131,8 +132,9 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 	
 	
 	public ArrayList getImagesFromTo(ICFile imageFolder, int startPosition, int endPosition) throws SQLException {
-		if (imageFolder == null || (startPosition < 1) || (startPosition > endPosition))
+		if (imageFolder == null || (startPosition < 1) || (startPosition > endPosition)) {
 			return new ArrayList();
+		}
 
 		int length = endPosition - startPosition + 1;
 		ArrayList result = new ArrayList(length);
