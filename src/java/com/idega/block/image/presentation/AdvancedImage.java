@@ -127,8 +127,7 @@ public class AdvancedImage extends Image {
 				checkAndCalculateNewWidthAndHeight(iwc);
 				String newName = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,extension, null);
 				
-				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
-				
+				IWSlideService ss = getImageProvider(iwc).getIWSlideService();
 				
 				String temp = ss.getParentPath(this.resource) + "/resized/" + newName;
 				if (ss.getExistence(temp)) {
@@ -491,7 +490,8 @@ public class AdvancedImage extends Image {
 	 * @throws Exception
 	 */
 	protected void readWidthAndHeightFromOriginalImage() throws Exception {
-		String realOrURLPath = getRealPathToImage(IWContext.getInstance());
+		IWContext iwc = IWContext.getInstance();
+		String realOrURLPath = getRealPathToImage(iwc);
 		
 		// if in database
 		if (this.resource == null) {
@@ -556,7 +556,10 @@ public class AdvancedImage extends Image {
 			
 			// so we can have access to that in javascript...very handy
 			//only set for slide stuff now...
-			setMarkupAttribute("orgIMGPath", this.resource.getPath());
+			String path = resource.getPath();
+			setMarkupAttribute("orgIMGPath",path);
+			setMarkupAttribute("orgIMGParentPath", getImageProvider(iwc).getIWSlideService().getParentPath(path));
+
 		}
 		
 	}
