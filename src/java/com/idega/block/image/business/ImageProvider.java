@@ -1,6 +1,6 @@
 /*
- * $Id: ImageProvider.java 1.1 Mar 21, 2006 eiki Exp $
- * Created on Mar 21, 2006
+ * $Id: ImageProvider.java 1.1 Apr 4, 2006 eiki Exp $
+ * Created on Apr 4, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -16,8 +16,10 @@ import java.util.List;
 import javax.ejb.CreateException;
 import javax.ejb.TransactionRolledbackLocalException;
 import com.idega.block.image.data.ImageEntity;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBOService;
 import com.idega.core.file.data.ICFile;
+import com.idega.slide.business.IWSlideService;
 
 
 /**
@@ -44,6 +46,11 @@ public interface ImageProvider extends IBOService {
 	 */
 	public ArrayList getImagesFromTo(String imageFolderResourcePath, int startPosition, int endPosition)
 			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.block.image.business.ImageProviderBean#getIWSlideService
+	 */
+	public IWSlideService getIWSlideService() throws IBOLookupException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.block.image.business.ImageProviderBean#getContainedFolders

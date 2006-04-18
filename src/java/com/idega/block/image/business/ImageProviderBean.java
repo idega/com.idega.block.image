@@ -52,7 +52,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 	
 	public int getImageCount(String imageFolderResourcePath) {
 		try {
-			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+			IWSlideService service = getIWSlideService();
 			return service.getChildCountExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
 		}
 		catch (IBOLookupException e) {
@@ -71,7 +71,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		}
 		else{
 			try {
-				IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+				IWSlideService service = getIWSlideService();
 				ArrayList result = new ArrayList();
 				List imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
 				
@@ -102,6 +102,15 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		return new ArrayList();
 	}
 
+	/**
+	 * @return
+	 * @throws IBOLookupException
+	 */
+	public IWSlideService getIWSlideService() throws IBOLookupException {
+		IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+		return service;
+	}
+
 	
 	public List getContainedFolders(String imageFolderResourcePath) {
 		List folders = null;
@@ -110,7 +119,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		}
 		else{
 			try {
-				IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+				IWSlideService service = getIWSlideService();
 				folders = service.getChildFolderPaths(imageFolderResourcePath);
 			}
 			catch (IBOLookupException e) {
