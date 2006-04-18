@@ -556,7 +556,7 @@ public class AdvancedImage extends Image {
 			
 			// so we can have access to that in javascript...very handy
 			//only set for slide stuff now...
-			String path = resource.getPath();
+			String path = this.resource.getPath();
 			setMarkupAttribute("orgIMGPath",path);
 			setMarkupAttribute("orgIMGParentPath", getImageProvider(iwc).getIWSlideService().getParentPath(path));
 
