@@ -1,6 +1,6 @@
 /*
- * $Id: ImageProviderHomeImpl.java 1.1 Apr 4, 2006 eiki Exp $
- * Created on Apr 4, 2006
+ * $Id: ImageProviderHomeImpl.java 1.1 May 2, 2006 eiki Exp $
+ * Created on May 2, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *

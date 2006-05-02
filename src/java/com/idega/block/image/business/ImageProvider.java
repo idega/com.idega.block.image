@@ -1,6 +1,6 @@
 /*
- * $Id: ImageProvider.java 1.1 Apr 4, 2006 eiki Exp $
- * Created on Apr 4, 2006
+ * $Id: ImageProvider.java 1.1 May 2, 2006 eiki Exp $
+ * Created on May 2, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
 package com.idega.block.image.business;
 
 import java.io.InputStream;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,11 @@ public interface ImageProvider extends IBOService {
 	 */
 	public ArrayList getImagesFromTo(String imageFolderResourcePath, int startPosition, int endPosition)
 			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.block.image.business.ImageProviderBean#getAllImagePathsForFolder
+	 */
+	public String[] getAllImagePathsForFolder(String folderURI) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.image.business.ImageProviderBean#getIWSlideService

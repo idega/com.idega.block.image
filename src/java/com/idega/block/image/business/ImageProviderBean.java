@@ -101,6 +101,31 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 			
 		return new ArrayList();
 	}
+	
+	/**
+	 * 
+	 * @param folderURI
+	 * @return An array of resource paths to images within the supplied folder uri (in slide)
+	 * @throws RemoteException 
+	 */
+	public String[] getAllImagePathsForFolder(String folderURI) throws RemoteException{
+		
+		IWSlideService service;
+		try {
+			service = getIWSlideService();
+		
+			List imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(folderURI);
+			
+			if(imagePaths!=null){
+				return (String[]) imagePaths.toArray(new String[0]);
+			}
+		}
+		catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+	
+		return null;
+	}
 
 	/**
 	 * @return
