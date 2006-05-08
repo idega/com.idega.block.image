@@ -43,7 +43,7 @@ public class ImageAttributeSetter extends Block{
   private Map oldMap;
 
   public static final String ALIGNMENT = "align",BORDER = "border",VSPACE = "vspace",
-			      HSPACE = "hspace",WIDTH = "width",HEIGHT="height";
+			      HSPACE = "hspace";
 
   private IWResourceBundle iwrb;
 
