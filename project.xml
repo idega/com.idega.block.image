@@ -4,9 +4,7 @@
   <extend>${base.project.dir}/block-dependencies.xml</extend>
   <artifactId>com.idega.block.image</artifactId>
   <name>idegaWeb Image Block</name>
-  <!--currentVersion>1.0.1</currentVersion-->
-  <currentVersion>1.1-SNAPSHOT</currentVersion>
-
+  <currentVersion>3.1.0</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>This is the image module for idegaWeb</shortDescription>
   <versions>
@@ -80,9 +78,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <!--version>3.0.5</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -92,9 +88,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.slide</artifactId>
-      <!--version>1.0</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -104,9 +98,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <!--version>1.4.2</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -116,9 +108,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.media</artifactId>
-      <!--version>1.1.2</version-->
-      <version>SNAPSHOT</version>
-
+      <version>3.1.0</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
