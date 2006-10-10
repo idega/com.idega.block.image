@@ -95,7 +95,7 @@ Slidalicious.prototype = {
             this.element = $(this.element);
             if(!this.element) return this.error("Could not find element '"+this.element+"' ");
             
-            this.element.removeChildNodes(
+            this.element.removeChildNodes();
             this.element.style.position = "relative";
             
             this.next_slide = document.createElement("A");
