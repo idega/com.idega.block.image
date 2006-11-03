@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.14 2006/04/09 11:38:40 laddi Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.15 2006/11/03 11:27:44 valdas Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,6 +30,7 @@ import org.apache.webdav.lib.WebdavResource;
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
+import com.idega.graphics.image.business.ImageEncoder;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.io.MemoryFileBuffer;
@@ -41,11 +42,11 @@ import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/04/09 11:38:40 $ by $Author: laddi $
+ * Last modified: $Date: 2006/11/03 11:27:44 $ by $Author: valdas $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ImageProcessor implements Runnable {
 
