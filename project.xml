@@ -4,7 +4,7 @@
   <extend>${base.project.dir}/block-dependencies.xml</extend>
   <artifactId>com.idega.block.image</artifactId>
   <name>idegaWeb Image Block</name>
-  <currentVersion>3.1.0</currentVersion>
+  <currentVersion>3.1.1</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>This is the image module for idegaWeb</shortDescription>
   <versions>
@@ -83,7 +83,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.16</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -93,7 +93,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.slide</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.2</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -103,7 +103,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.2</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>

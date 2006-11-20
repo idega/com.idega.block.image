@@ -5,6 +5,14 @@
   </properties>
   <body>
 	
+	<release version="3.1.1" date="2006-11-20">
+      <action dev="eiki" type="update">
+      	Changed Slidalicious img-tag implementation to preload the images because of iptv slowness.
+      	Changed ImageProcessor thread to a daemon thread.
+      	Updated to newer versions of core,slide and builder.
+      </action>
+    </release>
+    
 	<release version="3.1.0" date="2006-06-19">
       <action dev="tryggvil" type="update">
       	New version to be included in ePlatform 3.1 Release.
