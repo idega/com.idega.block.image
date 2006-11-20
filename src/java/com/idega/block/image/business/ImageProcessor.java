@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.15 2006/11/03 11:27:44 valdas Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.14.2.1 2006/11/20 14:13:01 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,7 +30,6 @@ import org.apache.webdav.lib.WebdavResource;
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
-import com.idega.graphics.image.business.ImageEncoder;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.io.MemoryFileBuffer;
@@ -42,11 +41,11 @@ import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/11/03 11:27:44 $ by $Author: valdas $
+ * Last modified: $Date: 2006/11/20 14:13:01 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.14.2.1 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -275,6 +274,7 @@ public class ImageProcessor implements Runnable {
 			//a new thread must be created here because it was null or 
 			//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
 			this.thread = new Thread(this, "ImageProcessor Thread");
+			this.thread.setDaemon(true);
 			//this is a backround task
 			this.thread.setPriority(Thread.NORM_PRIORITY);
 			this.thread.start();
