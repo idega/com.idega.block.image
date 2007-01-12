@@ -111,8 +111,8 @@ private ImageViewer viewer = new ImageViewer();
     String refreshing = (String) iwc.getSessionAttribute("refresh");
 
     if( refreshing!=null ) {
-			this.refresh = true;
-		}
+		this.refresh = true;
+	}
 
 
 
@@ -472,7 +472,7 @@ private ImageViewer viewer = new ImageViewer();
 
           imageViewer.setFooterBackgroundImage("/pics/jmodules/image/myndamodule/footer/foottiler.gif");
 
-          imageViewer.setHeaderText("Fann "+image.length+" myndir sem uppfylltu leitarskilyrðið: <u>"+searchString+"</u>");
+          imageViewer.setHeaderText("Fann "+image.length+" myndir sem uppfylltu leitarskilyrï¿½iï¿½: <u>"+searchString+"</u>");
 
 
 
@@ -500,7 +500,7 @@ private ImageViewer viewer = new ImageViewer();
 
     else {
 
-      Text noQuery = new Text("Engin leitarskilyrði valin...");
+      Text noQuery = new Text("Engin leitarskilyrï¿½i valin...");
 
       noQuery.setFontColor("#FFFFFF");
 

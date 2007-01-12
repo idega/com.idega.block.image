@@ -72,8 +72,8 @@ public class SimpleViewer extends PresentationObjectContainer{
       iwc.setSessionAttribute(this.sessImageParameterName,this.sessImageParameter);
     }
     else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null) {
-			this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
-		}
+		this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
+	}
     }
 
     public boolean deleteImage(String sImageId){
@@ -143,9 +143,9 @@ public class SimpleViewer extends PresentationObjectContainer{
 
     public String getImageId(IWContext iwc){
       if(iwc.getParameter(this.sessImageParameterName)!=null) {
-				this.sessImageParameter = iwc.getParameter(this.sessImageParameterName);
-			}
-			else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null){
+		this.sessImageParameter = iwc.getParameter(this.sessImageParameterName);
+	}
+	else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null){
         this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
       }
       //add(sessImageParameter);
@@ -155,11 +155,11 @@ public class SimpleViewer extends PresentationObjectContainer{
         iwc.setSessionAttribute(this.sessImageParameter+"_2",s);
       }
       else if(iwc.getSessionAttribute(this.sessImageParameter)!=null) {
-				s = (String) iwc.getSessionAttribute(this.sessImageParameter);
-			}
-			else if(iwc.getSessionAttribute(this.sessImageParameter+"_2")!=null) {
-				s = (String) iwc.getSessionAttribute(this.sessImageParameter+"_2");
-			}
+		s = (String) iwc.getSessionAttribute(this.sessImageParameter);
+	}
+	else if(iwc.getSessionAttribute(this.sessImageParameter+"_2")!=null) {
+		s = (String) iwc.getSessionAttribute(this.sessImageParameter+"_2");
+	}
       //add(" " +s);
       return s;
     }

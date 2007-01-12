@@ -129,22 +129,22 @@ public class EditWindow extends Window {
     String imageLink = image.getLink();
 
     if( imageText==null ) {
-			imageText = "";
-		}
+		imageText = "";
+	}
     if( imageLink==null ) {
-			imageLink= "";
-		}
+		imageLink= "";
+	}
 
 
     TextArea input = new TextArea("image_text",imageText);
     TextInput input2 = new TextInput("image_link",imageLink);
 
-    Text texti = new Text("Texti með mynd");
+    Text texti = new Text("Texti meï¿½ mynd");
     texti.setFontColor("#FFFFFF");
     texti.setFontSize(2);
     texti.setBold();
 
-    Text texti2 = new Text("Tengill á mynd og texta");
+    Text texti2 = new Text("Tengill ï¿½ mynd og texta");
     texti2.setFontColor("#FFFFFF");
     texti2.setFontSize(2);
     texti2.setBold();
@@ -179,7 +179,7 @@ public class EditWindow extends Window {
     }
 
     Table table = new Table(2,2);
-    Text texti = new Text("Veldu mynd með því að ýta á \"Browse\" og smelltu svo á \"Submit\".");
+    Text texti = new Text("Veldu mynd meï¿½ ï¿½vï¿½ aï¿½ ï¿½ta ï¿½ \"Browse\" og smelltu svo ï¿½ \"Submit\".");
     texti.setFontColor("#FFFFFF");
     texti.setFontSize(2);
     texti.setBold();
@@ -211,7 +211,7 @@ public class EditWindow extends Window {
       iwc.setSessionAttribute("im_ip",ip);
       Image imagefile = new Image(ip.getWebPath());
 
-      Text texti = new Text("Veldu nú myndaflokk og hakaðu við þær aukastærðir af myndinni sem þú vilt fá.");
+      Text texti = new Text("Veldu nï¿½ myndaflokk og hakaï¿½u viï¿½ ï¿½ï¿½r aukastï¿½rï¿½ir af myndinni sem ï¿½ï¿½ vilt fï¿½.");
       texti.setFontColor("#FFFFFF");
       texti.setFontSize(2);
       texti.setBold();

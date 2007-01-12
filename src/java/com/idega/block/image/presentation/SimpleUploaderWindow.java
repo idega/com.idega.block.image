@@ -45,8 +45,8 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
         iwc.setSessionAttribute(sessImageParameterName,this.sessImageParameter);
       }
       else if(iwc.getSessionAttribute(sessImageParameterName)!=null) {
-				this.sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
-			}
+		this.sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+	}
     }
 
     public void main(IWContext iwc){
@@ -68,9 +68,9 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
         if(iwc.getParameter("save")!=null){
           save(iwc);
         }
-				else {
-					add(getMultiForm(iwc));
-				}
+		else {
+			add(getMultiForm(iwc));
+		}
       }
 
 

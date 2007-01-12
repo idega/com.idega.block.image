@@ -28,8 +28,8 @@ private boolean showAll = true;
 
 
     if( (sRefresh!=null) || this.refresh || (refreshing!=null) ) {
-			browser.refresh();
-		}
+		browser.refresh();
+	}
 
 
 

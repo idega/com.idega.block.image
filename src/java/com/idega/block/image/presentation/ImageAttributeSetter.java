@@ -10,14 +10,12 @@ package com.idega.block.image.presentation;
  */
 
 import java.util.Map;
-
 import javax.faces.component.UIComponent;
-
 import com.idega.block.image.business.ImageFinder;
 import com.idega.block.media.presentation.ImageInserter;
-//TODO for backward dependency use reflection to add IBPageChooser
-//import com.idega.builder.presentation.IBPageChooser;
+import com.idega.builder.presentation.IBPageChooser;
 import com.idega.core.file.business.FileSystemConstants;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -36,16 +34,18 @@ import com.idega.presentation.ui.TextInput;
 public class ImageAttributeSetter extends Block{
 
   private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
+  private int imageId = -1;
   private String sSessionName =null;
   private String sHiddenInputName = null;
   public static final String sSessionParameterName = "im_image_session_name";
   public static String prmImageEntityId = "prmImageEntityId";
   public static String prmAttributeKey = "prmAttributeKey";
-  private Map oldMap;
+  private Map oldMap,newMap;
 
   public static final String ALIGNMENT = "align",BORDER = "border",VSPACE = "vspace",
-			      HSPACE = "hspace";
+			      HSPACE = "hspace",WIDTH = "width",HEIGHT="height";
 
+  private IWBundle iwb;
   private IWResourceBundle iwrb;
 
   public ImageAttributeSetter(){
@@ -67,6 +67,7 @@ public class ImageAttributeSetter extends Block{
   }
 
   public void main(IWContext iwc)throws Exception{
+    this.iwb = getBundle(iwc);
     this.iwrb = getResourceBundle(iwc);
 
     String sAttributeKey = iwc.getParameter(prmAttributeKey );
@@ -82,9 +83,9 @@ public class ImageAttributeSetter extends Block{
 
       add(getForm(this.oldMap,sAttributeKey ,sImageEntityId ));
     }
-		else {
-			add("no attributekey or image id ");
-		}
+	else {
+		add("no attributekey or image id ");
+	}
   }
 
   public UIComponent getForm(Map map,String sAttributeKey,String sImageEntityId){
@@ -140,8 +141,8 @@ public class ImageAttributeSetter extends Block{
     addAttribute(FileSystemConstants.ZOOMHEIGHT,zheight,this.oldMap );
     addAttribute(FileSystemConstants.ZOOMIMAGE,zimage,this.oldMap );
     if ( zpage != null ) {
-			addAttribute(FileSystemConstants.ZOOMPAGE,zpage,this.oldMap );
-		}
+		addAttribute(FileSystemConstants.ZOOMPAGE,zpage,this.oldMap );
+	}
 
     return getAttributesString(this.oldMap);
   }
@@ -196,23 +197,21 @@ public class ImageAttributeSetter extends Block{
       insert.setMaxImageWidth(50);
       insert.setImageWidth(50);
     if ( zoomImage != null ) {
-			insert.setImageId(Integer.parseInt(zoomImage));
-		}
+		insert.setImageId(Integer.parseInt(zoomImage));
+	}
 
-    // TODO for backward dependency use reflection to add IBPageChooser
-//    IBPageChooser file = new IBPageChooser(FileSystemConstants.ZOOMPAGE,IWConstants.BUILDER_FONT_STYLE_INTERFACE_SMALL);
+    IBPageChooser file = new IBPageChooser(FileSystemConstants.ZOOMPAGE,IWConstants.BUILDER_FONT_STYLE_INTERFACE_SMALL);
     if ( zoomPage != null ) {
-//			file.setSelectedPage(Integer.parseInt(zoomPage),"Page");
-		}
+		file.setSelectedPage(Integer.parseInt(zoomPage),"Page");
+	}
 
     T.add(toText(this.iwrb.getLocalizedString("zoom_image","Zoom image")+":"),1,7);
-    //T.add(toText(this.iwrb.getLocalizedString("zoom_page","Zoom page")+":"),1,8);
-    T.add(toText("PAGE CHOOSER REMOVED TEMPORARELY"),1,8);
+    T.add(toText(this.iwrb.getLocalizedString("zoom_page","Zoom page")+":"),1,8);
     T.add(toText(this.iwrb.getLocalizedString("zoom_width","Zoom image width")+":"),1,9);
     T.add(toText(this.iwrb.getLocalizedString("zoom_height","Zoom image height")+":"),1,10);
 
     T.add(insert,2,7);
-//    T.add(file,2,8);
+    T.add(file,2,8);
     T.add(getHeightAndWidthInput(zoomWidth,FileSystemConstants.ZOOMWIDTH),2,9);
     T.add(getHeightAndWidthInput(zoomHeight,FileSystemConstants.ZOOMHEIGHT),2,10);
 

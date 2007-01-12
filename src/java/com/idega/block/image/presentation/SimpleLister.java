@@ -70,8 +70,8 @@ public class SimpleLister extends PresentationObjectContainer {
       iwc.setSessionAttribute(this.sessImageParameterName,this.sessImageParameter);
     }
     else if(iwc.getSessionAttribute(this.sessImageParameterName)!=null) {
-			this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
-		}
+		this.sessImageParameter = (String) iwc.getSessionAttribute(this.sessImageParameterName);
+	}
   }
 
   public Link getImageLink(ImageEntity image,String target,String prm){

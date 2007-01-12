@@ -60,6 +60,8 @@ private PlanarImage modifiedImage = null;
 
 //private ImageDisplay canvas = null;
 
+private boolean state = false;
+
 private int imageId = -1;
 
 private int modifiedImageId = -1;
@@ -358,6 +360,14 @@ private int getBrightness(){
 
 
 
+private void setModifiedImageId( int modifiedImageId ){
+
+  this.modifiedImageId = modifiedImageId;
+
+}
+
+
+
 public int getModifiedImageId(){
 
   return this.modifiedImageId;
@@ -527,11 +537,11 @@ private void setModifiedImageAttributes(){
     if ( tempWidth == -1 ){//missing width
 
       if ( keepProportions() ) {
-				setModifiedWidth( (getWidth()*tempHeight)/getHeight());
-			}
-			else {
-				setModifiedWidth( getWidth() );
-			}
+		setModifiedWidth( (getWidth()*tempHeight)/getHeight());
+	}
+	else {
+		setModifiedWidth( getWidth() );
+	}
 
       setModifiedHeight( tempHeight );
 
@@ -540,11 +550,11 @@ private void setModifiedImageAttributes(){
     if( tempHeight == -1 ){//missing height
 
       if ( keepProportions() ) {
-				setModifiedHeight( (getHeight()*tempWidth)/getWidth() );
-			}
-			else {
-				setModifiedHeight( getHeight() );
-			}
+		setModifiedHeight( (getHeight()*tempWidth)/getWidth() );
+	}
+	else {
+		setModifiedHeight( getHeight() );
+	}
 
       setModifiedWidth( tempWidth );
 
@@ -691,8 +701,8 @@ protected float getQuality(){
 public com.idega.presentation.Image getModifiedImageAsImageObject(IWContext iwc) throws Exception{
 
   if( this.modifiedImageCounter != 1 ) {
-		ImageBusiness.deleteImageFile(this.modifiedImageURL);
-	}
+	ImageBusiness.deleteImageFile(this.modifiedImageURL);
+}
 
   String seperator = System.getProperty("file.separator");
 
@@ -727,9 +737,9 @@ protected void writeModifiedImageToDatabase(boolean update) throws Exception{
     ImageSave.saveImageToDataBase(getImageId(),-1,input,getmimeType(),getImageName(),Integer.toString(getModifiedWidth()),Integer.toString(getModifiedHeight()), false);
 
   }
-	else {
-		ImageSave.saveImageToDataBase(-1,getImageId(),input,getmimeType(),getImageName(),Integer.toString(getModifiedWidth()),Integer.toString(getModifiedHeight()), true);
-	}
+else {
+	ImageSave.saveImageToDataBase(-1,getImageId(),input,getmimeType(),getImageName(),Integer.toString(getModifiedWidth()),Integer.toString(getModifiedHeight()), true);
+}
 
 }
 
@@ -740,8 +750,8 @@ protected void writeModifiedImageToFile(String filename) throws Exception{
 
 
   if ( filename.equalsIgnoreCase("")) {
-		filename = getImageName();
-	}
+	filename = getImageName();
+}
 
   OutputStream output = new FileOutputStream(filename);
 
@@ -774,11 +784,11 @@ protected void writeModifiedImageToFile(String filename) throws Exception{
 
 
   if ( modified != null) {
-		imageEncoder.encode( getModifiedImage() );
-	}
-	else {
-		System.out.println("getModifiedImage() returned null!");
-	}
+	imageEncoder.encode( getModifiedImage() );
+}
+else {
+	System.out.println("getModifiedImage() returned null!");
+}
 
 
 

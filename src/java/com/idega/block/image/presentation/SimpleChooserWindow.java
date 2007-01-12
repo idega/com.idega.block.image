@@ -38,7 +38,7 @@ import com.idega.presentation.IWContext;
       setTitle("Image Chooser Block Media");
       addTitle("Image Chooser" );
       if(iwc.getParameter(prmReloadParent )!= null) {
-				setParentToReload();
-			}
+		setParentToReload();
+	}
     }
 }

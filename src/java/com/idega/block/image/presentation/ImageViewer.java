@@ -71,6 +71,8 @@ private String callingModule = "image_id";
 
 
 
+private boolean backbutton = false;
+
 private boolean refresh = false;
 
 private Table outerTable = new Table(2,3);
@@ -97,6 +99,12 @@ private String percent = "100";
 
 private Link continueRefresh = new Link("Click here to continue...");
 
+private String lastViewAction = "";
+
+
+
+
+
 private Text textProxy = new Text();
 
 
@@ -115,6 +123,8 @@ private Image edit;
 
 private Image save;
 
+private Image cancel;
+
 private Image newImage;
 
 private Image newCategory;
@@ -126,6 +136,22 @@ private Image reload;
 
 
 private String language = "IS";
+
+
+
+private int textSize = 1;
+
+
+
+private String attributeName = "union_id";
+
+private int attributeId = 3;
+
+
+
+
+
+
 
 
 
@@ -154,6 +180,30 @@ public ImageViewer(ImageEntity[] entities){
   this.entities=entities;
 
 }
+
+
+
+
+
+public void setConnectionAttributes(String attributeName, int attributeId) {
+
+  this.attributeName = attributeName;
+
+  this.attributeId = attributeId;
+
+}
+
+
+
+public void setConnectionAttributes(String attributeName, String attributeId) {
+
+  this.attributeName = attributeName;
+
+  this.attributeId = Integer.parseInt(attributeId);
+
+}
+
+
 
 
 
@@ -191,11 +241,11 @@ public void main(IWContext iwc)throws Exception{
 
   String sessionImageId = (String) iwc.getSessionAttribute("im_image_id");
 
-  String imageSessionName = iwc.getParameter("im_image_session_name");
+  String imageSessionName = (String) iwc.getParameter("im_image_session_name");
 
   if( imageSessionName!=null ) {
-		this.callingModule = imageSessionName;
-	}
+	this.callingModule = imageSessionName;
+}
 
 
 
@@ -210,8 +260,8 @@ public void main(IWContext iwc)throws Exception{
 
 
   if( refreshing!=null ) {
-		this.refresh = true;
-	}
+	this.refresh = true;
+}
 
 
 
@@ -242,6 +292,8 @@ public void main(IWContext iwc)throws Exception{
 
 
   this.save = new Image("/pics/jmodules/image/"+this.language+"/save.gif","Save");
+
+  this.cancel = new Image("/pics/jmodules/image/"+this.language+"/cancel.gif","Cancel");
 
   this.newImage = new Image("/pics/jmodules/image/"+this.language+"/newimage.gif","Upload a new image");
 
@@ -342,12 +394,12 @@ public void main(IWContext iwc)throws Exception{
 
 
   if ( this.headerBackgroundImage != null ) {
-		this.outerTable.setBackgroundImage(1,1,this.headerBackgroundImage);
-	}
+	this.outerTable.setBackgroundImage(1,1,this.headerBackgroundImage);
+}
 
   if ( this.footerBackgroundImage != null ) {
-		this.outerTable.setBackgroundImage(1,3,this.footerBackgroundImage);
-	}
+	this.outerTable.setBackgroundImage(1,3,this.footerBackgroundImage);
+}
 
 
 
@@ -504,8 +556,8 @@ public void main(IWContext iwc)throws Exception{
             this.continueRefresh.setFontSize(3);
 
             if( !("editcategories".equalsIgnoreCase(action)) ) {
-							this.outerTable.add(this.continueRefresh,1,2);
-						}
+				this.outerTable.add(this.continueRefresh,1,2);
+			}
 
           }
 
@@ -538,8 +590,8 @@ public void main(IWContext iwc)throws Exception{
           String sFirst = iwc.getParameter("iv_first");//browsing from this image
 
           if (sFirst!=null) {
-						this.ifirst = Integer.parseInt(sFirst);
-					}
+			this.ifirst = Integer.parseInt(sFirst);
+		}
 
 
 
@@ -574,9 +626,9 @@ public void main(IWContext iwc)throws Exception{
               imageEntity = (ImageEntity[]) category.findRelated(((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).createLegacy());
 
             }
-						else {
-							imageEntity = inApplication;
-						}
+			else {
+				imageEntity = inApplication;
+			}
 
 
 
@@ -629,8 +681,8 @@ public void main(IWContext iwc)throws Exception{
               int iback = this.ifirst-this.numberOfDisplayedImages;
 
               if( iback<0 ) {
-								this.ifirst = 0;
-							}
+				this.ifirst = 0;
+			}
 
               back.addParameter("iv_first",this.ifirst);
 
@@ -648,7 +700,7 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-              Text rightText = new Text(">> Næstu myndir");
+              Text rightText = new Text(">> Nï¿½stu myndir");
 
               rightText.setBold();
 
@@ -663,8 +715,8 @@ public void main(IWContext iwc)throws Exception{
               int inext = this.ifirst+this.numberOfDisplayedImages;
 
               if( inext > (imageEntity.length-1)) {
-								inext = (imageEntity.length-1)-this.numberOfDisplayedImages;
-							}
+				inext = (imageEntity.length-1)-this.numberOfDisplayedImages;
+			}
 
 
 
@@ -880,19 +932,19 @@ private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException 
 
 
   if( this.limitNumberOfImages ) {
-		k = this.numberOfDisplayedImages;
-	}
-	else {
-		k = imageEntity.length;
-	}
+	k = this.numberOfDisplayedImages;
+}
+else {
+	k = imageEntity.length;
+}
 
 
 
   int heigth = k/this.iNumberInRow;
 
   if( k%this.iNumberInRow!=0 ) {
-		heigth++;
-	}
+	heigth++;
+}
 
   Table table = new Table(this.iNumberInRow,heigth);
 
@@ -934,7 +986,7 @@ private Table displayCatagory( ImageEntity[] imageEntity )  throws SQLException 
 
     table.setAlignment((x%this.iNumberInRow)+1,(x/this.iNumberInRow)+1,"center");
 
-    table.setWidth((x%this.iNumberInRow)+1,Integer.toString(100/this.iNumberInRow)+"%");
+    table.setWidth((x%this.iNumberInRow)+1,Integer.toString((int)(100/this.iNumberInRow))+"%");
 
     table.add( displayImage(imageEntity[i]) ,(x%this.iNumberInRow)+1,(x/this.iNumberInRow)+1);
 
@@ -1003,8 +1055,8 @@ public void setNumberOfDisplayedImages(int numberOfDisplayedImages){
   this.limitNumberOfImages = true;
 
   if( numberOfDisplayedImages<0 ) {
-		numberOfDisplayedImages = (-1)*numberOfDisplayedImages;
-	}
+	numberOfDisplayedImages = (-1)*numberOfDisplayedImages;
+}
 
   this.numberOfDisplayedImages = numberOfDisplayedImages;
 
@@ -1211,6 +1263,16 @@ private void refresh(IWContext iwc) throws SQLException{
 }
 
 
+
+private Table getImageInfoTable(){
+
+ Table table = new Table();
+
+ table.setColor("");
+
+return table;
+
+}
 
 private Form getEditorForm(ImageHandler handler, String ImageId, IWContext iwc) throws Exception{
 
@@ -1451,14 +1513,14 @@ private Form getEditorForm(ImageHandler handler, String ImageId, IWContext iwc) 
     String percent2  = iwc.getParameter("percent");
 
     if (percent2!=null) {
-			this.percent = TextSoap.findAndReplace(percent2,"%","");
-		}
+		this.percent = TextSoap.findAndReplace(percent2,"%","");
+	}
 
     int iPercent = 100;
 
     if(this.percent==null) {
-			this.percent = "100";
-		}
+		this.percent = "100";
+	}
 
 
 
@@ -1616,7 +1678,7 @@ private Form getCategoryEditForm(){
 
 
 
-  Text deleteText = new Text("Eyða");
+  Text deleteText = new Text("Eyï¿½a");
 
   deleteText.setBold();
 

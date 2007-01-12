@@ -1,6 +1,7 @@
 package com.idega.block.image.presentation;
 
 import com.idega.block.image.business.SimpleImage;
+import com.idega.block.media.servlet.MediaServlet;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -25,6 +26,7 @@ import com.idega.presentation.ui.IFrame;
     private String sessImageParameter = "image_id";
     private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.image";
     private boolean includeLinks;
+    private boolean usesOld = false;
 
     public void setToIncludeLinks(boolean includeLinks){
       this.includeLinks = includeLinks;
@@ -50,8 +52,12 @@ import com.idega.presentation.ui.IFrame;
     public void  main(IWContext iwc){
       IWBundle iwb = getBundle(iwc);
       checkParameterName(iwc);
-   
-      getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(this.sessImageParameter) );
+
+      if(iwc.getIWMainApplication().getSettings().getProperty(MediaServlet.USES_OLD_TABLES)!=null) {
+		this.usesOld = true;
+	}
+
+        getParentPage().getAssociatedScript().addFunction("callbim",getSaveImageFunction(this.sessImageParameter) );
 
 
       //add("block.media");
@@ -77,8 +83,8 @@ import com.idega.presentation.ui.IFrame;
       Frame.add(ifViewer,2,1);
       Frame.setBorderColor("#00FF00");
       if(this.includeLinks) {
-				Frame.add(getLinkTable(iwb),2,2);
-			}
+		Frame.add(getLinkTable(iwb),2,2);
+	}
 
       add(Frame);
     }
@@ -96,8 +102,8 @@ import com.idega.presentation.ui.IFrame;
         iwc.setSessionAttribute(sessImageParameterName,this.sessImageParameter);
       }
       else if(iwc.getSessionAttribute(sessImageParameterName)!=null) {
-				this.sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
-			}
+		this.sessImageParameter = (String) iwc.getSessionAttribute(sessImageParameterName);
+	}
     }
 
     public PresentationObject getLinkTable(IWBundle iwb){
