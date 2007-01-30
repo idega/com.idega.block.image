@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page-templates>
+	<page name="Image gallery" type="imagegallery" iconfile="/idegaweb/bundles/com.idega.content.bundle/resources/images/pageIcons/imagegallery.png" templatefile="idega_theme_gallery.xml"></page>
+</page-templates>
