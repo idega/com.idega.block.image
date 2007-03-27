@@ -166,7 +166,7 @@ public class ImageGallery extends Block {
 		script.addScriptSource(web2.getBundleURIToPrototypeLib());
 		script.addScriptSource(web2.getBundleURIToScriptaculousLib());
 		script.addScriptSource(web2.getLightboxScriptFilePath());
-		add(script);
+	
 		
 		this.getParentPage().addStyleSheetURL(web2.getLightboxStyleFilePath());
 		
