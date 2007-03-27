@@ -3,7 +3,9 @@ package com.idega.block.image.presentation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import com.idega.block.image.business.ImageProvider;
+import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.data.ICFile;
@@ -12,6 +14,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.SubmitButton;
@@ -55,7 +58,7 @@ public class ImageGallery extends Block {
 	private boolean showNameOfImage = false;
 	// number of new images that is shown per step
 	private int numberOfImagesPerStep = 0;
-	// flag to show if the image should keep it´s proportion
+	// flag to show if the image should keep itï¿½s proportion
 	private boolean scaleProportional = true;
 	private String heightOfGallery = null;
 	private String widthOfGallery = null;
@@ -156,6 +159,17 @@ public class ImageGallery extends Block {
 	}
 
 	public void main(IWContext iwc) throws Exception {
+		
+		Web2Business web2 = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
+		
+		Script script = this.getParentPage().getAssociatedScript();
+		script.addScriptSource(web2.getBundleURIToPrototypeLib());
+		script.addScriptSource(web2.getBundleURIToScriptaculousLib());
+		script.addScriptSource(web2.getLightboxScriptFilePath());
+		add(script);
+		
+		this.getParentPage().addStyleSheetURL(web2.getLightboxStyleFilePath());
+		
 		Layer imageGalleryLayer = new Layer(Layer.DIV);
 		imageGalleryLayer.setStyleClass(this.styleClassName);
 		add(imageGalleryLayer);
@@ -227,33 +241,38 @@ public class ImageGallery extends Block {
 			}
 			PresentationObject pres = null;
 			// check if a link to a viewer page should be added
-			if (this.viewerPage != null) {
+//			if (this.viewerPage != null) {
 				Link link;
 				link = new Link(image);
-				link.setPage(this.viewerPage);
+				//link.setPage(this.viewerPage);
 				String resourceURI = image.getResourceURI();
+				link.setURL(resourceURI);
 				if (resourceURI != null) {
 					link.addParameter(Image.PARAM_IMAGE_URL, resourceURI);
 				}
 				else {
 					link.addParameter(Image.PARAM_IMAGE_ID, image.getImageID(iwc));
 				}
+				
+				link.setMarkupAttribute("rel", "lightbox[test]");
+				
 				pres = link;
-			}
-			else if (this.popUpOriginalImageOnClick) {
-				// check if a link to a popup window should be added
-				image.setLinkToDisplayWindow(imageNumber);
-				pres = image;
-			}
-			else {
-				// show only the image without a link
-				pres = image;
-			}
+//			}
+//			else if (this.popUpOriginalImageOnClick) {
+//				// check if a link to a popup window should be added
+//				image.setLinkToDisplayWindow(imageNumber);
+//	
+//				pres = image;
+//			}
+//			else {
+//				// show only the image without a link
+//				pres = image;
+//			}
 			imageNumber++;
 			int xPositionImage = ((count % this.columns) + 1);
 			// why clone?
 			PresentationObject tmp = (PresentationObject) pres.clone();
-			imageAndTextLayer.add(tmp);
+			imageAndTextLayer.add(pres);
 			// add extra style classes for first and last elements of each row
 			// for styling purposes
 			if (xPositionImage == 1) {
