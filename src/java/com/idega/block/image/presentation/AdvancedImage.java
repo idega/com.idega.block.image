@@ -1,33 +1,26 @@
 package com.idega.block.image.presentation;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import javax.ejb.FinderException;
+
 import org.apache.webdav.lib.WebdavResource;
+
 import com.idega.block.image.business.ImageProcessor;
 import com.idega.block.image.business.ImageProvider;
-import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
-import com.idega.core.file.data.ICFile;
-import com.idega.core.file.data.ICFileHome;
 import com.idega.graphics.ImageInfo;
 import com.idega.graphics.image.business.ImageEncoder;
-import com.idega.idegaweb.IWCacheManager;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
 import com.idega.slide.business.IWSlideService;
 import com.idega.slide.util.IWSlideConstants;
-import com.idega.util.caching.Cache;
 
 /**
  * 
@@ -75,18 +68,10 @@ public class AdvancedImage extends Image {
 	public static final String MODIFIED_IMAGES_FOLDER = "modified_images";
 	/** border around the image in the popup window */
 	private static final String BORDER = "90";
-	/** cached value not an attribute */
-	private ImageEntity imageEntity;
+
 	/** cached value not an attribute */
 	private String realPathToImage;
-	/**
-	 * id of the original image. The id is stored because during the execution
-	 * of the print method the id variable of the super class must be set to the
-	 * id of the modified image when a modified image is printed. See print
-	 * method of this class.
-	 */
-	private int originalImageId = -1;
-	private int modifiedImageId = -1;
+
 	private int widthOfModifiedImage = 0;
 	private int heightOfModifiedImage = 0;
 	private int widthOfOriginalImage = 0;
@@ -96,76 +81,56 @@ public class AdvancedImage extends Image {
 	 */
 	private boolean enlargeIfNecessary = false;
 	/**
-	 * flag to show if the image should keep it´s proportion
+	 * flag to show if the image should keep itï¿½s proportion
 	 */
 	private boolean scaleProportional = true;
 	private WebdavResource resource = null;
+	private boolean shouldBeModified = false;
+	private String nameOfModifiedImage;
+	private String fullModifiedImageURL;
+	private String originalImageName;
+	private String resourceURI;
 
 	public AdvancedImage(WebdavResource webdavResource) {
 		super(webdavResource.getPath());
+
+		this.resourceURI = getURL();
 		this.resource = webdavResource;
 		this.realPathToImage = this.resource.getHttpURL().toString();
-	}
-	
-	public AdvancedImage(int imageId) throws SQLException {
-		super(imageId);
-		this.originalImageId = imageId;
-	}
-
-	public AdvancedImage(int imageId, String name) throws SQLException {
-		super(imageId, name);
-		this.originalImageId = imageId;
+		this.setToolTip(getName());
 	}
 
 	public void main(IWContext iwc) {
 		super.main(iwc);
 		if (this.resource != null) {
 			try {
-				String name = this.resource.getName();
+				String name = this.getName();
 				String extension = name.substring(name.lastIndexOf(".") + 1);
 				//todo don't get original width and height unless absolutely necessery e.g. not if both height and width are set and scale proportionally is false
-				checkAndCalculateNewWidthAndHeight(iwc);
-				String newName = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,extension, null);
-				
-				IWSlideService ss = getImageProvider(iwc).getIWSlideService();
-				
-				String temp = ss.getParentPath(this.resource) + "/resized/" + newName;
-				if (ss.getExistence(temp)) {
-					//why was this set before??- eiki
-					//resource = ss.getWebdavResourceAuthenticatedAsRoot(temp);
-					setURL(temp);
-				}
-				else {
-					scaleImage(iwc);
+				this.shouldBeModified = checkAndCalculateNewWidthAndHeight(iwc);
+
+				if(shouldBeModified){
+					this.nameOfModifiedImage = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,extension);
+
+					IWSlideService ss = getImageProvider(iwc).getIWSlideService();
+
+					this.fullModifiedImageURL = ss.getParentPath(this.getResourceURI()) + "/resized/" + this.nameOfModifiedImage;
+
+					if (ss.getExistence(this.fullModifiedImageURL)) {
+						//why was this set before??- eiki
+						//resource = ss.getWebdavResourceAuthenticatedAsRoot(temp);
+						setURL(this.fullModifiedImageURL);
+					}
+					else {
+						scaleImage(iwc);
+					}
+
 				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		else {
-			scaleImage(iwc);
-		}
-	}
-
-	public void print(IWContext iwc) throws Exception {
-		// TODO Eiki show a message that the image is being prepared if the id
-		// is -1
-		// or have it as a setting
-		// set id temporary to id of the modified image
-		if (this.modifiedImageId > -1) {
-			setImageID(this.modifiedImageId);
-			super.print(iwc);
-			// set old value
-			setImageID(this.originalImageId);
-		}
-		else {
-			printOriginalImage(iwc);
-		}
-	}
-
-	public void printOriginalImage(IWContext iwc) throws Exception {
-		super.print(iwc);
 	}
 
 	public void setEnlargeProperty(boolean enlargeIfNecessary) {
@@ -177,16 +142,11 @@ public class AdvancedImage extends Image {
 	}
 
 	/*
-	 * public void setImageToOpenInPopUp(IWContext iwc) { try { String width =
-	 * Integer.toString(getWidthOfOriginalImage(iwc)); String height =
-	 * Integer.toString(getHeightOfOriginalImage(iwc));
-	 * this.setOnClick("img_wnd=window.open('"+getMediaURL()+"','','width="+width+",height="+height+",left='+((screen.width/2)-50)+',top='+((screen.height/2)-50)+',resizable=yes,scrollbars=no');
-	 * doopen('"+getMediaURL()+"'); return true;"); } catch (Exception ex) {
-	 * System.err.println(ex.getMessage()); } }
+	 * Scales the image with an encoder in a seperate thread
 	 */
 	private void scaleImage(IWContext iwc) {
 		try {
-			this.modifiedImageId = createAndStoreImage(iwc);
+			createAndStoreImage(iwc);
 			// commented because we want the browser to know the width and
 			// height (faster browser rendering)
 			// even when the image has not been scaled (otherwise the layout is
@@ -197,9 +157,7 @@ public class AdvancedImage extends Image {
 			//    
 		}
 		catch (Exception ex) {
-			// set modified image id back
 			ex.printStackTrace();
-			this.modifiedImageId = -1;
 			System.err.println("Image could not be modified. Message was: " + ex.getMessage());
 		}
 	}
@@ -207,18 +165,14 @@ public class AdvancedImage extends Image {
 	private boolean checkAndCalculateNewWidthAndHeight(IWContext iwc) throws Exception {
 		String heightString = getHeight();
 		String widthString = getWidth();
-		if (heightString == null || widthString == null){
+		if (heightString == null && widthString == null){
 			// image must be not modified
 			return false;
 		}
-		
-		int setHeight = Integer.parseInt(heightString);
-		int setWidth = Integer.parseInt(widthString);
-		if ((setHeight <= 0) && (setWidth <= 0)){
-			// image must not be modified
-			return false;
-		}
-		
+
+		int setHeight = (heightString==null)? 0: Integer.parseInt(heightString);
+		int setWidth =  (widthString==null)? 0: Integer.parseInt(widthString);
+
 		// ...there are new settings for the height and the width
 		// calculate now the new values for the modified image....
 		// first assumption: image must not be modified:
@@ -228,8 +182,8 @@ public class AdvancedImage extends Image {
 		// get values of the original image
 		this.heightOfOriginalImage = getHeightOfOriginalImage();
 		this.widthOfOriginalImage = getWidthOfOriginalImage();
-		
-		
+
+
 		/*
 		 * modify height, if + desired height is defined + image should be
 		 * enlarged (if it is smaller than the desired height) + imgage is too
@@ -256,32 +210,55 @@ public class AdvancedImage extends Image {
 		}
 		// resize the image proportional if desired
 		if (imageMustBeModified && this.scaleProportional) {
-			BigInteger wTable = BigInteger.valueOf(setWidth);
-			BigInteger hTable = BigInteger.valueOf(setHeight);
-			BigInteger wImage = BigInteger.valueOf(this.widthOfOriginalImage);
-			BigInteger hImage = BigInteger.valueOf(this.heightOfOriginalImage);
+
+			//proportional calculations
+//			width = (orgWidth*height)/orgHeight;
+//			height = orgheight* width / orgwidth
+
+			BigInteger widthDesired = BigInteger.valueOf(setWidth);
+			BigInteger heightDesired = BigInteger.valueOf(setHeight);
+			BigInteger widthOriginal = BigInteger.valueOf(this.widthOfOriginalImage);
+			BigInteger heightOriginal = BigInteger.valueOf(this.heightOfOriginalImage);
+
 			// start calculation with big integers
-			BigInteger wImagehTable = wImage.multiply(hTable);
-			BigInteger hImagewTable = hImage.multiply(wTable);
-			if (hImagewTable.compareTo(wImagehTable) > 0) {
-				// set height of modified image to height of the cell
-				this.heightOfModifiedImage = setHeight;
-				this.widthOfModifiedImage = wImagehTable.divide(hImage).intValue();
-			}
-			else {
-				// set width of modified image to width of the cell
+			BigInteger widthFinding = widthOriginal.multiply(heightDesired); //orgWidth*height
+			BigInteger heightFinding = heightOriginal.multiply(widthDesired); //orgheight* width
+
+			if (setHeight == 0) {
+				// set height to the calculated propertional height
 				this.widthOfModifiedImage = setWidth;
-				this.heightOfModifiedImage = hImagewTable.divide(wImage).intValue();
+				this.heightOfModifiedImage = heightFinding.divide(widthOriginal).intValue();
 			}
-			// sometimes the new values equal to the original values:
-			// in this case do not modify the image
-			if (this.widthOfModifiedImage == this.widthOfOriginalImage && this.heightOfModifiedImage == this.heightOfOriginalImage) {
-				// do not modify the image
-				this.widthOfModifiedImage = 0;
-				this.heightOfModifiedImage = 0;
-				return false;
+			else if(setWidth == 0) {
+				// set width to the calculated propertional width
+				this.heightOfModifiedImage = setHeight;
+				this.widthOfModifiedImage = widthFinding.divide(heightOriginal).intValue();
+			}
+			else{
+				this.widthOfModifiedImage = setWidth;
+				this.heightOfModifiedImage = setHeight;
 			}
 		}
+		else{
+			if(setWidth>0){
+				this.widthOfModifiedImage = setWidth;
+			}
+			if(setHeight>0){
+				this.heightOfModifiedImage = setHeight;
+			}
+		}
+
+
+//		sometimes the new values equal to the original values:
+		// in this case do not modify the image
+		if (this.widthOfModifiedImage == this.widthOfOriginalImage && this.heightOfModifiedImage == this.heightOfOriginalImage) {
+			// do not modify the image
+			this.widthOfModifiedImage = 0;
+			this.heightOfModifiedImage = 0;
+			return false;
+		}
+
+
 		// end of calculation of the values width and height of the modified
 		// image
 		return imageMustBeModified;
@@ -291,22 +268,11 @@ public class AdvancedImage extends Image {
 	 * Gets height of original image.
 	 */
 	public int getHeightOfOriginalImage() throws Exception {
-		if (this.heightOfOriginalImage <= 0) {
-			// is not in Slide
-			if (this.resource == null) {
-				String tempHeight = getImageEntity(IWContext.getInstance()).getHeight();
-				if (tempHeight != null) {
-					this.heightOfOriginalImage = Integer.parseInt(tempHeight);
-					return this.heightOfOriginalImage;
-				}
-			}
+		if (this.heightOfOriginalImage <= 0) {		
 			// same for both db and slide
 			if (this.heightOfOriginalImage <= 0) {
 				// this actually sets both the width and height
 				readWidthAndHeightFromOriginalImage();
-				if (this.resource == null) {
-					setWidthAndHeightInImageEntity(this.widthOfOriginalImage, this.heightOfOriginalImage);
-				}
 			}
 		}
 		return this.heightOfOriginalImage;
@@ -317,20 +283,10 @@ public class AdvancedImage extends Image {
 	 */
 	public int getWidthOfOriginalImage() throws Exception {
 		if (this.widthOfOriginalImage <= 0) {
-			// is not in Slide
-			if (this.resource == null) {
-				String tempWidth = getImageEntity(IWContext.getInstance()).getWidth();
-				if (tempWidth != null) {
-					this.widthOfOriginalImage = Integer.parseInt(tempWidth);
-				}
-			}
 			// same for both db and slide
 			if (this.widthOfOriginalImage <= 0) {
 				// this actually sets both the width and height
 				readWidthAndHeightFromOriginalImage();
-				if (this.resource == null) {
-					setWidthAndHeightInImageEntity(this.widthOfOriginalImage, this.heightOfOriginalImage);
-				}
 			}
 		}
 		return this.widthOfOriginalImage;
@@ -384,14 +340,10 @@ public class AdvancedImage extends Image {
 	 */
 	public void setLinkToDisplayWindow(int imageNumber) {
 		Link popUp = getPopUpReadyLink();
-		if (this.originalImageId != -1) {
-			// set imageID of the original image
-			popUp.addParameter(ImageDisplayWindow.PARAMETER_IMAGE_ID, this.originalImageId);
-		}
-		else if (this.resource != null) {
+		if (this.resource != null) {
 			popUp.addParameter(ImageDisplayWindow.PARAMETER_IMAGE_URI, getResourceURI());
 		}
-		
+
 		popUp.addParameter(ImageDisplayWindow.PARAMETER_IMAGE_NUMBER, imageNumber);
 		setImageZoomLink(popUp);
 		setImageLinkZoomView();
@@ -402,21 +354,21 @@ public class AdvancedImage extends Image {
 	 * @return resource.getPath() if resource is not null (image from slide)
 	 */
 	public String getResourceURI() {
-		if (this.resource != null) {
-			return this.resource.getPath();
-		}
-		else {
-			return null;
-		}
+		return resourceURI;
 	}
-	
-	public String getName(){
-		if(this.resource!=null){
-			String path = getResourceURI();
-			return path.substring(path.lastIndexOf("/")+1);
-		}
 
-		return super.getName();
+	public String getName(){
+		if(this.originalImageName!=null){
+			return this.originalImageName;
+		}
+		else if(this.resource!=null){
+			String path = getResourceURI();
+			this.originalImageName = path.substring(path.lastIndexOf("/")+1);
+			return this.originalImageName;
+		}
+		else{
+			return super.getName();
+		}
 	}
 
 	/**
@@ -447,41 +399,10 @@ public class AdvancedImage extends Image {
 		return link;
 	}
 
-	/**
-	 * Gets the imageEntity and changes and stores it
-	 * 
-	 * @param width
-	 * @param height
-	 */
-	private void setWidthAndHeightInImageEntity(int width, int height) throws Exception {
-		// only if we are using the database storage
-		if (this.resource == null) {
-			IWContext iwc = IWContext.getInstance();
-			ImageProvider imageProvider = getImageProvider(iwc);
-			ImageEntity entity = getImageEntity(iwc);
-			imageProvider.setHeightAndWidthOfOriginalImageToEntity(width, height, entity);
-		}
-	}
-
-	private ImageEntity getImageEntity(IWContext iwc) {
-		if (this.imageEntity == null) {
-			setRealPathToImageAndImageEntity(iwc);
-		}
-		return this.imageEntity;
-	}
-
-	private String getRealPathToImage(IWContext iwc) {
-		if (this.realPathToImage == null) {
-			setRealPathToImageAndImageEntity(iwc);
-		}
+	private String getRealPathToImage() {
 		return this.realPathToImage;
 	}
 
-	private void setRealPathToImageAndImageEntity(IWContext iwc) {
-		Cache cachedImage = getCachedImage(iwc, this.originalImageId);
-		this.realPathToImage = cachedImage.getRealPathToFile();
-		this.imageEntity = (ImageEntity) cachedImage.getEntity();
-	}
 
 	/**
 	 * Read width and height from the original image via slide properties or ImageInfo
@@ -491,129 +412,74 @@ public class AdvancedImage extends Image {
 	 */
 	protected void readWidthAndHeightFromOriginalImage() throws Exception {
 		IWContext iwc = IWContext.getInstance();
-		String realOrURLPath = getRealPathToImage(iwc);
-		
-		// if in database
-		if (this.resource == null) {
+		String realOrURLPath = getRealPathToImage();
+
+		//Todo use slide local api/webdavlocal resource to get properties
+		String widthAndHeight = null;
+		Enumeration enumWidthAndHeight = this.resource.propfindMethod(IWSlideConstants.PROPERTYNAME_WIDTH_AND_HEIGHT_PROPERTY);
+		if(enumWidthAndHeight!=null && enumWidthAndHeight.hasMoreElements() && !"".equals((widthAndHeight = (String) enumWidthAndHeight.nextElement())) ){
+			this.widthOfOriginalImage = Integer.parseInt(widthAndHeight.substring(0,widthAndHeight.indexOf("x")));
+			this.heightOfOriginalImage = Integer.parseInt(widthAndHeight.substring(widthAndHeight.indexOf("x")+1));	
+		}
+		else{
+			//TODO move to ImageProvider
+			URL url = new URL(realOrURLPath);
 			ImageInfo ii = new ImageInfo();
-			InputStream stream = new FileInputStream(realOrURLPath);
+			InputStream stream = url.openStream();
 			ii.setInput(stream);
 			if (ii.check()) {
 				this.widthOfOriginalImage = ii.getWidth();
 				this.heightOfOriginalImage = ii.getHeight();
-			}
-			stream.close();
-			stream = null;
-			
-		}
-		else {
-			// in Slide
-			//Todo use slide local api/webdavlocal resource to get properties
-			String widthAndHeight = null;
-			Enumeration enumWidthAndHeight = this.resource.propfindMethod(IWSlideConstants.PROPERTYNAME_WIDTH_AND_HEIGHT_PROPERTY);
-			if(enumWidthAndHeight!=null && enumWidthAndHeight.hasMoreElements() && !"".equals((widthAndHeight = (String) enumWidthAndHeight.nextElement())) ){
-				this.widthOfOriginalImage = Integer.parseInt(widthAndHeight.substring(0,widthAndHeight.indexOf("x")));
-				this.heightOfOriginalImage = Integer.parseInt(widthAndHeight.substring(widthAndHeight.indexOf("x")+1));	
-			}
-			else{
-				//TODO move to ImageProvider
-				URL url = new URL(realOrURLPath);
-				ImageInfo ii = new ImageInfo();
-				InputStream stream = url.openStream();
-				ii.setInput(stream);
-				if (ii.check()) {
-					this.widthOfOriginalImage = ii.getWidth();
-					this.heightOfOriginalImage = ii.getHeight();
-					final int bitsPerPixel = ii.getBitsPerPixel();
-					final int widthDpi = ii.getPhysicalWidthDpi();
-					
-					Hashtable props = new Hashtable();
-					props.put(IWSlideConstants.PROPERTY_HEIGHT, String.valueOf(this.heightOfOriginalImage));
-					props.put(IWSlideConstants.PROPERTY_WIDTH, String.valueOf(this.widthOfOriginalImage));
+				final int bitsPerPixel = ii.getBitsPerPixel();
+				final int widthDpi = ii.getPhysicalWidthDpi();
 
-					props.put(IWSlideConstants.PROPERTY_WIDTH_AND_HEIGHT, String.valueOf(this.widthOfOriginalImage)+"x"+String.valueOf(this.heightOfOriginalImage));
-					props.put(IWSlideConstants.PROPERTY_BITS_PER_PIXEL, String.valueOf(bitsPerPixel));
-					if (widthDpi != -1) {
-						props.put(IWSlideConstants.PROPERTY_DPI, String.valueOf(widthDpi));
-					}
-					
-					//close before to avoid thread lock
-					stream.close();
-					stream = null;
-					ii = null;
-					this.resource.proppatchMethod(props, true);
-					
+				Hashtable props = new Hashtable();
+				props.put(IWSlideConstants.PROPERTY_HEIGHT, String.valueOf(this.heightOfOriginalImage));
+				props.put(IWSlideConstants.PROPERTY_WIDTH, String.valueOf(this.widthOfOriginalImage));
+
+				props.put(IWSlideConstants.PROPERTY_WIDTH_AND_HEIGHT, String.valueOf(this.widthOfOriginalImage)+"x"+String.valueOf(this.heightOfOriginalImage));
+				props.put(IWSlideConstants.PROPERTY_BITS_PER_PIXEL, String.valueOf(bitsPerPixel));
+				if (widthDpi != -1) {
+					props.put(IWSlideConstants.PROPERTY_DPI, String.valueOf(widthDpi));
 				}
-				//must close
-				if(stream!=null){
-					stream.close();
-					stream = null;
-					ii = null;
-				}
-				
-				
+
+				//close before to avoid thread lock
+				stream.close();
+				stream = null;
+				ii = null;
+				this.resource.proppatchMethod(props, true);
+
 			}
-			
-			// so we can have access to that in javascript...very handy
-			//only set for slide stuff now...
-			String path = this.resource.getPath();
-			setMarkupAttribute("orgIMGPath",path);
-			setMarkupAttribute("orgIMGParentPath", getImageProvider(iwc).getIWSlideService().getParentPath(path));
+			//must close
+			if(stream!=null){
+				stream.close();
+				stream = null;
+				ii = null;
+			}
+
 
 		}
-		
+
+		// so we can have access to that in javascript...very handy
+		//only set for slide stuff now...
+		String path = getResourceURI();
+		setMarkupAttribute("orgIMGPath",path);
+		setMarkupAttribute("orgIMGParentPath", getImageProvider(iwc).getIWSlideService().getParentPath(path));
+
+
 	}
 
-	private Cache getCachedImage(IWContext iwc, int imageId) {
-		// this method is similar to the private getImage() method of the super
-		// class Image
-		IWMainApplication iwma = iwc.getIWMainApplication();
-		IWCacheManager cacheManager = IWCacheManager.getInstance(iwma);
-		if (imageId > 0) {
-			return cacheManager.getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(), imageId,
-					iwma);
-		}
-		else if (this.resource != null) {
-			// TODO store this cache object
-			return new Cache(getResourceURI(), getResourceURI());
-		}
-		return null;
-	}
+	private void createAndStoreImage(IWContext iwc) throws Exception {
 
-	private int createAndStoreImage(IWContext iwc) throws Exception {
+//		set the xml width and height
+		setHeight(this.heightOfModifiedImage);
+		setWidth(this.widthOfModifiedImage);
+
 		// get image encoder
 		ImageEncoder imageEncoder = getImageEncoder(iwc);
 		// get mime type
-		String mimeType = null;
-		Cache cachedImage = null;
-		if (this.resource == null) {
-			cachedImage = getCachedImage(iwc, this.originalImageId);
-			ImageEntity imageEntity = (ImageEntity) cachedImage.getEntity();
-			mimeType = imageEntity.getMimeType();
-		}
-		else {
-			cachedImage = new Cache(getResourceURI(), getResourceURI());
-			mimeType = this.resource.getGetContentType();
-		}
-		// is it necessary to convert the image?
-		if (!checkAndCalculateNewWidthAndHeight(iwc)) {
-			// okay: the desired width and height is the same as the original
-			// image
-			// check if the image would be converted to another type
-			if (imageEncoder.isInputTypeEqualToResultType(mimeType)) {
-				// do nothing, use the original image -----
-				return -1;
-			}
-			else if (this.resource != null) {
-				// convert the original image using the same size
-				// e.g. bitmap to jpeg conversion because of load size
-				this.heightOfModifiedImage = getHeightOfOriginalImage();
-				this.widthOfModifiedImage = getWidthOfOriginalImage();
-			}
-		}
-		// set the xml width and height
-		setHeight(this.heightOfModifiedImage);
-		setWidth(this.widthOfModifiedImage);
+		String mimeType = this.resource.getGetContentType();
+
 		// look up the file extension of the result file the image encoder
 		// returns
 		// for this mime type
@@ -621,62 +487,27 @@ public class AdvancedImage extends Image {
 		if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension)) {
 			throw new IOException("ImageEncoder do not known this mime type:" + mimeType);
 		}
-		String nameOfModifiedImage = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,
-				extension, this.imageEntity);
-		// TODO if the image exists on HARD DISK then set the Image url to that
-		// path
-		// otherwise get the id from the database.
-		// setURL(path);
-		// check if the image already exists and return the value if found
-		int imageID = getImageIDByName(nameOfModifiedImage);
-		if (imageID > -1) {
-			// nothing to do, use the already existing modified image ---
-			return imageID;
-		}
-		else {
-			// -----------------------------------------------------------------------------
-			// ------------------ image has to be processed---------------------------------
-			// get the processer
-			// create a image process job
-			ImageProcessJob job = new ImageProcessJob();
-			if (this.resource != null) {
-				job.setImageLocation(this.resource.getHttpURL().toString());
-				job.setLocationIsURL(true);
-				job.setMimeType(this.resource.getGetContentType());
-				job.setName(this.resource.getName());
-				job.setID("");
-			}
-			else {
-				job.setImageEntity((ImageEntity) cachedImage.getEntity());
-				job.setImageLocation(cachedImage.getRealPathToFile());
-				job.setLocationIsURL(false);
-				job.setMimeType(job.getImageEntity().getMimeType());
-				job.setName(job.getImageEntity().getName());
-				job.setID(job.getImageEntity().getPrimaryKey().toString());
-			}
-			// job.setCachedImage(cachedImage);
-			job.setNewExtension(extension);
-			job.setNewWidth(this.widthOfModifiedImage);
-			job.setNewHeight(this.heightOfModifiedImage);
-			job.setJobKey(nameOfModifiedImage);
-			ImageProcessor processor = ImageProcessor.getInstance(iwc);
-			processor.addImageProcessJobToQueu(job);
-			// the scaled image is not ready yet
-			return -1;
-		}
+
+		// -----------------------------------------------------------------------------
+		// ------------------ image has to be processed---------------------------------
+		// get the processer
+		// create a image process job
+		ImageProcessJob job = new ImageProcessJob();
+		job.setImageLocation(this.realPathToImage);
+		job.setLocationIsURL(true);
+		job.setMimeType(mimeType);
+		job.setName(this.getName());
+		job.setID("");
+
+		job.setNewExtension(extension);
+		job.setNewWidth(this.widthOfModifiedImage);
+		job.setNewHeight(this.heightOfModifiedImage);
+		job.setJobKey(nameOfModifiedImage);
+		ImageProcessor processor = ImageProcessor.getInstance(iwc);
+		//add to the image processing engine
+		processor.addImageProcessJobToQueu(job);
 	}
 
-	private int getImageIDByName(String name) {
-		ICFileHome icFileHome = (ICFileHome) com.idega.data.IDOLookup.getHomeLegacy(ICFile.class);
-		ICFile icFile;
-		try {
-			icFile = icFileHome.findByFileName(name);
-		}
-		catch (FinderException e) {
-			return -1;
-		}
-		return ((Integer) icFile.getPrimaryKey()).intValue();
-	}
 
 	private ImageEncoder getImageEncoder(IWContext iwc) throws RemoteException {
 		return (ImageEncoder) IBOLookup.getServiceInstance(iwc, ImageEncoder.class);
@@ -686,26 +517,16 @@ public class AdvancedImage extends Image {
 		return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
 	}
 
-	private String getNameOfModifiedImageWithExtension(int width, int height, String extension, ImageEntity entity) {
+	private String getNameOfModifiedImageWithExtension(int width, int height, String extension) {
 		String name = getName();
-		if (this.resource != null) {
-			String imageName = this.resource.getName();
-			int slashPos = imageName.lastIndexOf("/");
-			if (slashPos > 0) {
-				imageName = imageName.substring(slashPos + 1);
-			}
-			int pointPosition = imageName.lastIndexOf('.');
-			int length = imageName.length();
-			if ((pointPosition > 0) && pointPosition > (length - 5)) {
-				imageName = imageName.substring(0, pointPosition);
-			}
-			name = imageName;
+
+		int pointPosition = name.lastIndexOf('.');
+		int length = name.length();
+		if ((pointPosition > 0) && pointPosition > (length - 5)) {
+			name = name.substring(0, pointPosition);
 		}
 		StringBuffer nameOfImage = new StringBuffer();
-		// add new extension
-		if (entity != null) {
-			nameOfImage.append(entity.getPrimaryKey());
-		}
+		// add new extension	
 		nameOfImage.append(name).append("_").append(width).append("x").append(height).append(".").append(extension);
 		return nameOfImage.toString();
 	}

@@ -270,10 +270,10 @@ public class ImageGallery extends Block {
 //			wrapper.add(imageAndTitle);
 			
 			// todo have a set method
-			if (this.widthOfImages > 0) {
+			if (this.heightOfImages > 0) {
 				image.setHeight(this.heightOfImages);
 			}
-			if (this.heightOfImages > 0) {
+			if (this.widthOfImages > 0) {
 				image.setWidth(this.widthOfImages);
 			}
 			// set properties of advanced image
