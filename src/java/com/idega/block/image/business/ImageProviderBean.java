@@ -3,27 +3,23 @@ package com.idega.block.image.business;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.CreateException;
-import javax.ejb.FinderException;
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+
 import org.apache.commons.httpclient.HttpException;
+
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageEntityHome;
 import com.idega.block.image.presentation.AdvancedImage;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOServiceBean;
-import com.idega.core.file.data.ICFile;
-import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 import com.idega.slide.business.IWSlideService;
 import com.idega.util.ListUtil;
 
@@ -41,13 +37,6 @@ import com.idega.util.ListUtil;
 public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 
 	public ImageProviderBean() {
-	}
-
-	public int getImageCount(ICFile imageFolder) {
-		if (imageFolder == null) {
-			return 0;
-		}
-		return imageFolder.getChildCount();
 	}
 	
 	public int getImageCount(String imageFolderResourcePath) {
@@ -163,36 +152,6 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		}
 	}
 	
-	
-	
-	public ArrayList getImagesFromTo(ICFile imageFolder, int startPosition, int endPosition) throws SQLException {
-		if (imageFolder == null || (startPosition < 1) || (startPosition > endPosition)) {
-			return new ArrayList();
-		}
-
-		int length = endPosition - startPosition + 1;
-		ArrayList result = new ArrayList(length);
-
-		try {
-			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-			Collection images = fileHome.findChildren(imageFolder, null, null, "name", startPosition-1, length);
-			Iterator iterator = images.iterator();
-			AdvancedImage child;
-			while (iterator.hasNext()) {
-				ICFile imageFile = ((ICFile) iterator.next());
-				child = new AdvancedImage(((Integer) imageFile.getPrimaryKey()).intValue(), imageFile.getName());
-				result.add(child);
-			}
-		}
-		catch (IDOLookupException ile) {
-			throw new SQLException(ile.getMessage());
-		}
-		catch (FinderException fe) {
-			throw new SQLException(fe.getMessage());
-		}
-		return result;
-	}
-
 	public int uploadImage(InputStream inputStream, String mimeType, String name, int width, int height,
 			ImageEntity parent) throws CreateException {
 

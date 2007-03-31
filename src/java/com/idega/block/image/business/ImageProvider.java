@@ -11,15 +11,15 @@ package com.idega.block.image.business;
 
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ejb.CreateException;
 import javax.ejb.TransactionRolledbackLocalException;
+
 import com.idega.block.image.data.ImageEntity;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOService;
-import com.idega.core.file.data.ICFile;
 import com.idega.slide.business.IWSlideService;
 
 
@@ -31,11 +31,6 @@ import com.idega.slide.business.IWSlideService;
  * @version $Revision: 1.1 $
  */
 public interface ImageProvider extends IBOService {
-
-	/**
-	 * @see com.idega.block.image.business.ImageProviderBean#getImageCount
-	 */
-	public int getImageCount(ICFile imageFolder) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.block.image.business.ImageProviderBean#getImageCount
@@ -62,12 +57,6 @@ public interface ImageProvider extends IBOService {
 	 * @see com.idega.block.image.business.ImageProviderBean#getContainedFolders
 	 */
 	public List getContainedFolders(String imageFolderResourcePath) throws java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.block.image.business.ImageProviderBean#getImagesFromTo
-	 */
-	public ArrayList getImagesFromTo(ICFile imageFolder, int startPosition, int endPosition) throws SQLException,
-			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.block.image.business.ImageProviderBean#uploadImage
