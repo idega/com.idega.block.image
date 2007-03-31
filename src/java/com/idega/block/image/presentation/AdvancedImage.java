@@ -377,6 +377,7 @@ public class AdvancedImage extends Image {
 	 *         ImageDisplayWindow
 	 */
 	public Link getPopUpReadyLink() {
+		//TODO remove or implement ImageDisplayWindow for slide, not used in ImageGallery any more.
 		Link link = new Link();
 		try {
 			int width = getWidthOfOriginalImage();

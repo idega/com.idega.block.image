@@ -8,13 +8,11 @@ import com.idega.block.image.business.ImageProvider;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
-import com.idega.core.file.data.ICFile;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
-import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
@@ -41,8 +39,6 @@ public class ImageGallery extends Block {
 	public static final String STYLE_CLASS_FIRST_IN_ROW = "firstInRow";
 	private static final String STYLE_CLASS_GALLERY_BUTTONS = "galleryButtons";
 
-	// folder with the images
-	private ICFile imageFileFolder = null;
 	// slide path to resource folder
 	private String resourceFilePath = null;
 	// enlarge image to specified height and width
@@ -90,10 +86,6 @@ public class ImageGallery extends Block {
 
 	public String getBundleIdentifier() {
 		return ImageGallery.IW_BUNDLE_IDENTIFIER;
-	}
-
-	public void setFilesFolder(ICFile imageFileFolder) {
-		this.imageFileFolder = imageFileFolder;
 	}
 
 	public void setFolderResourcePath(String resourcePath) {
@@ -359,10 +351,7 @@ public class ImageGallery extends Block {
 
 
 		int limit = 0;
-		if (this.imageFileFolder != null) {
-			limit = getImageProvider(iwc).getImageCount(this.imageFileFolder);
-		}
-		else if (this.resourceFilePath != null) {
+		if (this.resourceFilePath != null) {
 			limit = getImageProvider(iwc).getImageCount(this.resourceFilePath);
 		}
 		int startPosition = restoreNumberOfFirstImage(iwc);
@@ -420,10 +409,7 @@ public class ImageGallery extends Block {
 		int newStartPosition;
 		int limit = 0;
 
-		if (this.imageFileFolder != null) {
-			limit = getImageProvider(iwc).getImageCount(this.imageFileFolder);
-		}
-		else if (this.resourceFilePath != null) {
+		if (this.resourceFilePath != null) {
 			limit = getImageProvider(iwc).getImageCount(this.resourceFilePath);
 		}		
 
@@ -444,15 +430,9 @@ public class ImageGallery extends Block {
 		return getImagesFromTo(iwc, startPosition, startPosition + getNumberOfImagePlaces() - 1);
 	}
 
-	protected ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException,
-	java.sql.SQLException {
+	protected ArrayList getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException {
 		//todo optimize calls to imageprovider, this is almost the same as before
-		if (this.imageFileFolder != null) {
-			return getImageProvider(iwc).getImagesFromTo(this.imageFileFolder, startPosition, endPosition);
-		}
-		else {
-			return getImageProvider(iwc).getImagesFromTo(this.resourceFilePath, startPosition, endPosition);
-		}
+		return getImageProvider(iwc).getImagesFromTo(this.resourceFilePath, startPosition, endPosition);
 	}
 
 	private void storeNumberOfFirstImage(IWContext iwc, int firstImageNumber) {

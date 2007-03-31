@@ -30,7 +30,7 @@ public class AdvancedImageWrapper extends PresentationObject  {
   }
   
   public void print(IWContext iwc)throws Exception{
-    this.image.printOriginalImage(iwc);
+    this.image.print(iwc);
   }
   
   public void _print(IWContext iwc) throws Exception {

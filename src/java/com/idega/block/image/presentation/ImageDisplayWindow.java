@@ -224,23 +224,25 @@ public class ImageDisplayWindow extends Window {
 	}
 
 	private AdvancedImage getImage(IWContext iwc, ICFile imageFolder, int imageNumber) {
-		if (imageNumber > 0) {
-			try {
-				ArrayList list = getImageProvider(iwc).getImagesFromTo(imageFolder, imageNumber, imageNumber);
-				if (list != null) {
-					Iterator iter = list.iterator();
-					while (iter.hasNext()) {
-						return (AdvancedImage) iter.next();
-					}
-				}
-			}
-			catch (SQLException sql) {
-				log(sql);
-			}
-			catch (RemoteException re) {
-				log(re);
-			}
-		}
+		
+		//REMOVE THIS CLASS OR IMPLEMENT WITH SLIDE
+//		if (imageNumber > 0) {
+//			try {
+//				ArrayList list = getImageProvider(iwc).getImagesFromTo(imageFolder, imageNumber, imageNumber);
+//				if (list != null) {
+//					Iterator iter = list.iterator();
+//					while (iter.hasNext()) {
+//						return (AdvancedImage) iter.next();
+//					}
+//				}
+//			}
+//			catch (SQLException sql) {
+//				log(sql);
+//			}
+//			catch (RemoteException re) {
+//				log(re);
+//			}
+//		}
 		return null;
 	}
 
