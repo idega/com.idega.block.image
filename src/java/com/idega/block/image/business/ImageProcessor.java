@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.15 2006/11/03 11:27:44 valdas Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.16 2007/04/10 11:30:43 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,9 +9,6 @@
  */
 package com.idega.block.image.business;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,29 +21,22 @@ import java.util.Map;
 
 import javax.ejb.CreateException;
 
-import org.apache.commons.httpclient.HttpURL;
-import org.apache.webdav.lib.WebdavResource;
-
-import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.graphics.image.business.ImageEncoder;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWCacheManager;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
 import com.idega.slide.business.IWSlideService;
-import com.idega.slide.util.WebdavExtendedResource;
-import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/11/03 11:27:44 $ by $Author: valdas $
+ * Last modified: $Date: 2007/04/10 11:30:43 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -134,30 +124,18 @@ public class ImageProcessor implements Runnable {
 		// get all the job data
 		String realPathToImage = job.getImageLocation();
 		String mimeType = job.getMimeType();
-		String imageName = job.getName();
-		String originalImageID = job.getID();
+		//String imageName = job.getName();
 		int widthOfModifiedImage = job.getNewWidth();
 		int heightOfModifiedImage = job.getNewHeight();
-		String extension = job.getNewExtension();
 		String nameOfModifiedImage = job.getJobKey();
-		String pathOfModifiedImage = null;
+		String pathOfModifiedImage = job.getModifiedImageURI();
+		
 		if (job.getLocationIsURL()) {
-			try {
-
-				WebdavExtendedResource resource = new WebdavExtendedResource(new HttpURL(realPathToImage));
-				String parentPath = resource.getParentPath();
+			try {						
+				
 				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(this.iwac, IWSlideService.class);
-				WebdavExtendedResource parentRes = ss.getWebdavExtendedResource(parentPath,ss.getRootUserCredentials());
-				WebdavResource root = ss.getWebdavRootResource(ss.getRootUserCredentials());
-				String complete = parentPath+"/resized";
-				boolean exists = ss.getExistence(complete);
-				// create resized folder
-				if (!exists) {
-					root.mkcolMethod(complete);
-				}
-				pathOfModifiedImage = getModifiedImagePath(widthOfModifiedImage, heightOfModifiedImage, extension,
-						imageName, parentPath);
-
+				//pathOfModifiedImage = getModifiedImagePath(widthOfModifiedImage, heightOfModifiedImage, extension,imageName, parentPath);
+				
 				InputStream input = new URL(realPathToImage).openStream();
 				// get output
 				MemoryFileBuffer buff = new MemoryFileBuffer();
@@ -167,8 +145,9 @@ public class ImageProcessor implements Runnable {
 					imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
 					InputStream s = new MemoryInputStream(buff);
 					//parentRes.putMethod(pathOfModifiedImage, new URL(realPathToImage).openStream());
-					parentRes.putMethod(pathOfModifiedImage, s);
+					ss.uploadFileAndCreateFoldersFromStringAsRoot(pathOfModifiedImage.substring(0,pathOfModifiedImage.lastIndexOf("/")+1) , nameOfModifiedImage, s, mimeType, true);
 					s.close();
+					s = null;
 				}
 				catch (Exception ex) {
 					// delete the created file (you can not use the result)
@@ -178,46 +157,14 @@ public class ImageProcessor implements Runnable {
 				}
 				finally {
 					output.close();
+					output = null;
 					input.close();
+					input = null;					
+					buff = null;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else {
-
-			pathOfModifiedImage = getRealPathOfModifiedImage(widthOfModifiedImage, heightOfModifiedImage, extension,
-					imageName, originalImageID);
-
-			// now create the new image...
-			// get input from the cached file instead of from the database because
-			// get imageEntity.getFileValue() causes End-Of-File Exception when JAI
-			// tries to read the file fully
-			FileInputStream input = new FileInputStream(realPathToImage);
-			// get output
-			OutputStream output = new FileOutputStream(pathOfModifiedImage);
-			// encode the image
-			try {
-				imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
-			}
-			catch (Exception ex) {
-				// delete the created file (you can not use the result)
-				output.close();
-				input.close();
-				(new File(pathOfModifiedImage)).delete();
-				ex.printStackTrace();
-			}
-			finally {
-				output.close();
-				input.close();
-			}
-			
-			//Save the image to the database
-			FileInputStream inputStream = new FileInputStream(pathOfModifiedImage);
-			ImageEntity motherImage = job.getImageEntity();
-			ImageProvider imageProvider = getImageProvider();
-			imageProvider.uploadImage(inputStream, mimeType, nameOfModifiedImage,
-					widthOfModifiedImage, heightOfModifiedImage, motherImage);
-			inputStream.close();
 		}
 	}
 
@@ -239,42 +186,13 @@ public class ImageProcessor implements Runnable {
 		return buf.toString();
 	}
 	
-	private String getRealPathOfModifiedImage(int width, int height, String extension, String imageName,
-			String originalImageID) {
-		String separator = FileUtil.getFileSeparator();
-		StringBuffer path = new StringBuffer(this.iwac.getIWMainApplication().getApplicationRealPath());
-		path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY).append(separator).append(MODIFIED_IMAGES_FOLDER);
-		// check if the folder exists create it if necessary
-		// usually the folder should be already be there.
-		// the folder is never deleted by this class
-		FileUtil.createFolder(path.toString());
-		path.append(separator).append(
-				getNameOfModifiedImageWithExtension(width, height, extension, imageName, originalImageID));
-		return path.toString();
-	}
-
-	private String getNameOfModifiedImageWithExtension(int width, int height, String extension, String imageName,
-			String originalImageID) {
-		int pointPosition = imageName.lastIndexOf('.');
-		int length = imageName.length();
-		// cut extension (imageName.a imageName.ab imageName.abc but not
-		// imageName.abcd)
-		if ((pointPosition > 0) && pointPosition > (length - 5)) {
-			imageName = imageName.substring(0, pointPosition);
-		}
-		StringBuffer nameOfImage = new StringBuffer();
-		// add new extension
-		nameOfImage.append(originalImageID);
-		nameOfImage.append(width).append("_").append(height).append("_").append(imageName).append(".").append(extension);
-		return nameOfImage.toString();
-	}
-
 	public void start() {
 		this.runThread = true;
 		if (this.thread == null || !this.isRunning) {
 			//a new thread must be created here because it was null or 
 			//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
 			this.thread = new Thread(this, "ImageProcessor Thread");
+			this.thread.setDaemon(true);
 			//this is a backround task
 			this.thread.setPriority(Thread.NORM_PRIORITY);
 			this.thread.start();
@@ -328,7 +246,4 @@ public class ImageProcessor implements Runnable {
 		return (ImageEncoder) IBOLookup.getServiceInstance(this.iwac, ImageEncoder.class);
 	}
 
-	private ImageProvider getImageProvider() throws RemoteException {
-		return (ImageProvider) IBOLookup.getServiceInstance(this.iwac, ImageProvider.class);
-	}
 }
