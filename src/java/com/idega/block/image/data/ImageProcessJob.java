@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessJob.java,v 1.4 2006/04/09 11:38:40 laddi Exp $
+ * $Id: ImageProcessJob.java,v 1.5 2007/04/11 12:54:40 eiki Exp $
  * Created on Sep 30, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,27 +10,24 @@
 package com.idega.block.image.data;
 
 
+
 /**
  * 
- *  Last modified: $Date: 2006/04/09 11:38:40 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/11 12:54:40 $ by $Author: eiki $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ImageProcessJob {
-	
-	private ImageEntity entity;
-	
-	public void setImageEntity(ImageEntity ent) {
-		this.entity = ent;
-	}
-	
-	public ImageEntity getImageEntity() {
-		return this.entity;
-	}
-	
+		
 	private String loc;
-	
+	private int newWidth;
+	private int newHeight;
+	private String newExtension;
+	private String mimeType;
+	private String jobKey;
+	private String modifiedImageURI;
+
 	public void setImageLocation(String loc) {
 		this.loc = loc;
 	}
@@ -48,19 +45,7 @@ public class ImageProcessJob {
 	public boolean getLocationIsURL() {
 		return this.locIsUrl;
 	}
-	
-	private String id;
-	
-	public void setID(String id) {
-		this.id = id;
-	}
-	
-	public String getID() {
-		return this.id;
-	}
-	
-	private String mimeType;
-	
+
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
 	}
@@ -69,36 +54,21 @@ public class ImageProcessJob {
 		return this.mimeType;
 	}
 
-	private String name;
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	private String jobKey;
-	
+	/**
+	 * 
+	 * @return The path to the modified image
+	 */
 	public String getJobKey() {
 		return this.jobKey;
 	}
+	
+	/*
+	 * A unique key, the path to the modified image
+	 */
 	public void setJobKey(String jobKey) {
 		this.jobKey = jobKey;
 	}
-	private int newWidth;
-	
-	private int newHeight;
-	
-	String newExtension;
-	
-//	public Cache getCachedImage() {
-//		return cachedImage;
-//	}
-//	public void setCachedImage(Cache cachedImage) {
-//		this.cachedImage = cachedImage;
-//	}
+
 	public String getNewExtension() {
 		return this.newExtension;
 	}
@@ -117,4 +87,13 @@ public class ImageProcessJob {
 	public void setNewWidth(int newWidth) {
 		this.newWidth = newWidth;
 	}
+
+	public String getModifiedImageURI() {
+		return modifiedImageURI;
+	}
+
+	public void setModifiedImageURI(String modifiedImageURI) {
+		this.modifiedImageURI = modifiedImageURI;
+	}
+
 }

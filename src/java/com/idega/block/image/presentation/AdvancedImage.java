@@ -1,6 +1,5 @@
 package com.idega.block.image.presentation;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
@@ -38,8 +37,8 @@ import com.idega.slide.util.IWSlideConstants;
  * setWidth methods of the Image class.
  * 
  * The ImageEncoder service bean is used to create the new image. The new
- * created image is uploaded into the file repository (db or slide) into a branch of the original
- * image(db) or under "/resized" in the images parent folder. The type of the new image is not necessary equal to the type of the
+ * created image is uploaded into the file repository (slide) under the folder "/resized" in the images parent folder. 
+ * The type of the new image is not necessary equal to the type of the
  * original image. The ImageEncoder is responsible for changing the type. (e.g.
  * bitmap is transformed to jpeg).
  * 
@@ -47,25 +46,25 @@ import com.idega.slide.util.IWSlideConstants;
  * derived images: Depending on the values of the height and the width value the
  * corresponding image is used by the print method. A new image is only created
  * if that size was never created before otherwise the desired image is fetched
- * from the database or cache. This means that an access to all modified images
+ * from the cache. This means that an access to all modified images
  * and especially to the original image is always possible.
  * 
  * To print the original image when this image is set to a different size the
  * {@link com.idega.block.image.presentation.AdvancedImageWrapper AdvancedImageWrapper}
  * can be used. Use the constructor AdvancedImageWrapper(this) and the wrapper
- * represents the original image, especially the original image is printed if
- * the wrapper is printed.
+ * represents the original image.
  * 
  * 
  * Copyright: Copyright (c) 2003 Company: idega software
  * 
- * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>
+ * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>, <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
+ * 
  * @version 1.0
  */
 public class AdvancedImage extends Image {
 
 	/** Folder where the modified images are stored */
-	public static final String MODIFIED_IMAGES_FOLDER = "modified_images";
+	public static final String MODIFIED_IMAGES_FOLDER = "/resized/";
 	/** border around the image in the popup window */
 	private static final String BORDER = "90";
 
@@ -87,7 +86,7 @@ public class AdvancedImage extends Image {
 	private WebdavResource resource = null;
 	private boolean shouldBeModified = false;
 	private String nameOfModifiedImage;
-	private String fullModifiedImageURL;
+	private String modifiedImageURI;
 	private String originalImageName;
 	private String resourceURI;
 
@@ -113,13 +112,11 @@ public class AdvancedImage extends Image {
 					this.nameOfModifiedImage = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,extension);
 
 					IWSlideService ss = getImageProvider(iwc).getIWSlideService();
+					StringBuffer buffer = new StringBuffer(ss.getParentPath(this.getResourceURI())).append(AdvancedImage.MODIFIED_IMAGES_FOLDER).append(this.nameOfModifiedImage);
+					this.modifiedImageURI = buffer.toString();
 
-					this.fullModifiedImageURL = ss.getParentPath(this.getResourceURI()) + "/resized/" + this.nameOfModifiedImage;
-
-					if (ss.getExistence(this.fullModifiedImageURL)) {
-						//why was this set before??- eiki
-						//resource = ss.getWebdavResourceAuthenticatedAsRoot(temp);
-						setURL(this.fullModifiedImageURL);
+					if (ss.getExistence(this.modifiedImageURI)) {
+						setURL(this.modifiedImageURI);
 					}
 					else {
 						scaleImage(iwc);
@@ -147,14 +144,6 @@ public class AdvancedImage extends Image {
 	private void scaleImage(IWContext iwc) {
 		try {
 			createAndStoreImage(iwc);
-			// commented because we want the browser to know the width and
-			// height (faster browser rendering)
-			// even when the image has not been scaled (otherwise the layout is
-			// destroyed)...
-			// remove these attributes to prevent scaling by the browser client
-			// removeMarkupAttribute(HEIGHT);
-			// removeMarkupAttribute(WIDTH);
-			//    
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -457,8 +446,6 @@ public class AdvancedImage extends Image {
 				stream = null;
 				ii = null;
 			}
-
-
 		}
 
 		// so we can have access to that in javascript...very handy
@@ -486,7 +473,24 @@ public class AdvancedImage extends Image {
 		// for this mime type
 		String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
 		if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension)) {
-			throw new IOException("ImageEncoder do not known this mime type:" + mimeType);
+			log("ImageEncoder does not known this mime type:" + mimeType+" will try to use JPG/GIF/PNG/BMP");
+			//backup plan...
+			if(this.originalImageName.endsWith("jpg") || this.originalImageName.endsWith("JPG")){
+				mimeType = "image/jpg";
+				extension = "jpg";
+			}
+			else if(this.originalImageName.endsWith("gif") || this.originalImageName.endsWith("GIF")){
+				mimeType = "image/gif";
+				extension = "gif";
+			}
+			else if(this.originalImageName.endsWith("png") || this.originalImageName.endsWith("PNG")){
+				mimeType = "image/png";
+				extension = "png";
+			}
+			else if(this.originalImageName.endsWith("bmp") || this.originalImageName.endsWith("BMP")){
+				mimeType = "image/jpg";
+				extension = "jpg";
+			}
 		}
 
 		// -----------------------------------------------------------------------------
@@ -497,13 +501,12 @@ public class AdvancedImage extends Image {
 		job.setImageLocation(this.realPathToImage);
 		job.setLocationIsURL(true);
 		job.setMimeType(mimeType);
-		job.setName(this.getName());
-		job.setID("");
-
 		job.setNewExtension(extension);
 		job.setNewWidth(this.widthOfModifiedImage);
 		job.setNewHeight(this.heightOfModifiedImage);
-		job.setJobKey(nameOfModifiedImage);
+		job.setJobKey(this.nameOfModifiedImage);
+		job.setModifiedImageURI(this.modifiedImageURI);
+		
 		ImageProcessor processor = ImageProcessor.getInstance(iwc);
 		//add to the image processing engine
 		processor.addImageProcessJobToQueu(job);
