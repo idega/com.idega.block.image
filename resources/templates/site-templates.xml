@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-templates>
+	
+	<site name="Photo gallery" site-category="Personal">
+		<structure>
+			<page name="Photos" type="imagegallery">
+				<page name="About me" type="text"/>
+				<page name="Contact me" type="text"/>
+			</page>
+		</structure>
+		<variables>
+			<variable name="site_title" value="My photo gallery"/>
+		</variables>
+	</site>
+	
+</site-templates>
