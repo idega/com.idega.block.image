@@ -7,6 +7,7 @@ import java.util.Iterator;
 import com.idega.block.image.business.ImageProvider;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
+import com.idega.business.SpringBeanLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.presentation.Block;
@@ -165,7 +166,7 @@ public class ImageGallery extends Block {
 
 	public void main(IWContext iwc) throws Exception {
 
-		Web2Business web2 = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
+		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 
 		Page parentPage = this.getParentPage();
 		if(parentPage!=null){
