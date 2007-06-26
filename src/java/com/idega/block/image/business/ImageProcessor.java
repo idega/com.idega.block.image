@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.14.2.1 2006/11/20 14:13:01 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.14.2.2 2007/06/26 16:25:06 sigtryggur Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -41,11 +41,11 @@ import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/11/20 14:13:01 $ by $Author: eiki $
+ * Last modified: $Date: 2007/06/26 16:25:06 $ by $Author: sigtryggur $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.14.2.1 $
+ * @version $Revision: 1.14.2.2 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -134,6 +134,7 @@ public class ImageProcessor implements Runnable {
 		String realPathToImage = job.getImageLocation();
 		String mimeType = job.getMimeType();
 		String imageName = job.getName();
+		String parentPath = realPathToImage.substring(0,realPathToImage.lastIndexOf('/'));
 		String originalImageID = job.getID();
 		int widthOfModifiedImage = job.getNewWidth();
 		int heightOfModifiedImage = job.getNewHeight();
@@ -143,8 +144,8 @@ public class ImageProcessor implements Runnable {
 		if (job.getLocationIsURL()) {
 			try {
 
-				WebdavExtendedResource resource = new WebdavExtendedResource(new HttpURL(realPathToImage));
-				String parentPath = resource.getParentPath();
+//				WebdavExtendedResource resource = new WebdavExtendedResource(new HttpURL(realPathToImage));
+//				String parentPath = resource.getParentPath();
 				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(this.iwac, IWSlideService.class);
 				WebdavExtendedResource parentRes = ss.getWebdavExtendedResource(parentPath,ss.getRootUserCredentials());
 				WebdavResource root = ss.getWebdavRootResource(ss.getRootUserCredentials());
