@@ -181,7 +181,7 @@ public class ImageGallery extends Block {
 //			script.addScriptSource(web2.getBundleURIToScriptaculousLib()+"?load=effects");
 //			script.addScriptSource(web2.getLightboxScriptFilePath());
 			
-			parentPage.addScriptSource(web2.getBundleURIToJQueryLib());
+			parentPage.addScriptSource(web2.getBundleURIToJQueryLibOLD());
 			parentPage.addScriptSource(web2.getThickboxScriptFilePath());
 				
 		}
