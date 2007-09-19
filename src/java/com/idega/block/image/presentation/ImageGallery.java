@@ -4,6 +4,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.myfaces.renderkit.html.util.AddResource;
+import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+
 import com.idega.block.image.business.ImageProvider;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
@@ -13,14 +16,12 @@ import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Page;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.SubmitButton;
 
 /**
- * *
  * 
  * Title: idegaWeb Description: ImageGallery is a block to show images that are
  * stored in a specified folder. A subset of these images is shown in a table.
@@ -165,31 +166,19 @@ public class ImageGallery extends Block {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-
 		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 
-		Page parentPage = this.getParentPage();
-		if(parentPage!=null){
-			
-			parentPage.addStyleSheetURL(web2.getThickboxStyleFilePath());
-			
-			//parentPage.addStyleSheetURL(web2.getLightboxStyleFilePath());
-			
-			//Script script = parentPage.getAssociatedScript();
-	
-//			script.addScriptSource(web2.getBundleURIToPrototypeLib());
-//			script.addScriptSource(web2.getBundleURIToScriptaculousLib()+"?load=effects");
-//			script.addScriptSource(web2.getLightboxScriptFilePath());
-			
-			parentPage.addScriptSource(web2.getBundleURIToJQueryLibOLD());
-			parentPage.addScriptSource(web2.getThickboxScriptFilePath());
+		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
+		//add a javascript to the header :)
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToJQueryLib());
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getThickboxScriptFilePath());
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToReflectionLib());
+		//add a stylesheet to the header
+		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, web2.getThickboxStyleFilePath());
 				
-		}
-
 		Layer imageGalleryLayer = new Layer(Layer.DIV);
 		//imageGalleryLayer.setStyleClass("album-wrapper "+this.styleClassName);
 		imageGalleryLayer.setStyleClass(this.styleClassName);
-		
 		
 		add(imageGalleryLayer);
 
@@ -272,6 +261,9 @@ public class ImageGallery extends Block {
 			// set properties of advanced image
 			image.setEnlargeProperty(this.enlargeImage);
 			image.setScaleProportional(this.scaleProportional);
+			
+			image.setStyleClass("reflect rheight10");
+			
 			// deprecated backward compatability stuff
 			if (this.paddingOfImage > 0) {
 				image.setPadding(this.paddingOfImage);
