@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.14.2.2 2007/06/26 16:25:06 sigtryggur Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.14.2.3 2007/09/26 08:05:18 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.ejb.CreateException;
 
-import org.apache.commons.httpclient.HttpURL;
 import org.apache.webdav.lib.WebdavResource;
 
 import com.idega.block.image.data.ImageEntity;
@@ -41,11 +40,11 @@ import com.idega.util.FileUtil;
 
 /**
  * 
- * Last modified: $Date: 2007/06/26 16:25:06 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2007/09/26 08:05:18 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.14.2.2 $
+ * @version $Revision: 1.14.2.3 $
  */
 public class ImageProcessor implements Runnable {
 
