@@ -1,10 +1,7 @@
 package com.idega.block.image.presentation;
 
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import javax.ejb.FinderException;
+
 import com.idega.block.image.business.ImageProvider;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -50,10 +47,12 @@ public class ImageDisplayWindow extends Window {
 		// up?)
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return ImageDisplayWindow.IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		Image image = null;
