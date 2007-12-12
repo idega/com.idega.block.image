@@ -166,7 +166,7 @@ public class ImageGallery extends Block {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+		Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 
 		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
 		//add a javascript to the header :)
