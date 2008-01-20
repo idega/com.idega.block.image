@@ -5,16 +5,20 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.base</artifactId>
-  	<version>4.0-SNAPSHOT</version>
+  	<version>4.0.0</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.block.image</artifactId>
   <name>idegaWeb Image Block</name>
-  <version>4.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <inceptionYear>2000</inceptionYear>
   <description>This is the image module for idegaWeb</description>
   <scm>
+    <!--
+    <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
+    <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection> 
+     -->
     <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
     <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
   </scm>
@@ -54,22 +58,27 @@
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.core</artifactId>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.slide</artifactId>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.block.media</artifactId>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.graphics</artifactId>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.block.web2.0</artifactId>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>javax.media</groupId>
