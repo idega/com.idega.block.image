@@ -3,9 +3,7 @@ package com.idega.block.image.presentation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+import java.util.List;
 
 import com.idega.block.image.business.ImageProvider;
 import com.idega.block.web2.business.Web2Business;
@@ -20,6 +18,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.util.PresentationUtil;
 
 /**
  * 
@@ -168,13 +167,11 @@ public class ImageGallery extends Block {
 	public void main(IWContext iwc) throws Exception {
 		Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 
-		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
-		//add a javascript to the header :)
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToJQueryLib());
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getThickboxScriptFilePath());
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToReflectionLib());
-		//add a stylesheet to the header
-		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, web2.getThickboxStyleFilePath());
+		List<String> scriptsUris = new ArrayList<String>();
+		scriptsUris.add(web2.getBundleURIToMootoolsLib());
+		scriptsUris.add(web2.getMoodalboxScriptFilePath(false));
+		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scriptsUris);			//	JavaScript
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getMoodalboxStyleFilePath());	//	CSS
 				
 		Layer imageGalleryLayer = new Layer(Layer.DIV);
 		//imageGalleryLayer.setStyleClass("album-wrapper "+this.styleClassName);
