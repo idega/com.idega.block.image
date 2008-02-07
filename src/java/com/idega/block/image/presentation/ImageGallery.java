@@ -279,7 +279,7 @@ public class ImageGallery extends Block {
 			String resourceURI = image.getResourceURI();
 			link.setToolTip(image.getName());
 			link.setURL(resourceURI);
-			link.setMarkupAttribute("rel", "ligthbox["+idOfGallery+"]");
+			link.setMarkupAttribute("rel", "lightbox["+idOfGallery+"]");
 
 			imageNumber++;
 			int xPositionImage = ((count % this.columns) + 1);
