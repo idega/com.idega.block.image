@@ -35,9 +35,6 @@ import com.idega.util.PresentationUtil;
  */
 public class ImageGallery extends Block {
 
-	public static final String STYLE_CLASS_GALLERY_IMAGE_TITLE = "galleryImageTitle";
-	public static final String STYLE_CLASS_LAST_IN_ROW = "lastInRow";
-	public static final String STYLE_CLASS_FIRST_IN_ROW = "firstInRow";
 	private static final String STYLE_CLASS_GALLERY_BUTTONS = "galleryButtons";
 
 	// slide path to resource folder
@@ -217,11 +214,10 @@ public class ImageGallery extends Block {
 		String idOfGallery = this.getId();
 
 		Paragraph name = new Paragraph();
-		name.setStyleClass("thumbnail-caption " + STYLE_CLASS_GALLERY_IMAGE_TITLE);
+		name.setStyleClass("thumbnail-caption");
 		
 		Layer imageAndText = new Layer(Layer.DIV);
-		imageAndText.setStyleClass("thumbnail-wrap" +this.imageStyleClassName);
-		//imageAndText.setStyleClass(this.imageStyleClassName);
+		imageAndText.setStyleClass("thumbnail-wrap " +this.imageStyleClassName);
 		
 		Layer imageLayer = new Layer(Layer.DIV);
 		imageLayer.setStyleClass("thumbnail-frame");
