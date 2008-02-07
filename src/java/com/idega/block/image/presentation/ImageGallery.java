@@ -57,8 +57,6 @@ public class ImageGallery extends Block {
 	private boolean scaleProportional = true;
 	private String heightOfGallery = null;
 	private String widthOfGallery = null;
-	private int rows = 1;
-	private int columns = 1;
 	// corresponding bundle
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.block.image";
 	// string forward button
@@ -119,9 +117,6 @@ public class ImageGallery extends Block {
 	 * @param rows
 	 */
 	public void setRows(int rows) {
-		if (rows > 0) {
-			this.rows = rows;
-		}
 	}
 
 	/**
@@ -129,9 +124,6 @@ public class ImageGallery extends Block {
 	 * @param columns
 	 */
 	public void setColumns(int columns) {
-		if (columns > 0) {
-			this.columns = columns;
-		}
 	}
 
 	public void setShowNameOfImage(boolean showNameOfImage) {
@@ -251,12 +243,6 @@ public class ImageGallery extends Block {
 			
 			imageGalleryLayer.add(wrapper);
 			
-//			Layer imageAndTitle = (Layer) imageLayer.clone();
-//			imageAndTitle.setId(UUIDGenerator.getInstance().generateId());
-//			imageAndTitle.setStyleAttribute("width", ""+this.widthOfImages);
-//			
-//			wrapper.add(imageAndTitle);
-			
 			// todo have a set method
 			if (this.heightOfImages > 0) {
 				image.setHeight(this.heightOfImages);
@@ -282,22 +268,7 @@ public class ImageGallery extends Block {
 			link.setMarkupAttribute("rel", "lightbox["+idOfGallery+"]");
 
 			imageNumber++;
-			int xPositionImage = ((count % this.columns) + 1);
-			// why clone?
-			//imageAndTitle.add(link);
 			wrapper.add(link);
-			
-			// add extra style classes for first and last elements of each row
-			// for styling purposes
-			if (xPositionImage == 1) {
-				wrapper.setStyleClass(STYLE_CLASS_FIRST_IN_ROW);
-				//imageAndTitle.setStyleClass(STYLE_CLASS_FIRST_IN_ROW);
-				
-			}
-			else if (xPositionImage == this.columns) {
-				wrapper.setStyleClass(STYLE_CLASS_LAST_IN_ROW);
-//				imageAndTitle.setStyleClass(STYLE_CLASS_LAST_IN_ROW);
-			}
 			
 			if (this.showNameOfImage) {
 				Paragraph theName = (Paragraph) name.clone();
