@@ -48,8 +48,8 @@ public class ImageGallery extends Block {
 	private int heightOfImages = -1;
 	// width of the images
 	private int widthOfImages = -1;
-	// show image in a special popup window
-	// show name of image in table
+	
+	// show name of image
 	private boolean showNameOfImage = false;
 	// number of new images that is shown per step
 	private int numberOfImagesPerStep = 0;
@@ -193,14 +193,14 @@ public class ImageGallery extends Block {
 		}
 
 
-		/* backward compatability */
+		/* backward compatibility */
 		if (this.heightOfGallery != null) {
 			imageGalleryLayer.setHeight(this.heightOfGallery);
 		}
 		if (this.widthOfGallery != null) {
 			imageGalleryLayer.setWidth(this.widthOfGallery);
 		}
-		/* backward compatability ends */
+		/* backward compatibility ends */
 	}
 
 	/**
@@ -243,7 +243,6 @@ public class ImageGallery extends Block {
 			
 			imageGalleryLayer.add(wrapper);
 			
-			// todo have a set method
 			if (this.heightOfImages > 0) {
 				image.setHeight(this.heightOfImages);
 			}
@@ -254,13 +253,9 @@ public class ImageGallery extends Block {
 			image.setEnlargeProperty(this.enlargeImage);
 			image.setScaleProportional(this.scaleProportional);
 			
+			//todo reflect as an option?
 			//image.setStyleClass("reflect rheight10");
-			
-			// deprecated backward compatability stuff
-			if (this.paddingOfImage > 0) {
-				image.setPadding(this.paddingOfImage);
-			}
-			
+						
 			Link link = new Link(image);
 			String resourceURI = image.getResourceURI();
 			link.setToolTip(image.getName());
@@ -273,9 +268,12 @@ public class ImageGallery extends Block {
 			if (this.showNameOfImage) {
 				Paragraph theName = (Paragraph) name.clone();
 				theName.add(image.getName());
-				
-			//	imageAndTitle.add(theName);
 				wrapper.add(theName);
+			}
+			
+			// deprecated backward compatability stuff
+			if (this.paddingOfImage > 0) {
+				image.setPadding(this.paddingOfImage);
 			}
 			
 		}
