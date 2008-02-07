@@ -9,6 +9,12 @@
         		<type>java.lang.String</type>
       		</property>
     	</module>
+    	<module id="" class="com.idega.block.article.component.ArticleItemViewer">
+    		<property name="resourcePath" value="" />
+    		<property name="styleClass" value="blog-entry" />
+			<property name="showAuthor" value="false" />
+			<property name="showCreationDate" value="false" />
+    	</module>
     	<module id="" class="com.idega.block.image.presentation.ImageGallery">
     		<property>
 				<name>:method:1:implied:void:setFolderResourcePath:java.lang.String:</name>
@@ -16,21 +22,25 @@
 				<type>java.lang.String</type>
 			</property>
 			<property>
-				<name>:method:1:implied:void:setColumns:int:</name>
-				<value>3</value>
-				<type>java.lang.String</type>
-			</property>
-			<property>
-				<name>:method:1:implied:void:setRows:int:</name>
+				<name>:method:1:implied:void:setNumberOfImagesPerStep:int:</name>
 				<value>9</value>
 				<type>java.lang.String</type>
 			</property>
 			<property>
 				<name>:method:1:implied:void:setWidthOfImages:int:</name>
-				<value>150</value>
+				<value>144</value>
+				<type>java.lang.String</type>
+			</property>
+			<property>
+				<name>:method:1:implied:void:setHeightOfImages:int:</name>
+				<value>144</value>
 				<type>java.lang.String</type>
 			</property>
     	</module>
+    	<module id="" class="com.idega.block.article.component.CommentsViewer">
+			<property name="showCommentsList" value="false" />
+			<property name="showCommentsForAllUsers" value="false" />
+		</module>
     </region>
     <region id="toolbar" label="toolbar">
     	<module id="" class="com.idega.block.navigation.presentation.NavigationList">
