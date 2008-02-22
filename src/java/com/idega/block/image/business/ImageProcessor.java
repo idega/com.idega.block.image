@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.16 2007/04/10 11:30:43 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.17 2008/02/22 02:28:27 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.slide.business.IWSlideService;
 
 /**
  * 
- * Last modified: $Date: 2007/04/10 11:30:43 $ by $Author: eiki $
+ * Last modified: $Date: 2008/02/22 02:28:27 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -143,6 +143,9 @@ public class ImageProcessor implements Runnable {
 				// encode the image
 				try {
 					imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
+					//set the generated image mime type 
+					mimeType = imageEncoder.getResultMimeTypeForInputMimeType(mimeType);
+					
 					InputStream s = new MemoryInputStream(buff);
 					//parentRes.putMethod(pathOfModifiedImage, new URL(realPathToImage).openStream());
 					ss.uploadFileAndCreateFoldersFromStringAsRoot(pathOfModifiedImage.substring(0,pathOfModifiedImage.lastIndexOf("/")+1) , nameOfModifiedImage, s, mimeType, true);
