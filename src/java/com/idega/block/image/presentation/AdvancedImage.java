@@ -15,6 +15,7 @@ import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.graphics.ImageInfo;
 import com.idega.graphics.image.business.ImageEncoder;
+import com.idega.graphics.image.business.ImageEncoderBean;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
@@ -472,7 +473,7 @@ public class AdvancedImage extends Image {
 		// returns
 		// for this mime type
 		String extension = imageEncoder.getResultFileExtensionForInputMimeType(mimeType);
-		if (ImageEncoder.INVALID_FILE_EXTENSION.equals(extension)) {
+		if (ImageEncoderBean.INVALID_FILE_EXTENSION.equals(extension)) {
 			log("ImageEncoder does not known this mime type:" + mimeType+" will try to use JPG/GIF/PNG/BMP");
 			//backup plan...
 			if(this.originalImageName.endsWith("jpg") || this.originalImageName.endsWith("JPG")){

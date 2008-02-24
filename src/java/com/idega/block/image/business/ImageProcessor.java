@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.17 2008/02/22 02:28:27 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.18 2008/02/24 23:59:32 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,8 +11,6 @@ package com.idega.block.image.business;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,23 +18,22 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.CreateException;
+import javax.media.jai.PlanarImage;
 
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
 import com.idega.graphics.image.business.ImageEncoder;
+import com.idega.graphics.image.business.ImageEncoderBean;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.io.MemoryFileBuffer;
-import com.idega.io.MemoryInputStream;
-import com.idega.io.MemoryOutputStream;
 import com.idega.slide.business.IWSlideService;
 
 /**
  * 
- * Last modified: $Date: 2008/02/22 02:28:27 $ by $Author: eiki $
+ * Last modified: $Date: 2008/02/24 23:59:32 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -104,7 +101,7 @@ public class ImageProcessor implements Runnable {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-			//we are done with it wether it worked or not
+			//we are done with it weather it worked or not
 			this.unprocessedImages.remove(job.getJobKey());
 		}
 	}
@@ -124,7 +121,7 @@ public class ImageProcessor implements Runnable {
 		// get all the job data
 		String realPathToImage = job.getImageLocation();
 		String mimeType = job.getMimeType();
-		//String imageName = job.getName();
+		// String imageName = job.getName();
 		int widthOfModifiedImage = job.getNewWidth();
 		int heightOfModifiedImage = job.getNewHeight();
 		String nameOfModifiedImage = job.getJobKey();
@@ -132,61 +129,83 @@ public class ImageProcessor implements Runnable {
 		
 		if (job.getLocationIsURL()) {
 			try {						
-				
 				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(this.iwac, IWSlideService.class);
-				//pathOfModifiedImage = getModifiedImagePath(widthOfModifiedImage, heightOfModifiedImage, extension,imageName, parentPath);
+			    PlanarImage original = imageEncoder.getPlanarImage(realPathToImage);
+			    int originalHeight = original.getHeight();
+			    int originalWidth = original.getWidth();
+			    float scaleWidth = (float)widthOfModifiedImage;
+			    float scaleHeight = (float)heightOfModifiedImage;
+			    
+			    PlanarImage finalImage;
+			    if(job.isSetToOnlyScale()){
+			    	 // Scales the original image
+				    float scale = (float)(scaleWidth/originalWidth);
+				    // Creates a new, scaled image
+				    finalImage = imageEncoder.scale(original,scale); 
+			    }
+			    else{
+				    // calculate the biggest even sided box we can fit into the
+					// center of the image and then adjust either the width or
+					// height depending on the proportions
+				    // then crop the image to that size and then scale that to a
+					// thumb-nail size
+				    float x = 0;
+				    float y = 0;
+				    float cropWidth;
+				    float cropHeight;
+	
+				    // if ratio is > 1 then width > height
+				    // if ratio = 1 then width = height
+				    // if ratio < 0 then height > width
+				    float widthHeightRatio = (float) (scaleWidth/scaleHeight);
+			
+				    // first make a box with even sides
+				    if(originalWidth > originalHeight){
+				    	x = (originalWidth/2)-(originalHeight/2);
+				    	y = 0;
+				    	cropHeight = originalHeight;
+				    	cropWidth = originalHeight;
+				    }
+				    else if(originalWidth < originalHeight){
+				    	x = 0;
+				    	y = (originalHeight/2)-(originalWidth/2);
+				    	cropHeight = originalWidth;
+				    	cropWidth = originalWidth;
+				    }
+				    else{
+				    	x = 0;
+				    	y = 0;
+				    	cropWidth = originalWidth;
+				    	cropHeight = originalHeight;
+				    }
+				    
+				    // then shrink the width or the height if needed
+				    if(widthHeightRatio>1){
+				    	// width > height
+				    	cropHeight = (float) (cropWidth/widthHeightRatio);
+				    }
+				    else if(widthHeightRatio<1){
+				    	cropHeight = (float) (cropHeight * widthHeightRatio);
+				    }
+				    
+				    PlanarImage cropped = imageEncoder.crop(original, x, y, cropWidth, cropHeight);
+		 
+				    // Scales the original image
+				    float scale = (float)(scaleWidth/cropWidth);
+				    // Creates a new, scaled image
+				    finalImage = imageEncoder.scale(cropped,scale); 
+			    }   
+			    
+			    InputStream imageStream = imageEncoder.encodePlanarImageToInputStream(finalImage,ImageEncoderBean.JPEG);
 				
-				InputStream input = new URL(realPathToImage).openStream();
-				// get output
-				MemoryFileBuffer buff = new MemoryFileBuffer();
-				OutputStream output = new MemoryOutputStream(buff);
-				// encode the image
-				try {
-					imageEncoder.encode(mimeType, input, output, widthOfModifiedImage, heightOfModifiedImage);
-					//set the generated image mime type 
-					mimeType = imageEncoder.getResultMimeTypeForInputMimeType(mimeType);
-					
-					InputStream s = new MemoryInputStream(buff);
-					//parentRes.putMethod(pathOfModifiedImage, new URL(realPathToImage).openStream());
-					ss.uploadFileAndCreateFoldersFromStringAsRoot(pathOfModifiedImage.substring(0,pathOfModifiedImage.lastIndexOf("/")+1) , nameOfModifiedImage, s, mimeType, true);
-					s.close();
-					s = null;
-				}
-				catch (Exception ex) {
-					// delete the created file (you can not use the result)
-					output.close();
-					input.close();
-					ex.printStackTrace();
-				}
-				finally {
-					output.close();
-					output = null;
-					input.close();
-					input = null;					
-					buff = null;
-				}
+				ss.uploadFileAndCreateFoldersFromStringAsRoot(pathOfModifiedImage.substring(0,pathOfModifiedImage.lastIndexOf("/")+1) , nameOfModifiedImage, imageStream, mimeType, true);
+				imageStream.close();
+				imageStream = null;
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private String getModifiedImagePath(int width, int height, String extension, String imageName, String parentPath) {
-		int slashPos = imageName.lastIndexOf("/");
-		if (slashPos > 0) {
-			imageName = imageName.substring(slashPos+1);
-		}
-		int pointPosition = imageName.lastIndexOf('.');
-		int length = imageName.length();
-		if ((pointPosition > 0) && pointPosition > (length - 5)) {
-			imageName = imageName.substring(0, pointPosition);
-		}
-
-		StringBuffer buf = new StringBuffer(parentPath);
-		buf.append("/resized/").
-		append(imageName).
-		append("_").append(width).append("x").append(height).append(".").append(extension);		
-		return buf.toString();
 	}
 	
 	public void start() {

@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessJob.java,v 1.5 2007/04/11 12:54:40 eiki Exp $
+ * $Id: ImageProcessJob.java,v 1.6 2008/02/24 23:59:33 eiki Exp $
  * Created on Sep 30, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,10 @@ package com.idega.block.image.data;
 
 /**
  * 
- *  Last modified: $Date: 2007/04/11 12:54:40 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/02/24 23:59:33 $ by $Author: eiki $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ImageProcessJob {
 		
@@ -27,6 +27,8 @@ public class ImageProcessJob {
 	private String mimeType;
 	private String jobKey;
 	private String modifiedImageURI;
+	private boolean onlyScale = false;
+	
 
 	public void setImageLocation(String loc) {
 		this.loc = loc;
@@ -94,6 +96,14 @@ public class ImageProcessJob {
 
 	public void setModifiedImageURI(String modifiedImageURI) {
 		this.modifiedImageURI = modifiedImageURI;
+	}
+
+	public void setToOnlyScale(boolean onlyScale) {
+		this.onlyScale = onlyScale;
+	}
+
+	public boolean isSetToOnlyScale() {
+		return onlyScale;
 	}
 
 }
