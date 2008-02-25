@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.18 2008/02/24 23:59:32 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.19 2008/02/25 17:50:27 eiki Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,11 +29,11 @@ import com.idega.slide.business.IWSlideService;
 
 /**
  * 
- * Last modified: $Date: 2008/02/24 23:59:32 $ by $Author: eiki $
+ * Last modified: $Date: 2008/02/25 17:50:27 $ by $Author: eiki $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -180,12 +180,13 @@ public class ImageProcessor implements Runnable {
 				    }
 				    
 				    // then shrink the width or the height if needed
+				    //TODO move it a little to center it after shrinking
 				    if(widthHeightRatio>1){
 				    	// width > height
 				    	cropHeight = (float) (cropWidth/widthHeightRatio);
 				    }
 				    else if(widthHeightRatio<1){
-				    	cropHeight = (float) (cropHeight * widthHeightRatio);
+				    	cropWidth = (float) (cropHeight * widthHeightRatio);
 				    }
 				    
 				    PlanarImage cropped = imageEncoder.crop(original, x, y, cropWidth, cropHeight);
