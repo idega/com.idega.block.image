@@ -2,10 +2,6 @@ package com.idega.block.image.presentation;
 
 import javax.ejb.FinderException;
 
-import com.idega.block.image.business.ImageProvider;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
@@ -213,14 +209,14 @@ public class ImageDisplayWindow extends Window {
 		}
 	}
 
-	private ImageProvider getImageProvider(IWContext iwc) {
+	/*private ImageProvider getImageProvider(IWContext iwc) {
 		try {
 			return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
 		}
 		catch (IBOLookupException ile) {
 			throw new IBORuntimeException(ile);
 		}
-	}
+	}*/
 
 	private AdvancedImage getImage(IWContext iwc, ICFile imageFolder, int imageNumber) {
 		

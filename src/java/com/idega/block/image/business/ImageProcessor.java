@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProcessor.java,v 1.19 2008/02/25 17:50:27 eiki Exp $ Created on
+ * $Id: ImageProcessor.java,v 1.20 2008/04/24 23:20:28 laddi Exp $ Created on
  * Sep 30, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,11 +29,11 @@ import com.idega.slide.business.IWSlideService;
 
 /**
  * 
- * Last modified: $Date: 2008/02/25 17:50:27 $ by $Author: eiki $
+ * Last modified: $Date: 2008/04/24 23:20:28 $ by $Author: laddi $
  * 
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class ImageProcessor implements Runnable {
 
@@ -133,13 +133,13 @@ public class ImageProcessor implements Runnable {
 			    PlanarImage original = imageEncoder.getPlanarImage(realPathToImage);
 			    int originalHeight = original.getHeight();
 			    int originalWidth = original.getWidth();
-			    float scaleWidth = (float)widthOfModifiedImage;
-			    float scaleHeight = (float)heightOfModifiedImage;
+			    float scaleWidth = widthOfModifiedImage;
+			    float scaleHeight = heightOfModifiedImage;
 			    
 			    PlanarImage finalImage;
 			    if(job.isSetToOnlyScale()){
 			    	 // Scales the original image
-				    float scale = (float)(scaleWidth/originalWidth);
+				    float scale = scaleWidth/originalWidth;
 				    // Creates a new, scaled image
 				    finalImage = imageEncoder.scale(original,scale); 
 			    }
@@ -157,7 +157,7 @@ public class ImageProcessor implements Runnable {
 				    // if ratio is > 1 then width > height
 				    // if ratio = 1 then width = height
 				    // if ratio < 0 then height > width
-				    float widthHeightRatio = (float) (scaleWidth/scaleHeight);
+				    float widthHeightRatio = scaleWidth/scaleHeight;
 			
 				    // first make a box with even sides
 				    if(originalWidth > originalHeight){
@@ -183,16 +183,16 @@ public class ImageProcessor implements Runnable {
 				    //TODO move it a little to center it after shrinking
 				    if(widthHeightRatio>1){
 				    	// width > height
-				    	cropHeight = (float) (cropWidth/widthHeightRatio);
+				    	cropHeight = cropWidth/widthHeightRatio;
 				    }
 				    else if(widthHeightRatio<1){
-				    	cropWidth = (float) (cropHeight * widthHeightRatio);
+				    	cropWidth = cropHeight * widthHeightRatio;
 				    }
 				    
 				    PlanarImage cropped = imageEncoder.crop(original, x, y, cropWidth, cropHeight);
 		 
 				    // Scales the original image
-				    float scale = (float)(scaleWidth/cropWidth);
+				    float scale = scaleWidth/cropWidth;
 				    // Creates a new, scaled image
 				    finalImage = imageEncoder.scale(cropped,scale); 
 			    }   
