@@ -6,9 +6,11 @@ import java.util.List;
 import com.idega.block.image.business.ImageProvider;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.util.PresentationUtil;
 
 /**
  * MultiImageGallery is a block to show multiple ImageGallery blocks at once.
@@ -43,6 +45,7 @@ public class MultiImageGallery extends Block {
 	public MultiImageGallery() {
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -79,11 +82,16 @@ public class MultiImageGallery extends Block {
 		this.popUpOriginalImageOnClick = popUpOriginalImageOnClick;
 	}
 
+	@Override
 	public void setStyleClass(String className) {
 		this.styleClassName = className;
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
+		IWBundle iwb = getBundle(iwc);
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/image.css"));
+
 		Layer multiImageGalleryLayer = new Layer(Layer.DIV);
 		multiImageGalleryLayer.setStyleClass(this.styleClassName);
 		add(multiImageGalleryLayer);

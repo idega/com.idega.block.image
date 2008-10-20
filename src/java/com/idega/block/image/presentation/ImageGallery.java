@@ -10,6 +10,7 @@ import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.idgenerator.business.UUIDGenerator;
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -77,6 +78,7 @@ public class ImageGallery extends Block {
 	public ImageGallery() {
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return ImageGallery.IW_BUNDLE_IDENTIFIER;
 	}
@@ -102,6 +104,7 @@ public class ImageGallery extends Block {
 	 * @param viewerPage
 	 * @deprecated does nothing since image gallery uses slimbox (lightbox)
 	 */
+	@Deprecated
 	public void setViewerPage(ICPage viewerPage) {
 	}
 
@@ -113,6 +116,7 @@ public class ImageGallery extends Block {
 	 * @deprecated use useNumberOfImagePerStep
 	 * @param rows
 	 */
+	@Deprecated
 	public void setRows(int rows) {
 	}
 
@@ -120,6 +124,7 @@ public class ImageGallery extends Block {
 	 * @deprecated use useNumberOfImagePerStep
 	 * @param columns
 	 */
+	@Deprecated
 	public void setColumns(int columns) {
 	}
 
@@ -130,6 +135,7 @@ public class ImageGallery extends Block {
 	/**
 	 * @deprecated now uses a lightbox
 	 */
+	@Deprecated
 	public void setPopUpOriginalImageOnClick(boolean popUpOriginalImageOnClick) {
 		//does nothing
 	}
@@ -147,10 +153,12 @@ public class ImageGallery extends Block {
 	 *             padding to each image now via inline style
 	 * @param cellPaddingTable
 	 */
+	@Deprecated
 	public void setCellPadding(int cellPaddingTable) {
 		this.paddingOfImage = cellPaddingTable;
 	}
 
+	@Override
 	public void setStyleClass(String className) {
 		this.styleClassName = className;
 	}
@@ -159,14 +167,17 @@ public class ImageGallery extends Block {
 		this.imageStyleClassName = className;
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
+		IWBundle iwb = getBundle(iwc);
 
 		List<String> scriptsUris = new ArrayList<String>();
 		scriptsUris.add(web2.getBundleURIToMootoolsLib());
 		scriptsUris.add(web2.getSlimboxScriptFilePath());
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scriptsUris);			//	JavaScript
 		PresentationUtil.addStyleSheetToHeader(iwc, web2.getSlimboxStyleFilePath());	//	CSS
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/image.css"));
 				
 		Layer imageGalleryLayer = new Layer(Layer.DIV);
 		imageGalleryLayer.setStyleClass("album-wrapper "+this.styleClassName);
@@ -439,6 +450,7 @@ public class ImageGallery extends Block {
 	 * @param height
 	 * @deprecated use CSS styles instead
 	 */
+	@Deprecated
 	public void setHeightOfGallery(String height) {
 		this.heightOfGallery = height;
 	}
@@ -447,6 +459,7 @@ public class ImageGallery extends Block {
 	 * @param width
 	 * @deprecated use CSS styles instead
 	 */
+	@Deprecated
 	public void setWidthOfGallery(String width) {
 		this.widthOfGallery = width;
 	}
