@@ -5,12 +5,12 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.platform</artifactId>
-  	<version>4.0.2-SNAPSHOT</version>
+  	<version>4.1.0</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.block.image</artifactId>
-  <version>4.0.2-SNAPSHOT</version>
+  <version>4.1.0</version>
   <name>idegaWeb Image Block</name>
   <inceptionYear>2000</inceptionYear>
   <description>This is the image module for idegaWeb</description>
@@ -23,6 +23,7 @@
     <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.block.image/</connection>
     <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.block.image/</developerConnection>
     -->
+    <tag>com_idega_block_platform-4_1_0</tag>
   </scm>
 
   <developers>
