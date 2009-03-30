@@ -10,12 +10,13 @@ import java.util.Hashtable;
 import org.apache.webdav.lib.WebdavResource;
 
 import com.idega.block.image.business.ImageProcessor;
-import com.idega.block.image.business.ImageProvider;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.graphics.ImageInfo;
 import com.idega.graphics.image.business.ImageEncoder;
 import com.idega.graphics.image.business.ImageEncoderBean;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
@@ -112,7 +113,7 @@ public class AdvancedImage extends Image {
 				if(shouldBeModified){
 					this.nameOfModifiedImage = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,extension);
 
-					IWSlideService ss = getImageProvider(iwc).getIWSlideService();
+					IWSlideService ss = getIWSlideService(iwc);
 					StringBuffer buffer = new StringBuffer(ss.getParentPath(this.getResourceURI())).append(AdvancedImage.MODIFIED_IMAGES_FOLDER).append(this.nameOfModifiedImage);
 					this.modifiedImageURI = buffer.toString();
 
@@ -129,6 +130,11 @@ public class AdvancedImage extends Image {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public IWSlideService getIWSlideService(IWApplicationContext iwac) throws IBOLookupException {
+		IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(iwac, IWSlideService.class);
+		return service;
 	}
 
 	public void setEnlargeProperty(boolean enlargeIfNecessary) {
@@ -453,7 +459,7 @@ public class AdvancedImage extends Image {
 		//only set for slide stuff now...
 		String path = getResourceURI();
 		setMarkupAttribute("orgIMGPath",path);
-		setMarkupAttribute("orgIMGParentPath", getImageProvider(iwc).getIWSlideService().getParentPath(path));
+		setMarkupAttribute("orgIMGParentPath", getIWSlideService(iwc).getParentPath(path));
 
 
 	}
@@ -516,10 +522,6 @@ public class AdvancedImage extends Image {
 
 	private ImageEncoder getImageEncoder(IWContext iwc) throws RemoteException {
 		return (ImageEncoder) IBOLookup.getServiceInstance(iwc, ImageEncoder.class);
-	}
-
-	private ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
-		return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
 	}
 
 	private String getNameOfModifiedImageWithExtension(int width, int height, String extension) {
