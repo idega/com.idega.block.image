@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.block.image.business.ImageProvider;
+import com.idega.block.image.business.ImagesProviderGeneric;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.idegaweb.IWBundle;
@@ -39,7 +41,7 @@ public class ImageGallery extends Block {
 	private static final String STYLE_CLASS_GALLERY_BUTTONS = "galleryButtons";
 
 	// slide path to resource folder
-	private String resourceFilePath = null;
+	private String resourceFilePath;
 	// enlarge image to specified height and width
 	private boolean enlargeImage = false;
 	// height of the images
@@ -221,7 +223,7 @@ public class ImageGallery extends Block {
 	 */
 	protected void addImages(IWContext iwc, Layer imageGalleryLayer) throws Exception {
 
-		ArrayList<AdvancedImage> images = getImages(iwc);
+		List<AdvancedImage> images = getImages(iwc);
 		String idOfGallery = this.getId();
 
 		Paragraph name = new Paragraph();
@@ -301,10 +303,11 @@ public class ImageGallery extends Block {
 		imageGalleryLayer.add(buttonsLayer);
 
 
-		int limit = 0;
-		if (this.resourceFilePath != null) {
-			limit = getTotalImageCount(iwc);
-		}
+		int limit = getTotalImageCount(iwc);
+//		TODO: cleanup
+//		if (this.resourceFilePath != null) {
+//			limit = getTotalImageCount(iwc);
+//		}
 		int startPosition = restoreNumberOfFirstImage(iwc);
 		int endPosition;
 		int imageSpotsAvailable = getNumberOfImagesPerStep();
@@ -349,12 +352,9 @@ public class ImageGallery extends Block {
 	}
 
 	protected int getTotalImageCount(IWContext iwc) {
-		if(totalCountOfImages==-1){
-			try {
-				totalCountOfImages = getImageProvider(iwc).getImageCount(this.resourceFilePath);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
+		
+		if(totalCountOfImages == -1) {
+			totalCountOfImages = getImagesProvider(iwc).getImageCount();
 		}
 		
 		return totalCountOfImages;
@@ -370,18 +370,23 @@ public class ImageGallery extends Block {
 	 * @return
 	 * @throws Exception
 	 */
-	protected ArrayList<AdvancedImage> getImages(IWContext iwc) throws Exception {
+	protected List<AdvancedImage> getImages(IWContext iwc) throws Exception {
 		int step = getNumberOfImagesPerStep();
 		int startPosition = restoreNumberOfFirstImage(iwc);
 		int newStartPosition;
-		int limit = 0;
+		int limit = getTotalImageCount(iwc);
+		
+		if(step == 0) {
+			step = limit;
+		}
 
-		if (this.resourceFilePath != null) {
-			limit = getTotalImageCount(iwc);
-			if(step==0){
-				step = limit;
-			}
-		}		
+//		TODO: cleanup
+//		if (this.resourceFilePath != null) {
+//			limit = getTotalImageCount(iwc);
+//			if(step==0){
+//				step = limit;
+//			}
+//		}		
 
 		String parameterValue = getParameter(iwc);
 		if (STRING_FORWARD_BUTTON.equals(parameterValue)) {
@@ -402,9 +407,9 @@ public class ImageGallery extends Block {
 		return getImagesFromTo(iwc, startPosition, startPosition + step - 1);
 	}
 
-	protected ArrayList<AdvancedImage> getImagesFromTo(IWContext iwc, int startPosition, int endPosition) throws RemoteException {
+	protected List<AdvancedImage> getImagesFromTo(IWContext iwc, int startPosition, int endPosition) {
 		//todo optimize calls to imageprovider, this is almost the same as before
-		return getImageProvider(iwc).getImagesFromTo(this.resourceFilePath, startPosition, endPosition);
+		return getImagesProvider(iwc).getImagesFromTo(startPosition, endPosition);
 	}
 
 	private void storeNumberOfFirstImage(IWContext iwc, int firstImageNumber) {
@@ -423,8 +428,52 @@ public class ImageGallery extends Block {
 		return Integer.toString(this.getICObjectInstanceID());
 	}
 
-	protected ImageProvider getImageProvider(IWContext iwc) throws RemoteException {
-		return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
+	protected ImageProvider getImageProvider(IWContext iwc) {
+		
+		try {
+			return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
+	        
+        } catch (RemoteException e) {
+	        throw new IBORuntimeException(e);
+        }
+	}
+	
+	protected ImagesProviderGeneric getImagesProvider(IWContext iwc) {
+		
+		ImagesProviderGeneric imagesProvider = getExpressionValue(iwc, "imagesProvider");
+		
+		if(imagesProvider == null) {
+			
+			final ImageProvider imageProvider = getImageProvider(iwc);
+			final String resourceFilePath = this.resourceFilePath;
+
+//			TODO: we could cache this either on resourceFilePath, or at least as a property in ImageGallery (saving 1 object for request)
+			imagesProvider = new ImagesProviderGeneric() {
+				
+				public int getImageCount() {
+					try {
+						return resourceFilePath != null ? imageProvider.getImageCount(resourceFilePath) : 0;
+	                    
+                    } catch (RemoteException e) {
+                    	throw new IBORuntimeException(e);
+                    }
+                }
+
+				public List<AdvancedImage> getImagesFromTo(int startPosition,
+                        int endPosition) {
+					try {
+						@SuppressWarnings("unchecked")
+						List<AdvancedImage> images = imageProvider.getImagesFromTo(resourceFilePath, startPosition, endPosition);
+						return images;
+	                    
+                    } catch (RemoteException e) {
+                    	throw new IBORuntimeException(e);
+                    }
+                }
+			};
+		}
+
+		return imagesProvider;
 	}
 
 	public void setToShowButtons(boolean showButtons){
