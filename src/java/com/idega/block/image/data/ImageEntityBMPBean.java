@@ -139,7 +139,7 @@ public class ImageEntityBMPBean extends com.idega.core.file.data.ICFileBMPBean i
 			return -1;
 		}
 		else {
-			return parent.getNodeID();
+			return Integer.parseInt(parent.getId());
 		}
 
   }
