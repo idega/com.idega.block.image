@@ -15,8 +15,7 @@ import javax.faces.component.UIComponent;
 
 import com.idega.block.image.business.ImageFinder;
 import com.idega.block.media.presentation.ImageInserter;
-//TODO for backward dependency use reflection to add IBPageChooser
-//import com.idega.builder.presentation.IBPageChooser;
+import com.idega.builder.presentation.IBPageChooser;
 import com.idega.core.file.business.FileSystemConstants;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -199,20 +198,18 @@ public class ImageAttributeSetter extends Block{
 			insert.setImageId(Integer.parseInt(zoomImage));
 		}
 
-    // TODO for backward dependency use reflection to add IBPageChooser
-//    IBPageChooser file = new IBPageChooser(FileSystemConstants.ZOOMPAGE,IWConstants.BUILDER_FONT_STYLE_INTERFACE_SMALL);
+    IBPageChooser file = new IBPageChooser(FileSystemConstants.ZOOMPAGE,IWConstants.BUILDER_FONT_STYLE_INTERFACE_SMALL);
     if ( zoomPage != null ) {
-//			file.setSelectedPage(Integer.parseInt(zoomPage),"Page");
+			file.setSelectedPage(Integer.parseInt(zoomPage),"Page");
 		}
 
     T.add(toText(this.iwrb.getLocalizedString("zoom_image","Zoom image")+":"),1,7);
-    //T.add(toText(this.iwrb.getLocalizedString("zoom_page","Zoom page")+":"),1,8);
-    T.add(toText("PAGE CHOOSER REMOVED TEMPORARELY"),1,8);
+    T.add(toText(this.iwrb.getLocalizedString("zoom_page","Zoom page")+":"),1,8);
     T.add(toText(this.iwrb.getLocalizedString("zoom_width","Zoom image width")+":"),1,9);
     T.add(toText(this.iwrb.getLocalizedString("zoom_height","Zoom image height")+":"),1,10);
 
     T.add(insert,2,7);
-//    T.add(file,2,8);
+    T.add(file,2,8);
     T.add(getHeightAndWidthInput(zoomWidth,FileSystemConstants.ZOOMWIDTH),2,9);
     T.add(getHeightAndWidthInput(zoomHeight,FileSystemConstants.ZOOMHEIGHT),2,10);
 
