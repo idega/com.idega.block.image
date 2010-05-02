@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -65,6 +66,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 				IWSlideService service = getIWSlideService();
 				Set result = new TreeSet();
 				List imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
+				Collections.sort(imagePaths);
 				
 				if(imagePaths!=null){
 					int realEnd = Math.min(endPosition, imagePaths.size());
