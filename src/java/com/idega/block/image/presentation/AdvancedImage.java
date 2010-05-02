@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -22,6 +23,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
 import com.idega.slide.business.IWSlideService;
 import com.idega.slide.util.IWSlideConstants;
+import com.idega.util.LocaleUtil;
 
 /**
  * 
@@ -63,7 +65,7 @@ import com.idega.slide.util.IWSlideConstants;
  * 
  * @version 1.0
  */
-public class AdvancedImage extends Image {
+public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 
 	/** Folder where the modified images are stored */
 	public static final String MODIFIED_IMAGES_FOLDER = "/resized/";
@@ -99,6 +101,15 @@ public class AdvancedImage extends Image {
 		this.resource = webdavResource;
 		this.realPathToImage = this.resource.getHttpURL().toString();
 		this.setToolTip(getName());
+	}
+
+	/**
+	 * @see java.lang.Comparable#compareTo(Object)
+	 */
+	public int compareTo(AdvancedImage image) {
+		Collator coll = Collator.getInstance(LocaleUtil.getIcelandicLocale());
+		
+		return coll.compare(this.getName(), image.getName());
 	}
 
 	public void main(IWContext iwc) {

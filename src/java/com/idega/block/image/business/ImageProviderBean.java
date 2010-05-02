@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.CreateException;
 import javax.ejb.TransactionRolledbackLocalException;
@@ -61,7 +63,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 		else{
 			try {
 				IWSlideService service = getIWSlideService();
-				ArrayList result = new ArrayList();
+				Set result = new TreeSet();
 				List imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(imageFolderResourcePath);
 				
 				if(imagePaths!=null){
@@ -71,7 +73,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 						result.add(image);
 					}
 						
-					return result;
+					return new ArrayList(result);
 				}
 			}
 			catch (IBOLookupException e) {
