@@ -8,6 +8,7 @@ import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.apache.webdav.lib.PropertyName;
 import org.apache.webdav.lib.WebdavResource;
 
 import com.idega.block.image.business.ImageProcessor;
@@ -94,13 +95,19 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	private String originalImageName;
 	private String resourceURI;
 
+	public AdvancedImage(String path) {
+		super(path);
+		
+		this.resourceURI = path;
+	}
+		
 	public AdvancedImage(WebdavResource webdavResource) {
-		super(webdavResource.getPath());
+		this(webdavResource.getPath());
 
 		this.resourceURI = getURL();
 		this.resource = webdavResource;
 		this.realPathToImage = this.resource.getHttpURL().toString();
-		this.setToolTip(getName());
+		this.setTitle(getName());
 	}
 
 	/**
@@ -112,6 +119,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		return coll.compare(this.getName(), image.getName());
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		super.main(iwc);
 		if (this.resource != null) {
@@ -299,6 +307,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		return this.widthOfOriginalImage;
 	}
 
+	@Override
 	public String getHeight() {
 		String height = super.getHeight();
 		// height is set?
@@ -320,6 +329,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		return null;
 	}
 
+	@Override
 	public String getWidth() {
 		String width = super.getWidth();
 		// width is set?
@@ -364,6 +374,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		return resourceURI;
 	}
 
+	@Override
 	public String getName(){
 		if(this.originalImageName!=null){
 			return this.originalImageName;
@@ -441,7 +452,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 				final int bitsPerPixel = ii.getBitsPerPixel();
 				final int widthDpi = ii.getPhysicalWidthDpi();
 
-				Hashtable props = new Hashtable();
+				Hashtable<PropertyName, String> props = new Hashtable<PropertyName, String>();
 				props.put(IWSlideConstants.PROPERTY_HEIGHT, String.valueOf(this.heightOfOriginalImage));
 				props.put(IWSlideConstants.PROPERTY_WIDTH, String.valueOf(this.widthOfOriginalImage));
 
