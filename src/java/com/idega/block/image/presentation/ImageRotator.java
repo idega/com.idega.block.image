@@ -8,7 +8,6 @@
  */
 package com.idega.block.image.presentation;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -16,11 +15,12 @@ import javax.faces.context.FacesContext;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
+import com.idega.presentation.IWBaseComponent;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.PresentationObjectTransitional;
 import com.idega.slide.business.IWSlideService;
 
-public class ImageRotator extends PresentationObjectTransitional {
+public class ImageRotator extends IWBaseComponent {
 
 	private String iFolderURI;
 	private String iWidth;
@@ -29,40 +29,14 @@ public class ImageRotator extends PresentationObjectTransitional {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.idega.presentation.PresentationObjectTransitional#encodeBegin(javax.faces.context.FacesContext)
-	 */
-	public void encodeBegin(FacesContext context) throws IOException {
-		super.encodeBegin(context);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.idega.presentation.PresentationObjectTransitional#encodeChildren(javax.faces.context.FacesContext)
-	 */
-	public void encodeChildren(FacesContext context) throws IOException {
-		super.encodeChildren(context);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.idega.presentation.PresentationObjectTransitional#encodeEnd(javax.faces.context.FacesContext)
-	 */
-	public void encodeEnd(FacesContext arg0) throws IOException {
-		super.encodeEnd(arg0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.idega.presentation.PresentationObjectTransitional#initializeComponent(javax.faces.context.FacesContext)
+	 * @see com.idega.presentation.IWBaseComponent#initializeComponent(javax.faces.context.FacesContext)
 	 */
 	protected void initializeComponent(FacesContext context) {
-		List imagePaths = null;
+		IWContext iwc = IWContext.getIWContext(context);
+		
+		List<?> imagePaths = null;
 		try {
-			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
+			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
 			imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
 		}
 		catch (RemoteException e) {
@@ -82,11 +56,11 @@ public class ImageRotator extends PresentationObjectTransitional {
 			if (getWidth() != null) {
 				image.setWidth(getWidth());
 			}
-			getChildren().add(image);
+			add(image);
 		}
 	}
 
-	private String getRandomURL(List imageURLs) {
+	private String getRandomURL(List<?> imageURLs) {
 		int num = (int) (Math.random() * imageURLs.size());
 		return (String) imageURLs.get(num);
 	}
