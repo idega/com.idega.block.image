@@ -1,24 +1,22 @@
 /*
  * $Id$ Created on Feb 10, 2006
- * 
+ *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
 package com.idega.block.image.presentation;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.jcr.RepositoryException;
 
-import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObjectTransitional;
-import com.idega.slide.business.IWSlideService;
 
 public class ImageRotator extends PresentationObjectTransitional {
 
@@ -29,43 +27,45 @@ public class ImageRotator extends PresentationObjectTransitional {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObjectTransitional#encodeBegin(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		super.encodeBegin(context);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObjectTransitional#encodeChildren(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
 		super.encodeChildren(context);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObjectTransitional#encodeEnd(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeEnd(FacesContext arg0) throws IOException {
 		super.encodeEnd(arg0);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObjectTransitional#initializeComponent(javax.faces.context.FacesContext)
 	 */
+	@Override
 	protected void initializeComponent(FacesContext context) {
-		List imagePaths = null;
+		List<String> imagePaths = null;
 		try {
-			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(getIWApplicationContext(), IWSlideService.class);
-			imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
-		}
-		catch (RemoteException e) {
+			imagePaths = getRepositoryService().getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
+		} catch (RepositoryException e) {
 			throw new IBORuntimeException(e);
 		}
 
@@ -86,14 +86,15 @@ public class ImageRotator extends PresentationObjectTransitional {
 		}
 	}
 
-	private String getRandomURL(List imageURLs) {
+	private String getRandomURL(List<String> imageURLs) {
 		int num = (int) (Math.random() * imageURLs.size());
-		return (String) imageURLs.get(num);
+		return imageURLs.get(num);
 	}
 
 	/**
 	 * @see javax.faces.component.UIComponentBase#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[5];
 		values[0] = super.saveState(ctx);
@@ -108,6 +109,7 @@ public class ImageRotator extends PresentationObjectTransitional {
 	 * @see javax.faces.component.UIComponentBase#restoreState(javax.faces.context.FacesContext,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -133,18 +135,22 @@ public class ImageRotator extends PresentationObjectTransitional {
 		this.iFolderURI = folderURI;
 	}
 
+	@Override
 	public String getHeight() {
 		return this.iHeight;
 	}
 
+	@Override
 	public void setHeight(String height) {
 		this.iHeight = height;
 	}
 
+	@Override
 	public String getWidth() {
 		return this.iWidth;
 	}
 
+	@Override
 	public void setWidth(String width) {
 		this.iWidth = width;
 	}

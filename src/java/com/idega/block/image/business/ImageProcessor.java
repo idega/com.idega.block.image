@@ -1,9 +1,9 @@
 /*
  * $Id: ImageProcessor.java,v 1.20 2008/04/24 23:20:28 laddi Exp $ Created on
  * Sep 30, 2004
- * 
+ *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -25,13 +25,14 @@ import com.idega.business.IBOLookup;
 import com.idega.graphics.image.business.ImageEncoder;
 import com.idega.graphics.image.business.ImageEncoderBean;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.slide.business.IWSlideService;
+import com.idega.repository.RepositoryService;
+import com.idega.util.expression.ELUtil;
 
 /**
- * 
+ *
  * Last modified: $Date: 2008/04/24 23:20:28 $ by $Author: laddi $
- * 
- * 
+ *
+ *
  * @author <a href="mailto:eiki@idega.com">eiki </a>
  * @version $Revision: 1.20 $
  */
@@ -49,7 +50,7 @@ public class ImageProcessor implements Runnable {
 	private IWApplicationContext iwac;
 
 	/**
-	 *  
+	 *
 	 */
 	private ImageProcessor(IWApplicationContext iwac) {
 		super();
@@ -67,9 +68,10 @@ public class ImageProcessor implements Runnable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
 		this.isRunning = true;
 		try {
@@ -108,7 +110,7 @@ public class ImageProcessor implements Runnable {
 
 	/**
 	 * Scales the image to its new dimensions
-	 * 
+	 *
 	 * @param job
 	 * @param iwc
 	 * @throws IOException
@@ -126,22 +128,22 @@ public class ImageProcessor implements Runnable {
 		int heightOfModifiedImage = job.getNewHeight();
 		String nameOfModifiedImage = job.getJobKey();
 		String pathOfModifiedImage = job.getModifiedImageURI();
-		
+
 		if (job.getLocationIsURL()) {
-			try {						
-				IWSlideService ss = (IWSlideService) IBOLookup.getServiceInstance(this.iwac, IWSlideService.class);
+			try {
+				RepositoryService repository = ELUtil.getInstance().getBean(RepositoryService.class);
 			    PlanarImage original = imageEncoder.getPlanarImage(realPathToImage);
 			    int originalHeight = original.getHeight();
 			    int originalWidth = original.getWidth();
 			    float scaleWidth = widthOfModifiedImage;
 			    float scaleHeight = heightOfModifiedImage;
-			    
+
 			    PlanarImage finalImage;
 			    if(job.isSetToOnlyScale()){
 			    	 // Scales the original image
 				    float scale = scaleWidth/originalWidth;
 				    // Creates a new, scaled image
-				    finalImage = imageEncoder.scale(original,scale); 
+				    finalImage = imageEncoder.scale(original,scale);
 			    }
 			    else{
 				    // calculate the biggest even sided box we can fit into the
@@ -153,12 +155,12 @@ public class ImageProcessor implements Runnable {
 				    float y = 0;
 				    float cropWidth;
 				    float cropHeight;
-	
+
 				    // if ratio is > 1 then width > height
 				    // if ratio = 1 then width = height
 				    // if ratio < 0 then height > width
 				    float widthHeightRatio = scaleWidth/scaleHeight;
-			
+
 				    // first make a box with even sides
 				    if(originalWidth > originalHeight){
 				    	x = (originalWidth/2)-(originalHeight/2);
@@ -178,7 +180,7 @@ public class ImageProcessor implements Runnable {
 				    	cropWidth = originalWidth;
 				    	cropHeight = originalHeight;
 				    }
-				    
+
 				    // then shrink the width or the height if needed
 				    //TODO move it a little to center it after shrinking
 				    if(widthHeightRatio>1){
@@ -188,18 +190,18 @@ public class ImageProcessor implements Runnable {
 				    else if(widthHeightRatio<1){
 				    	cropWidth = cropHeight * widthHeightRatio;
 				    }
-				    
+
 				    PlanarImage cropped = imageEncoder.crop(original, x, y, cropWidth, cropHeight);
-		 
+
 				    // Scales the original image
 				    float scale = scaleWidth/cropWidth;
 				    // Creates a new, scaled image
-				    finalImage = imageEncoder.scale(cropped,scale); 
-			    }   
-			    
+				    finalImage = imageEncoder.scale(cropped,scale);
+			    }
+
 			    InputStream imageStream = imageEncoder.encodePlanarImageToInputStream(finalImage,ImageEncoderBean.JPEG);
-				
-				ss.uploadFileAndCreateFoldersFromStringAsRoot(pathOfModifiedImage.substring(0,pathOfModifiedImage.lastIndexOf("/")+1) , nameOfModifiedImage, imageStream, mimeType, true);
+
+				repository.uploadFileAndCreateFoldersFromStringAsRoot(pathOfModifiedImage.substring(0,pathOfModifiedImage.lastIndexOf("/")+1) , nameOfModifiedImage, imageStream, mimeType);
 				imageStream.close();
 				imageStream = null;
 
@@ -208,11 +210,11 @@ public class ImageProcessor implements Runnable {
 			}
 		}
 	}
-	
+
 	public void start() {
 		this.runThread = true;
 		if (this.thread == null || !this.isRunning) {
-			//a new thread must be created here because it was null or 
+			//a new thread must be created here because it was null or
 			//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
 			this.thread = new Thread(this, "ImageProcessor Thread");
 			this.thread.setDaemon(true);
@@ -232,7 +234,7 @@ public class ImageProcessor implements Runnable {
 	/**
 	 * You should use this method to add Image Processing jobs. It automatically
 	 * starts the processing thread
-	 * 
+	 *
 	 * @param job
 	 */
 	public void addImageProcessJobToQueu(ImageProcessJob job) {
@@ -251,7 +253,7 @@ public class ImageProcessor implements Runnable {
 
 	/**
 	 * Tells you if it is already being processed or is in the queu
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */

@@ -6,64 +6,57 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.Collator;
 import java.util.Enumeration;
-import java.util.Hashtable;
-
-import org.apache.webdav.lib.PropertyName;
-import org.apache.webdav.lib.WebdavResource;
 
 import com.idega.block.image.business.ImageProcessor;
 import com.idega.block.image.data.ImageProcessJob;
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.graphics.ImageInfo;
 import com.idega.graphics.image.business.ImageEncoder;
 import com.idega.graphics.image.business.ImageEncoderBean;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
-import com.idega.slide.business.IWSlideService;
-import com.idega.slide.util.IWSlideConstants;
+import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.LocaleUtil;
 
 /**
- * 
- * 
+ *
+ *
  * Title: idegaWeb Description: AdvancedImage represents a image and extends
  * {@link com.idega.presentation.Image Image}.
- * 
+ *
  * In contrast to the Image class changes of the size by the methods setHeight
  * and setWith are not performed by adding corresponding values and commands to
  * the print method but by creating a new image with the desired size. The new
  * image with the desired size is sent to the client. Therefore the image is not
  * resized on the client side but on the server side.
- * 
+ *
  * The height and the width of the image can be set by using the setHeight and
  * setWidth methods of the Image class.
- * 
+ *
  * The ImageEncoder service bean is used to create the new image. The new
- * created image is uploaded into the file repository (slide) under the folder "/resized" in the images parent folder. 
+ * created image is uploaded into the file repository (slide) under the folder "/resized" in the images parent folder.
  * The type of the new image is not necessary equal to the type of the
  * original image. The ImageEncoder is responsible for changing the type. (e.g.
  * bitmap is transformed to jpeg).
- * 
+ *
  * An instance of this class represents therefore the original image and all
  * derived images: Depending on the values of the height and the width value the
  * corresponding image is used by the print method. A new image is only created
  * if that size was never created before otherwise the desired image is fetched
  * from the cache. This means that an access to all modified images
  * and especially to the original image is always possible.
- * 
+ *
  * To print the original image when this image is set to a different size the
  * {@link com.idega.block.image.presentation.AdvancedImageWrapper AdvancedImageWrapper}
  * can be used. Use the constructor AdvancedImageWrapper(this) and the wrapper
  * represents the original image.
- * 
- * 
+ *
+ *
  * Copyright: Copyright (c) 2003 Company: idega software
- * 
+ *
  * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>, <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
- * 
+ *
  * @version 1.0
  */
 public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
@@ -88,7 +81,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	 * flag to show if the image should keep it�s proportion
 	 */
 	private boolean scaleProportional = true;
-	private WebdavResource resource = null;
+	private RepositoryItem resource = null;
 	private boolean shouldBeModified = false;
 	private String nameOfModifiedImage;
 	private String modifiedImageURI;
@@ -97,11 +90,11 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 
 	public AdvancedImage(String path) {
 		super(path);
-		
+
 		this.resourceURI = path;
 	}
-		
-	public AdvancedImage(WebdavResource webdavResource) {
+
+	public AdvancedImage(RepositoryItem webdavResource) {
 		this(webdavResource.getPath());
 
 		this.resourceURI = getURL();
@@ -113,9 +106,10 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	/**
 	 * @see java.lang.Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(AdvancedImage image) {
 		Collator coll = Collator.getInstance(LocaleUtil.getIcelandicLocale());
-		
+
 		return coll.compare(this.getName(), image.getName());
 	}
 
@@ -132,11 +126,10 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 				if(shouldBeModified){
 					this.nameOfModifiedImage = getNameOfModifiedImageWithExtension(this.widthOfModifiedImage, this.heightOfModifiedImage,extension);
 
-					IWSlideService ss = getIWSlideService(iwc);
-					StringBuffer buffer = new StringBuffer(ss.getParentPath(this.getResourceURI())).append(AdvancedImage.MODIFIED_IMAGES_FOLDER).append(this.nameOfModifiedImage);
+					StringBuffer buffer = new StringBuffer(getRepositoryService().getParentPath(this.getResourceURI())).append(AdvancedImage.MODIFIED_IMAGES_FOLDER).append(this.nameOfModifiedImage);
 					this.modifiedImageURI = buffer.toString();
 
-					if (ss.getExistence(this.modifiedImageURI)) {
+					if (getRepositoryService().getExistence(this.modifiedImageURI)) {
 						setURL(this.modifiedImageURI);
 					}
 					else {
@@ -149,11 +142,6 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public IWSlideService getIWSlideService(IWApplicationContext iwac) throws IBOLookupException {
-		IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(iwac, IWSlideService.class);
-		return service;
 	}
 
 	public void setEnlargeProperty(boolean enlargeIfNecessary) {
@@ -283,7 +271,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	 * Gets height of original image.
 	 */
 	public int getHeightOfOriginalImage() throws Exception {
-		if (this.heightOfOriginalImage <= 0) {		
+		if (this.heightOfOriginalImage <= 0) {
 			// same for both db and slide
 			if (this.heightOfOriginalImage <= 0) {
 				// this actually sets both the width and height
@@ -367,7 +355,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return resource.getPath() if resource is not null (image from slide)
 	 */
 	public String getResourceURI() {
@@ -390,7 +378,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return A link with almost all neccessary parameters set for the
 	 *         ImageDisplayWindow
 	 */
@@ -425,7 +413,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 
 	/**
 	 * Read width and height from the original image via slide properties or ImageInfo
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -435,10 +423,10 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 
 		//Todo use slide local api/webdavlocal resource to get properties
 		String widthAndHeight = null;
-		Enumeration enumWidthAndHeight = this.resource.propfindMethod(IWSlideConstants.PROPERTYNAME_WIDTH_AND_HEIGHT_PROPERTY);
+		Enumeration enumWidthAndHeight = null;//this.resource.propfindMethod(IWSlideConstants.PROPERTYNAME_WIDTH_AND_HEIGHT_PROPERTY);
 		if(enumWidthAndHeight!=null && enumWidthAndHeight.hasMoreElements() && !"".equals((widthAndHeight = (String) enumWidthAndHeight.nextElement())) ){
 			this.widthOfOriginalImage = Integer.parseInt(widthAndHeight.substring(0,widthAndHeight.indexOf("x")));
-			this.heightOfOriginalImage = Integer.parseInt(widthAndHeight.substring(widthAndHeight.indexOf("x")+1));	
+			this.heightOfOriginalImage = Integer.parseInt(widthAndHeight.substring(widthAndHeight.indexOf("x")+1));
 		}
 		else{
 			//TODO move to ImageProvider
@@ -452,21 +440,21 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 				final int bitsPerPixel = ii.getBitsPerPixel();
 				final int widthDpi = ii.getPhysicalWidthDpi();
 
-				Hashtable<PropertyName, String> props = new Hashtable<PropertyName, String>();
-				props.put(IWSlideConstants.PROPERTY_HEIGHT, String.valueOf(this.heightOfOriginalImage));
-				props.put(IWSlideConstants.PROPERTY_WIDTH, String.valueOf(this.widthOfOriginalImage));
-
-				props.put(IWSlideConstants.PROPERTY_WIDTH_AND_HEIGHT, String.valueOf(this.widthOfOriginalImage)+"x"+String.valueOf(this.heightOfOriginalImage));
-				props.put(IWSlideConstants.PROPERTY_BITS_PER_PIXEL, String.valueOf(bitsPerPixel));
-				if (widthDpi != -1) {
-					props.put(IWSlideConstants.PROPERTY_DPI, String.valueOf(widthDpi));
-				}
+//				Hashtable<PropertyName, String> props = new Hashtable<PropertyName, String>();
+//				props.put(IWSlideConstants.PROPERTY_HEIGHT, String.valueOf(this.heightOfOriginalImage));
+//				props.put(IWSlideConstants.PROPERTY_WIDTH, String.valueOf(this.widthOfOriginalImage));
+//
+//				props.put(IWSlideConstants.PROPERTY_WIDTH_AND_HEIGHT, String.valueOf(this.widthOfOriginalImage)+"x"+String.valueOf(this.heightOfOriginalImage));
+//				props.put(IWSlideConstants.PROPERTY_BITS_PER_PIXEL, String.valueOf(bitsPerPixel));
+//				if (widthDpi != -1) {
+//					props.put(IWSlideConstants.PROPERTY_DPI, String.valueOf(widthDpi));
+//				}
 
 				//close before to avoid thread lock
 				stream.close();
 				stream = null;
 				ii = null;
-				this.resource.proppatchMethod(props, true);
+//				this.resource.proppatchMethod(props, true);
 
 			}
 			//must close
@@ -481,7 +469,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		//only set for slide stuff now...
 		String path = getResourceURI();
 		setMarkupAttribute("orgIMGPath",path);
-		setMarkupAttribute("orgIMGParentPath", getIWSlideService(iwc).getParentPath(path));
+		setMarkupAttribute("orgIMGParentPath", getRepositoryService().getParentPath(path));
 
 
 	}
@@ -495,7 +483,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		// get image encoder
 		ImageEncoder imageEncoder = getImageEncoder(iwc);
 		// get mime type
-		String mimeType = this.resource.getGetContentType();
+		String mimeType = this.resource.getMimeType();
 
 		// look up the file extension of the result file the image encoder
 		// returns
@@ -535,7 +523,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		job.setNewHeight(this.heightOfModifiedImage);
 		job.setJobKey(this.nameOfModifiedImage);
 		job.setModifiedImageURI(this.modifiedImageURI);
-		
+
 		ImageProcessor processor = ImageProcessor.getInstance(iwc);
 		//add to the image processing engine
 		processor.addImageProcessJobToQueu(job);
@@ -555,7 +543,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 			name = name.substring(0, pointPosition);
 		}
 		StringBuffer nameOfImage = new StringBuffer();
-		// add new extension	
+		// add new extension
 		nameOfImage.append(name).append("_").append(width).append("x").append(height).append(".").append(extension);
 		return nameOfImage.toString();
 	}
