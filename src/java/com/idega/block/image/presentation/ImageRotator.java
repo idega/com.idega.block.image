@@ -8,11 +8,7 @@
  */
 package com.idega.block.image.presentation;
 
-<<<<<<< HEAD
 import java.io.IOException;
-=======
-import java.rmi.RemoteException;
->>>>>>> 6896aeba6329b720ea2d4675d93d98c56c72f7de
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -20,13 +16,7 @@ import javax.jcr.RepositoryException;
 
 import com.idega.business.IBORuntimeException;
 import com.idega.presentation.IWBaseComponent;
-import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-<<<<<<< HEAD
-import com.idega.presentation.PresentationObjectTransitional;
-=======
-import com.idega.slide.business.IWSlideService;
->>>>>>> 6896aeba6329b720ea2d4675d93d98c56c72f7de
 
 public class ImageRotator extends IWBaseComponent {
 
@@ -35,62 +25,27 @@ public class ImageRotator extends IWBaseComponent {
 	private String iHeight;
 	private String iAlt;
 
-	/*
-	 * (non-Javadoc)
-<<<<<<< HEAD
-	 *
-	 * @see com.idega.presentation.PresentationObjectTransitional#encodeBegin(javax.faces.context.FacesContext)
-	 */
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		super.encodeBegin(context);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.idega.presentation.PresentationObjectTransitional#encodeChildren(javax.faces.context.FacesContext)
-	 */
 	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
 		super.encodeChildren(context);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.idega.presentation.PresentationObjectTransitional#encodeEnd(javax.faces.context.FacesContext)
-	 */
 	@Override
 	public void encodeEnd(FacesContext arg0) throws IOException {
 		super.encodeEnd(arg0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.idega.presentation.PresentationObjectTransitional#initializeComponent(javax.faces.context.FacesContext)
-=======
-	 * @see com.idega.presentation.IWBaseComponent#initializeComponent(javax.faces.context.FacesContext)
->>>>>>> 6896aeba6329b720ea2d4675d93d98c56c72f7de
-	 */
 	@Override
 	protected void initializeComponent(FacesContext context) {
-<<<<<<< HEAD
 		List<String> imagePaths = null;
 		try {
 			imagePaths = getRepositoryService().getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
 		} catch (RepositoryException e) {
-=======
-		IWContext iwc = IWContext.getIWContext(context);
-		
-		List<?> imagePaths = null;
-		try {
-			IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
-			imagePaths = service.getChildPathsExcludingFoldersAndHiddenFiles(getFolderURI());
-		}
-		catch (RemoteException e) {
->>>>>>> 6896aeba6329b720ea2d4675d93d98c56c72f7de
 			throw new IBORuntimeException(e);
 		}
 
@@ -111,11 +66,7 @@ public class ImageRotator extends IWBaseComponent {
 		}
 	}
 
-<<<<<<< HEAD
 	private String getRandomURL(List<String> imageURLs) {
-=======
-	private String getRandomURL(List<?> imageURLs) {
->>>>>>> 6896aeba6329b720ea2d4675d93d98c56c72f7de
 		int num = (int) (Math.random() * imageURLs.size());
 		return imageURLs.get(num);
 	}
