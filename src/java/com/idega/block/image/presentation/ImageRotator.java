@@ -115,22 +115,18 @@ public class ImageRotator extends IWBaseComponent {
 		this.iFolderURI = folderURI;
 	}
 
-	@Override
 	public String getHeight() {
 		return this.iHeight;
 	}
 
-	@Override
 	public void setHeight(String height) {
 		this.iHeight = height;
 	}
 
-	@Override
 	public String getWidth() {
 		return this.iWidth;
 	}
 
-	@Override
 	public void setWidth(String width) {
 		this.iWidth = width;
 	}
