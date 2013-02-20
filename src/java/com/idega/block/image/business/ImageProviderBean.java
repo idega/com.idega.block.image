@@ -79,7 +79,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 	/**
 	 *
 	 * @param folderURI
-	 * @return An array of resource paths to images within the supplied folder uri (in slide)
+	 * @return An array of resource paths to images within the supplied folder uri (in repository)
 	 * @throws RemoteException
 	 */
 	@Override

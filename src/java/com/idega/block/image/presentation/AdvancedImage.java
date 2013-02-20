@@ -35,7 +35,7 @@ import com.idega.util.LocaleUtil;
  * setWidth methods of the Image class.
  *
  * The ImageEncoder service bean is used to create the new image. The new
- * created image is uploaded into the file repository (slide) under the folder "/resized" in the images parent folder.
+ * created image is uploaded into the file repository (repository) under the folder "/resized" in the images parent folder.
  * The type of the new image is not necessary equal to the type of the
  * original image. The ImageEncoder is responsible for changing the type. (e.g.
  * bitmap is transformed to jpeg).
@@ -272,7 +272,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	 */
 	public int getHeightOfOriginalImage() throws Exception {
 		if (this.heightOfOriginalImage <= 0) {
-			// same for both db and slide
+			// same for both db and repository
 			if (this.heightOfOriginalImage <= 0) {
 				// this actually sets both the width and height
 				readWidthAndHeightFromOriginalImage();
@@ -286,7 +286,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	 */
 	public int getWidthOfOriginalImage() throws Exception {
 		if (this.widthOfOriginalImage <= 0) {
-			// same for both db and slide
+			// same for both db and repository
 			if (this.widthOfOriginalImage <= 0) {
 				// this actually sets both the width and height
 				readWidthAndHeightFromOriginalImage();
@@ -356,7 +356,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 
 	/**
 	 *
-	 * @return resource.getPath() if resource is not null (image from slide)
+	 * @return resource.getPath() if resource is not null (image from repository)
 	 */
 	public String getResourceURI() {
 		return resourceURI;
@@ -383,7 +383,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 	 *         ImageDisplayWindow
 	 */
 	public Link getPopUpReadyLink() {
-		//TODO remove or implement ImageDisplayWindow for slide, not used in ImageGallery any more.
+		//TODO remove or implement ImageDisplayWindow for repository, not used in ImageGallery any more.
 		Link link = new Link();
 		try {
 			int width = getWidthOfOriginalImage();
@@ -412,7 +412,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 
 
 	/**
-	 * Read width and height from the original image via slide properties or ImageInfo
+	 * Read width and height from the original image via repository properties or ImageInfo
 	 *
 	 * @return
 	 * @throws Exception
@@ -421,7 +421,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		IWContext iwc = IWContext.getInstance();
 		String realOrURLPath = getRealPathToImage();
 
-		//Todo use slide local api/webdavlocal resource to get properties
+		//Todo use repository local api/webdavlocal resource to get properties
 		String widthAndHeight = null;
 		Enumeration enumWidthAndHeight = null;//this.resource.propfindMethod(IWSlideConstants.PROPERTYNAME_WIDTH_AND_HEIGHT_PROPERTY);
 		if(enumWidthAndHeight!=null && enumWidthAndHeight.hasMoreElements() && !"".equals((widthAndHeight = (String) enumWidthAndHeight.nextElement())) ){
@@ -466,7 +466,7 @@ public class AdvancedImage extends Image implements Comparable<AdvancedImage> {
 		}
 
 		// so we can have access to that in javascript...very handy
-		//only set for slide stuff now...
+		//only set for repository stuff now...
 		String path = getResourceURI();
 		setMarkupAttribute("orgIMGPath",path);
 		setMarkupAttribute("orgIMGParentPath", getRepositoryService().getParentPath(path));
