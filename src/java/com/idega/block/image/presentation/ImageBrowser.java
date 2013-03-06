@@ -472,7 +472,7 @@ private ImageViewer viewer = new ImageViewer();
 
           imageViewer.setFooterBackgroundImage("/pics/jmodules/image/myndamodule/footer/foottiler.gif");
 
-          imageViewer.setHeaderText("Fann "+image.length+" myndir sem uppfylltu leitarskilyrðið: <u>"+searchString+"</u>");
+          imageViewer.setHeaderText("Fann "+image.length+" myndir sem uppfylltu leitarskilyrÃ°iÃ°: <u>"+searchString+"</u>");
 
 
 
@@ -500,7 +500,7 @@ private ImageViewer viewer = new ImageViewer();
 
     else {
 
-      Text noQuery = new Text("Engin leitarskilyrði valin...");
+      Text noQuery = new Text("Engin leitarskilyrÃ°i valin...");
 
       noQuery.setFontColor("#FFFFFF");
 

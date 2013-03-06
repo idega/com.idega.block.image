@@ -648,7 +648,7 @@ public void main(IWContext iwc)throws Exception{
 
 
 
-              Text rightText = new Text(">> Næstu myndir");
+              Text rightText = new Text(">> NÃ¦stu myndir");
 
               rightText.setBold();
 
@@ -1616,7 +1616,7 @@ private Form getCategoryEditForm(){
 
 
 
-  Text deleteText = new Text("Eyða");
+  Text deleteText = new Text("EyÃ°a");
 
   deleteText.setBold();
 
