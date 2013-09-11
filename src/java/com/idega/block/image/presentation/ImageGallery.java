@@ -24,15 +24,15 @@ import com.idega.util.PresentationUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
- * 
+ *
  * Title: idegaWeb Description: ImageGallery is a block to show images that are
  * stored in a specified folder. A subset of these images is shown at a time.
  * The sample can be changed by clicking on a forward and a back button. If
  * there are more than one ImageGallery on a single page each gallery works
  * independently of the others.
- * 
+ *
  * Copyright: Copyright (c) 2003 Company: idega software
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 2.0
  */
@@ -40,7 +40,7 @@ public class ImageGallery extends Block {
 
 	private static final String STYLE_CLASS_GALLERY_BUTTONS = "galleryButtons";
 
-	// slide path to resource folder
+	// repository path to resource folder
 	private String resourceFilePath;
 	// enlarge image to specified height and width
 	private boolean enlargeImage = false;
@@ -48,7 +48,7 @@ public class ImageGallery extends Block {
 	private int heightOfImages = -1;
 	// width of the images
 	private int widthOfImages = -1;
-	
+
 	// show name of image
 	private boolean showNameOfImage = false;
 	// number of new images that is shown per step
@@ -75,8 +75,8 @@ public class ImageGallery extends Block {
 	private boolean showButtons = true;
 	private int totalCountOfImages = -1;
 	// end of deprecated stuff
-	
-	
+
+
 	public ImageGallery() {
 	}
 
@@ -102,7 +102,7 @@ public class ImageGallery extends Block {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param viewerPage
 	 * @deprecated does nothing since image gallery uses slimbox (lightbox)
 	 */
@@ -145,7 +145,7 @@ public class ImageGallery extends Block {
 	public void setNumberOfImagesPerStep(int numberOfImagesPerStep) {
 		this.numberOfImagesPerStep = numberOfImagesPerStep;
 	}
-	
+
 	public int getNumberOfImagesPerStep() {
 		return this.numberOfImagesPerStep;
 	}
@@ -180,11 +180,11 @@ public class ImageGallery extends Block {
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scriptsUris);			//	JavaScript
 		PresentationUtil.addStyleSheetToHeader(iwc, web2.getSlimboxStyleFilePath());	//	CSS
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/image.css"));
-				
+
 		Layer imageGalleryLayer = new Layer(Layer.DIV);
 		imageGalleryLayer.setStyleClass("album-wrapper "+this.styleClassName);
 		//imageGalleryLayer.setStyleClass(this.styleClassName);
-		
+
 		add(imageGalleryLayer);
 
 		switch (this._posButton) {
@@ -216,7 +216,7 @@ public class ImageGallery extends Block {
 	/**
 	 * Adds images and text if needed to the imageGalleryLayer and sets various
 	 * style class too the items
-	 * 
+	 *
 	 * @param iwc
 	 * @param imageGalleryLayer
 	 * @throws Exception
@@ -228,13 +228,13 @@ public class ImageGallery extends Block {
 
 		Paragraph name = new Paragraph();
 		name.setStyleClass("thumbnail-caption");
-		
+
 		Layer imageAndText = new Layer(Layer.DIV);
 		imageAndText.setStyleClass("thumbnail-wrap " +this.imageStyleClassName);
-		
+
 		Layer imageLayer = new Layer(Layer.DIV);
 		imageLayer.setStyleClass("thumbnail-frame");
-		
+
 		AdvancedImage image;
 		int count = -1;
 		Iterator<AdvancedImage> iterator = images.iterator();
@@ -249,9 +249,9 @@ public class ImageGallery extends Block {
 				//yes height the same on purpose
 				wrapper.setStyleAttribute("height", ""+this.widthOfImages);
 			}
-			
+
 			imageGalleryLayer.add(wrapper);
-			
+
 			if (this.heightOfImages > 0) {
 				image.setHeight(this.heightOfImages);
 			}
@@ -261,10 +261,10 @@ public class ImageGallery extends Block {
 			// set properties of advanced image
 			image.setEnlargeProperty(this.enlargeImage);
 			image.setScaleProportional(this.scaleProportional);
-			
+
 			//todo reflect as an option?
 			//image.setStyleClass("reflect rheight10");
-						
+
 			Link link = new Link(image);
 			String resourceURI = image.getResourceURI();
 			link.setToolTip(image.getName());
@@ -273,18 +273,18 @@ public class ImageGallery extends Block {
 
 			imageNumber++;
 			wrapper.add(link);
-			
+
 			if (this.showNameOfImage) {
 				Paragraph theName = (Paragraph) name.clone();
 				theName.add(image.getName());
 				wrapper.add(theName);
 			}
-			
+
 			// deprecated backward compatability stuff
 			if (this.paddingOfImage > 0) {
 				image.setPadding(this.paddingOfImage);
 			}
-			
+
 		}
 	}
 
@@ -314,7 +314,7 @@ public class ImageGallery extends Block {
 		if(imageSpotsAvailable==0){
 			imageSpotsAvailable = limit;
 		}
-		
+
 		StringBuffer infoText = new StringBuffer();
 
 		if(limit<=imageSpotsAvailable && startPosition==1){
@@ -348,15 +348,15 @@ public class ImageGallery extends Block {
 		}
 		buttonsLayer.add(backButton);
 		buttonsLayer.add(new Text(infoText.toString()));
-		buttonsLayer.add(forwardButton);		
+		buttonsLayer.add(forwardButton);
 	}
 
 	protected int getTotalImageCount(IWContext iwc) {
-		
+
 		if(totalCountOfImages == -1) {
 			totalCountOfImages = getImagesProvider(iwc).getImageCount();
 		}
-		
+
 		return totalCountOfImages;
 	}
 
@@ -375,7 +375,7 @@ public class ImageGallery extends Block {
 		int startPosition = restoreNumberOfFirstImage(iwc);
 		int newStartPosition;
 		int limit = getTotalImageCount(iwc);
-		
+
 		if(step == 0) {
 			step = limit;
 		}
@@ -386,7 +386,7 @@ public class ImageGallery extends Block {
 //			if(step==0){
 //				step = limit;
 //			}
-//		}		
+//		}
 
 		String parameterValue = getParameter(iwc);
 		if (STRING_FORWARD_BUTTON.equals(parameterValue)) {
@@ -401,9 +401,9 @@ public class ImageGallery extends Block {
 		if (newStartPosition > 0 && newStartPosition <= limit) {
 			startPosition = newStartPosition;
 		}
-		
+
 		storeNumberOfFirstImage(iwc, startPosition);
-		
+
 		return getImagesFromTo(iwc, startPosition, startPosition + step - 1);
 	}
 
@@ -429,43 +429,45 @@ public class ImageGallery extends Block {
 	}
 
 	protected ImageProvider getImageProvider(IWContext iwc) {
-		
+
 		try {
 			return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
-	        
+
         } catch (RemoteException e) {
 	        throw new IBORuntimeException(e);
         }
 	}
-	
+
 	protected ImagesProviderGeneric getImagesProvider(IWContext iwc) {
-		
+
 		ImagesProviderGeneric imagesProvider = getExpressionValue(iwc, "imagesProvider");
-		
+
 		if(imagesProvider == null) {
-			
+
 			final ImageProvider imageProvider = getImageProvider(iwc);
 			final String resourceFilePath = this.resourceFilePath;
 
 //			TODO: we could cache this either on resourceFilePath, or at least as a property in ImageGallery (saving 1 object for request)
 			imagesProvider = new ImagesProviderGeneric() {
-				
+
+				@Override
 				public int getImageCount() {
 					try {
 						return resourceFilePath != null ? imageProvider.getImageCount(resourceFilePath) : 0;
-	                    
+
                     } catch (RemoteException e) {
                     	throw new IBORuntimeException(e);
                     }
                 }
 
+				@Override
 				public List<AdvancedImage> getImagesFromTo(int startPosition,
                         int endPosition) {
 					try {
 						@SuppressWarnings("unchecked")
 						List<AdvancedImage> images = imageProvider.getImagesFromTo(resourceFilePath, startPosition, endPosition);
 						return images;
-	                    
+
                     } catch (RemoteException e) {
                     	throw new IBORuntimeException(e);
                     }
@@ -477,7 +479,7 @@ public class ImageGallery extends Block {
 	}
 
 	public void setToShowButtons(boolean showButtons){
-		this.showButtons  = showButtons;		
+		this.showButtons  = showButtons;
 	}
 
 	/**

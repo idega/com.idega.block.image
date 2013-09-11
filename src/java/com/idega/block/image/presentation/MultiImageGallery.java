@@ -3,6 +3,7 @@ package com.idega.block.image.presentation;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.block.image.business.ImageProvider;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
@@ -14,10 +15,10 @@ import com.idega.util.PresentationUtil;
 
 /**
  * MultiImageGallery is a block to show multiple ImageGallery blocks at once.
- * It scans the supplied webdav(slide) folder for image folders and adds one ImageGallery block for each of them.
- * 
+ * It scans the supplied repository folder for image folders and adds one ImageGallery block for each of them.
+ *
  * Copyright: Copyright (c) 2006 Company: idega software
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
  */
@@ -36,7 +37,7 @@ public class MultiImageGallery extends Block {
 	private boolean popUpOriginalImageOnClick = false;
 	private boolean scaleProportional = true;
 
-	
+
 	// corresponding bundle
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.block.image";
 
@@ -99,10 +100,10 @@ public class MultiImageGallery extends Block {
 		addGalleries(iwc, multiImageGalleryLayer);
 	}
 
-	
+
 	protected void addGalleries(IWContext iwc, Layer multiImageGalleryLayer) throws Exception {
 		List folders = getFolders(iwc);
-		
+
 		for (Iterator iter = folders.iterator(); iter.hasNext();) {
 			String folderPath = (String) iter.next();
 			ImageGallery gallery = new ImageGallery();
@@ -116,12 +117,12 @@ public class MultiImageGallery extends Block {
 			gallery.setEnlargeImage(this.enlargeImage);
 			gallery.setViewerPage(this.viewerPage);
 			gallery.setPopUpOriginalImageOnClick(this.popUpOriginalImageOnClick);
-			
+
 			multiImageGalleryLayer.add(gallery);
 		}
-			
+
 	}
-	
+
 	/**
 	 * Gets a List of Folders of images
 	 * @param iwc
