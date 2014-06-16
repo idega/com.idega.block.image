@@ -282,7 +282,7 @@ protected void updateOriginalInfo() throws SQLException{
 
 
 
-private synchronized BufferedInputStream getBufferedInputStream(InputStream inputStream){
+private BufferedInputStream getBufferedInputStream(InputStream inputStream){
 
   return (new BufferedInputStream(inputStream));
 
@@ -290,7 +290,7 @@ private synchronized BufferedInputStream getBufferedInputStream(InputStream inpu
 
 
 
-private synchronized MemoryCacheSeekableStream getMemoryCacheSeekableStream(BufferedInputStream bufStream){
+private MemoryCacheSeekableStream getMemoryCacheSeekableStream(BufferedInputStream bufStream){
 
   return (new MemoryCacheSeekableStream(bufStream));
 
@@ -298,7 +298,7 @@ private synchronized MemoryCacheSeekableStream getMemoryCacheSeekableStream(Buff
 
 
 
-private synchronized PlanarImage getPlanarImageFromStream(MemoryCacheSeekableStream memStream){
+private PlanarImage getPlanarImageFromStream(MemoryCacheSeekableStream memStream){
 
   return (JAI.create("stream", memStream));
 

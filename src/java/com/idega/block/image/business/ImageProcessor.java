@@ -247,7 +247,7 @@ public class ImageProcessor implements Runnable {
 		}
 	}
 
-	private synchronized void addToQueu(ImageProcessJob job) {
+	private void addToQueu(ImageProcessJob job) {
 		this.unprocessedImages.put(job.getJobKey(), job);
 	}
 
@@ -268,7 +268,7 @@ public class ImageProcessor implements Runnable {
 	}
 
 	private ImageEncoder getImageEncoder() throws RemoteException {
-		return (ImageEncoder) IBOLookup.getServiceInstance(this.iwac, ImageEncoder.class);
+		return IBOLookup.getServiceInstance(this.iwac, ImageEncoder.class);
 	}
 
 }
