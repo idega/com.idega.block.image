@@ -17,6 +17,7 @@ import javax.jcr.RepositoryException;
 import com.idega.business.IBORuntimeException;
 import com.idega.presentation.IWBaseComponent;
 import com.idega.presentation.Image;
+import com.idega.util.CoreConstants;
 
 public class ImageRotator extends IWBaseComponent {
 
@@ -51,6 +52,9 @@ public class ImageRotator extends IWBaseComponent {
 
 		if (imagePaths != null) {
 			String imageURL = getRandomURL(imagePaths);
+			if (!imageURL.startsWith(CoreConstants.WEBDAV_SERVLET_URI)) {
+				imageURL = CoreConstants.WEBDAV_SERVLET_URI + imageURL;
+			}
 
 			Image image = new Image(imageURL);
 			if (getAlt() != null) {
