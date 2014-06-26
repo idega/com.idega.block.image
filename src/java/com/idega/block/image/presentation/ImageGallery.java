@@ -431,7 +431,7 @@ public class ImageGallery extends Block {
 	protected ImageProvider getImageProvider(IWContext iwc) {
 
 		try {
-			return (ImageProvider) IBOLookup.getServiceInstance(iwc, ImageProvider.class);
+			return IBOLookup.getServiceInstance(iwc, ImageProvider.class);
 
         } catch (RemoteException e) {
 	        throw new IBORuntimeException(e);
@@ -464,7 +464,6 @@ public class ImageGallery extends Block {
 				public List<AdvancedImage> getImagesFromTo(int startPosition,
                         int endPosition) {
 					try {
-						@SuppressWarnings("unchecked")
 						List<AdvancedImage> images = imageProvider.getImagesFromTo(resourceFilePath, startPosition, endPosition);
 						return images;
 
