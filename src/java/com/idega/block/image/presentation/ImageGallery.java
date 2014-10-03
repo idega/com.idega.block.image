@@ -236,11 +236,8 @@ public class ImageGallery extends Block {
 		imageLayer.setStyleClass("thumbnail-frame");
 
 		AdvancedImage image;
-		int count = -1;
 		Iterator<AdvancedImage> iterator = images.iterator();
-		int imageNumber = restoreNumberOfFirstImage(iwc);
 		while (iterator.hasNext()) {
-			count++;
 			image = iterator.next();
 			Layer wrapper = (Layer) imageAndText.clone();
 			wrapper.setId(UUIDGenerator.getInstance().generateId());
@@ -271,7 +268,6 @@ public class ImageGallery extends Block {
 			link.setURL(resourceURI);
 			link.setMarkupAttribute("rel", "lightbox["+idOfGallery+"]");
 
-			imageNumber++;
 			wrapper.add(link);
 
 			if (this.showNameOfImage) {
