@@ -434,9 +434,19 @@ public class ImageGallery extends Block {
         }
 	}
 
+	private ImagesProviderGeneric imagesProvider = null;
+
+	public ImagesProviderGeneric getImagesProvider() {
+		return imagesProvider;
+	}
+
+	public void setImagesProvider(ImagesProviderGeneric imagesProvider) {
+		this.imagesProvider = imagesProvider;
+	}
+
 	protected ImagesProviderGeneric getImagesProvider(IWContext iwc) {
 
-		ImagesProviderGeneric imagesProvider = getExpressionValue(iwc, "imagesProvider");
+		imagesProvider = imagesProvider == null ? getExpressionValue(iwc, "imagesProvider") : imagesProvider;
 
 		if(imagesProvider == null) {
 
