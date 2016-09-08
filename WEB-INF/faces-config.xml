@@ -10,5 +10,27 @@ version="1.2">
     <component-type>com.idega.block.image.ImageGallery</component-type>
     <component-class>com.idega.block.image.presentation.ImageGallery</component-class>
   </component>
-  
+
+	<component>
+		<component-type>Flickr gallery</component-type>
+		<component-class>com.idega.block.image.presentation.FlickrGallery</component-class>
+		<component-extension>
+			<idegaweb-info>
+				<builder-visible>true</builder-visible>
+				<object-type>jsf.uicomponent</object-type>
+			</idegaweb-info>
+		</component-extension>
+	</component>
+
+	<managed-bean>
+		<managed-bean-name>imageService</managed-bean-name>
+		<managed-bean-class>com.idega.block.image.presentation.bean.service.ImagesService</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>imageBean</managed-bean-name>
+		<managed-bean-class>com.idega.block.image.presentation.bean.data.ImageBean</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
 </faces-config>
