@@ -87,5 +87,10 @@
 		<artifactId>avalon-framework-api</artifactId>
 		<version>4.3.1</version>
 	</dependency>
+	<dependency>
+		<groupId>com.flickr4java</groupId>
+		<artifactId>flickr4java</artifactId>
+		<version>2.16</version>
+	</dependency>
   </dependencies>
 </project>
