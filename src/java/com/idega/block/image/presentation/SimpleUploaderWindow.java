@@ -1,6 +1,5 @@
 package com.idega.block.image.presentation;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.idega.block.image.business.ImageBusiness;
@@ -27,7 +26,6 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
 
     String dataBaseType;
     private String sessImageParameter = "image_id";
-    Connection Conn = null;
 
     public SimpleUploaderWindow(){
 
@@ -49,7 +47,8 @@ public class SimpleUploaderWindow extends Window implements SimpleImage{
 			}
     }
 
-    public void main(IWContext iwc){
+    @Override
+	public void main(IWContext iwc){
       checkParameterName(iwc);
       this.setBackgroundColor("white");
       this.setTitle("Idega Uploader");
