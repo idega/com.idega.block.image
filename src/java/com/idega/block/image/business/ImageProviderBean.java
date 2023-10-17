@@ -51,7 +51,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 
 	@Override
 	public List <AdvancedImage>getImagesFromTo(String imageFolderResourcePath, int startPosition, int endPosition) {
-		List<AdvancedImage> results = new ArrayList<AdvancedImage>();
+		List<AdvancedImage> results = new ArrayList<>();
 		if (imageFolderResourcePath == null) {
 			return results;
 		} else {
@@ -136,6 +136,7 @@ public class ImageProviderBean extends IBOServiceBean implements ImageProvider {
 			imageEntity = imageEntityHome.create();
 			// store value of File
 			imageEntity.setFileValue(inputStream);
+			imageEntity.setPublic(true);
 			imageEntity.setMimeType(mimeType);
 			imageEntity.setName(name);
 			imageEntity.setWidth(Integer.toString(width));

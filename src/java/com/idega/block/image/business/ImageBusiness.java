@@ -281,6 +281,7 @@ public static void makeDefaultSizes(IWContext iwc){
       System.out.println("ImageBusiness mimetype:"+ip.getMimeType());
 
       image.setFileValue(input);
+      image.setPublic(true);
       image.setFileSize((int)ip.getSize());
       image.store();
 

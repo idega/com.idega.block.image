@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import com.idega.block.image.data.ImageEntity;
 import com.idega.block.media.business.MediaBusiness;
+import com.idega.core.file.data.ICFile;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObjectContainer;
@@ -29,7 +30,8 @@ public class SimpleViewer extends PresentationObjectContainer{
     public String sessImageParameterName = "im_image_session_name";
     public String sessImageParameter = "image_id";
 
-    public void  main(IWContext iwc){
+    @Override
+	public void  main(IWContext iwc){
 
       //add("block.media");
       String sImageId = getImageId(iwc);
@@ -122,7 +124,8 @@ public class SimpleViewer extends PresentationObjectContainer{
             warning.setFontColor("FF0000");
             warning.setBold();
             Image image = new Image(id);
-            image.setURL(MediaBusiness.getMediaURL(id,iwc.getIWMainApplication()));
+            ICFile file = getFile(id);
+            image.setURL(MediaBusiness.getMediaURL(iwc, file.getUniqueId(), file.getToken(), iwc.getIWMainApplication()));
             T.setBackgroundImage(1,2,image);
             T.add(ieImage.getName(),1,1);
             T.add(warning,1,2);
