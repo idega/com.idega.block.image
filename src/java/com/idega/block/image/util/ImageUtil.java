@@ -91,6 +91,10 @@ public class ImageUtil {
 	 * @return true if similar
 	 */
 	public boolean areImagesSimilar(byte[] image1, byte[] image2, int threshold) {
+		if (image1 == null || image2 == null) {
+			return false;
+		}
+
 		InputStream stream = null;
 		try {
 			stream = new ByteArrayInputStream(image1);
